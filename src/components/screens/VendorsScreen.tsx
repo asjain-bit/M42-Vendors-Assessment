@@ -25,7 +25,6 @@ interface PublicVendorRecord {
 }
 
 export const VendorsScreen: React.FC = () => {
-  // Comprehensive list of countries across the world with flag emojis
   const worldCountryOptions = [
     { name: 'United Arab Emirates', flag: '🇦🇪' },
     { name: 'United States', flag: '🇺🇸' },
@@ -129,7 +128,7 @@ export const VendorsScreen: React.FC = () => {
       id: 'v-4',
       name: 'BioHealth Tech',
       sublabel: 'Genomics data analysis & clinical storage',
-      domain: '—', // Optional field set to '-' in 1-2 rows per user request
+      domain: '—',
       country: 'United Arab Emirates',
       flag: '🇦🇪',
       email: 'support@biohealth.ae',
@@ -296,7 +295,6 @@ export const VendorsScreen: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* URL column: No fill or stroke, normal text color with underline (or '-' for optional) */}
                     <td className="py-4 px-5 text-xs">
                       {vendor.domain !== '—' ? (
                         <a
@@ -322,7 +320,6 @@ export const VendorsScreen: React.FC = () => {
                       <StatusChip label={vendor.status} status="success" dot={false} />
                     </td>
 
-                    {/* Tertiary text button in light primary color */}
                     <td className="py-4 px-5 text-right">
                       <button
                         onClick={() => setActiveDispatchVendor(vendor)}
@@ -353,7 +350,7 @@ export const VendorsScreen: React.FC = () => {
           </p>
         </div>
 
-        {/* Card 1: FIND VENDOR (Search button renamed to "Add vendor", World countries dropdown) */}
+        {/* Card 1: FIND VENDOR (Add vendor button in dark primary color, disabled until mandatory legal name is filled) */}
         <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-4">
           <div>
             <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider block">
@@ -367,7 +364,7 @@ export const VendorsScreen: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="relative">
               <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                Legal name
+                Legal name *
               </label>
               <input
                 type="text"
@@ -449,18 +446,18 @@ export const VendorsScreen: React.FC = () => {
           </div>
 
           <div>
-            {/* Search button renamed to "Add vendor" per user request */}
             <button
               type="button"
+              disabled={!findLegalName.trim()}
               onClick={handleAddVendorFromFind}
-              className="bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0d212c] font-bold text-xs px-5 py-2 rounded-xl transition cursor-pointer shadow-xs"
+              className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Add vendor
             </button>
           </div>
         </div>
 
-        {/* Card 2: ADD VENDOR MANUALLY */}
+        {/* Card 2: ADD VENDOR MANUALLY (Add vendor button in dark primary color, disabled until mandatory display name and email are filled) */}
         <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-4">
           <div>
             <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider block">
@@ -551,7 +548,7 @@ export const VendorsScreen: React.FC = () => {
               <button
                 type="submit"
                 disabled={!manualDisplayName.trim() || !manualVendorEmail.trim()}
-                className="bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0d212c] font-bold text-xs px-5 py-2 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-5 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Add vendor
               </button>

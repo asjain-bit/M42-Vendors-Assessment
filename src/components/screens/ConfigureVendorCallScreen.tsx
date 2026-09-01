@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Check, ChevronDown, Clock, ShieldCheck, ArrowRight, ArrowLeft, Volume2, Copy } from 'lucide-react'
+import { Check, ChevronDown, Clock, ShieldCheck, ArrowRight, ArrowLeft, Volume2, Copy, SlidersHorizontal, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
 
 export interface VendorDispatchData {
@@ -34,6 +34,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
     'Technical Questionnaire'
   )
   const [roundLabel, setRoundLabel] = useState('Round 1')
+  const [estimatedDuration, setEstimatedDuration] = useState('135–205 min')
 
   // Step 2 states (Configure Sam)
   const [selectedVoice, setSelectedVoice] = useState('Marin')
@@ -43,6 +44,10 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   const [startTime, setStartTime] = useState('10:00 AM')
   const [endTime, setEndTime] = useState('11:00 AM')
   const [timezone, setTimezone] = useState('Asia/Calcutta - GMT+5:30')
+
+  // Advanced settings state (Snapshot 1)
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(true)
+  const [nudgeWaitSeconds, setNudgeWaitSeconds] = useState('30')
 
   const questionnaireOptions = [
     'Technical Questionnaire',
@@ -67,7 +72,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
     setTimeout(() => setCopiedLink(false), 2500)
   }
 
-  // SCREEN 2: Assessment Dispatched / Call Scheduled View (Snapshot 1)
+  // SCREEN 2: Assessment Dispatched / Call Scheduled View (Copy Icon inside link input box per user request)
   if (isDispatched) {
     return (
       <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full flex flex-col items-center">
@@ -104,9 +109,9 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
             </div>
           </div>
 
-          {/* Main White Card Container (Matching Attached Snapshot) */}
+          {/* Main White Card Container */}
           <div className="bg-white p-8 rounded-3xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
-            {/* JOIN LINK Section */}
+            {/* JOIN LINK Section (Copy Icon directly inside right side of link input field per user request) */}
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-extrabold text-[#64748b] uppercase tracking-wider">
@@ -117,24 +122,28 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 </span>
               </div>
 
-              {/* Link Input Box */}
-              <div className="p-3.5 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] font-mono text-xs text-[#0d212c] break-all">
-                {callJoinLink}
-              </div>
-
-              {/* Copy link & Open call room buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+              {/* Link Input Box with COPY ICON on right side */}
+              <div className="relative flex items-center w-full">
+                <input
+                  type="text"
+                  readOnly
+                  value={callJoinLink}
+                  className="w-full pl-4 pr-11 py-3 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] font-mono text-xs text-[#0d212c] outline-none select-all"
+                />
                 <button
                   onClick={handleCopyLink}
-                  className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 px-6 rounded-xl transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                  className="absolute right-3 p-1.5 rounded-lg text-slate-400 hover:text-[#0d212c] hover:bg-[#e2e8f0] transition cursor-pointer"
+                  title="Copy join link"
                 >
-                  <Copy className="w-4 h-4" />
-                  <span>{copiedLink ? 'Link copied!' : 'Copy link'}</span>
+                  {copiedLink ? <Check className="w-4 h-4 text-[#137333]" /> : <Copy className="w-4 h-4" />}
                 </button>
+              </div>
 
+              {/* Open call room primary button */}
+              <div className="mt-2">
                 <button
                   onClick={() => alert(`Opening call room for ${vendor.name}...`)}
-                  className="border border-[#cbd5e1] hover:bg-[#f1f5f9] text-[#0d212c] font-bold text-xs py-3 px-6 rounded-xl transition cursor-pointer flex items-center justify-center shadow-xs"
+                  className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3.5 px-6 rounded-xl transition cursor-pointer shadow-xs"
                 >
                   Open call room
                 </button>
@@ -239,7 +248,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
         <span className="text-[#36c0c9] font-bold">New call</span>
       </div>
 
-      {/* Main Page Title Header — Fill and stroke container removed per user instructions */}
+      {/* Main Page Title Header */}
       <div className="w-full px-6 lg:px-10 py-3 flex flex-col gap-1">
         <h1 className="text-xl lg:text-2xl font-extrabold tracking-tight text-[#0d212c]">
           Configure vendor call
@@ -346,6 +355,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
         <div className="lg:col-span-8 flex flex-col gap-6">
           {currentStep === 1 && (
             <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
+              {/* Back Arrow button aligned vertically centered with title text */}
               <div className="flex items-center gap-3">
                 <button
                   onClick={onBack}
@@ -364,7 +374,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 </div>
               </div>
 
-              {/* CALL TYPE: Assessment Round (Clean neutral styling, not highlighted in primary cyan) */}
+              {/* CALL TYPE: Radio button active / filled for Assessment Round */}
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
                   CALL TYPE
@@ -381,7 +391,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                       </span>
                     </div>
                   </div>
-                  <div className="w-4 h-4 rounded-full border-2 border-[#cbd5e1] bg-white shrink-0 mt-0.5" />
+                  {/* Radio button active / filled per user request */}
+                  <div className="w-4 h-4 rounded-full border-4 border-[#0d212c] bg-white shrink-0 mt-0.5" />
                 </div>
               </div>
 
@@ -409,15 +420,20 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 </span>
               </div>
 
-              {/* Estimated duration box */}
-              <div className="p-3.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-[#64748b]">
-                  <Clock className="w-4 h-4 text-[#36c0c9]" />
-                  <span>Estimated duration</span>
+              {/* ESTIMATED DURATION Input Field (Title: ESTIMATED DURATION, Input: 135–205 min) */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
+                  ESTIMATED DURATION
+                </label>
+                <div className="relative flex items-center w-full">
+                  <input
+                    type="text"
+                    value={estimatedDuration}
+                    onChange={(e) => setEstimatedDuration(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#e2e8f0] bg-white text-xs font-bold text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
+                  />
+                  <Clock className="w-4 h-4 text-[#36c0c9] absolute left-3.5 pointer-events-none" />
                 </div>
-                <span className="font-extrabold text-[#0d212c]">
-                  135–205 min
-                </span>
               </div>
 
               {/* ROUND LABEL */}
@@ -455,6 +471,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
           {currentStep === 2 && (
             <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
+              {/* Back Arrow button aligned vertically centered with title text */}
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setCurrentStep(1)}
@@ -656,6 +673,48 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 </div>
               </div>
 
+              {/* ADVANCED SETTINGS SECTION (Snapshot 1 implementation) */}
+              <div className="border border-[#e2e8f0] rounded-2xl bg-white overflow-hidden shadow-xs">
+                <div
+                  onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
+                  className="p-4 flex items-center justify-between cursor-pointer hover:bg-[#f8fafc] transition"
+                >
+                  <div className="flex items-center gap-3">
+                    <SlidersHorizontal className="w-4 h-4 text-[#64748b]" />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-xs text-[#0d212c]">
+                        Advanced settings
+                      </span>
+                      <span className="text-[11px] text-[#64748b]">
+                        Document reminders and room behaviour
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
+                    <span>{nudgeWaitSeconds}s reminder</span>
+                    <ChevronUp className={`w-4 h-4 transition-transform ${showAdvancedSettings ? '' : 'rotate-180'}`} />
+                  </div>
+                </div>
+
+                {showAdvancedSettings && (
+                  <div className="p-4 border-t border-[#e2e8f0] bg-[#f8fafc] flex flex-col gap-2">
+                    <label className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
+                      UPLOAD WAIT BEFORE NUDGE (SECONDS)
+                    </label>
+                    <input
+                      type="number"
+                      value={nudgeWaitSeconds}
+                      onChange={(e) => setNudgeWaitSeconds(e.target.value)}
+                      className="w-full px-4 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs font-bold text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                    />
+                    <p className="text-[11px] text-[#64748b] mt-0.5">
+                      How long Sam waits after asking for a document before nudging the room.
+                    </p>
+                  </div>
+                )}
+              </div>
+
               {/* Actions */}
               <div className="flex items-center justify-between border-t border-[#e2e8f0] pt-4">
                 <button
@@ -677,6 +736,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
           {currentStep === 3 && (
             <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
+              {/* Back Arrow button aligned vertically centered with title text */}
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setCurrentStep(2)}

@@ -118,9 +118,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             </div>
           </button>
 
-          {/* Centered Protected Note Text */}
-          <div className="flex items-center justify-center gap-1.5 text-xs text-slate-500 text-center w-full">
-            <Lock className="w-3.5 h-3.5 shrink-0 text-slate-400" />
+          {/* Protected Note Text aligned from top per user instructions */}
+          <div className="flex items-start justify-center gap-2 text-xs text-slate-500 text-left sm:text-center w-full">
+            <Lock className="w-3.5 h-3.5 shrink-0 text-slate-400 mt-0.5" />
             <span>
               Protected by your organization&apos;s Single Sign-On.{' '}
               <span className="block sm:inline">

@@ -159,7 +159,7 @@ export const DashboardScreen: React.FC = () => {
         <span className="text-[#36c0c9] font-bold">Dashboard</span>
       </div>
 
-      {/* KPI Cards Grid (Chips removed per user instructions) */}
+      {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Total assessments</span>
@@ -190,7 +190,7 @@ export const DashboardScreen: React.FC = () => {
 
       {/* Filter Chips & Search Control Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Filter Chips (Active filter chip in light primary color bg-[#ddf7f9] text-[#0f766e]) */}
+        {/* Filter Chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <button
             onClick={() => setActiveFilter('all')}
@@ -246,12 +246,12 @@ export const DashboardScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Data Table (Load More button removed, smooth lazy loading scroll) */}
+      {/* Data Table (Entire page scrolls naturally per user instructions) */}
       <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-xs overflow-hidden w-full transition-all duration-300">
-        <div className="overflow-x-auto w-full max-h-[600px] overflow-y-auto">
+        <div className="overflow-x-auto w-full">
           <table className="w-full text-left text-sm border-collapse">
-            <thead className="sticky top-0 bg-[#f8fafc] z-10">
-              <tr className="border-b border-[#e2e8f0] text-[#64748b] text-xs font-bold">
+            <thead>
+              <tr className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#64748b] text-xs font-bold">
                 <th className="py-3.5 px-4">Vendor</th>
                 <th className="py-3.5 px-4">Questionnaire</th>
                 <th className="py-3.5 px-4">Round</th>

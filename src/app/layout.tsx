@@ -21,9 +21,12 @@ export const metadata: Metadata = {
   title: 'Vendor Assessment',
   description: 'M42 Vendor Assessment Portal',
   icons: {
-    icon: '/white-logo.png',
-    shortcut: '/white-logo.png',
-    apple: '/white-logo.png',
+    icon: [
+      { url: '/favicon-square.png', type: 'image/png' },
+      { url: '/favicon-dark.png', type: 'image/png' },
+    ],
+    shortcut: '/favicon-square.png',
+    apple: '/favicon-square.png',
   },
 }
 
@@ -31,8 +34,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${inter.variable} ${fraunces.variable}`} data-theme="light">
       <head>
-        <link rel="icon" href="/white-logo.png" type="image/png" />
-        <link rel="apple-touch-icon" href="/white-logo.png" />
+        <link rel="icon" href="/favicon-square.png" type="image/png" sizes="any" />
+        <link rel="apple-touch-icon" href="/favicon-square.png" />
       </head>
       <body className="bg-bg-default text-text-primary antialiased min-h-screen">
         <ThemeProvider>{children}</ThemeProvider>

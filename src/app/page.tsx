@@ -59,7 +59,7 @@ export default function HomePage() {
       {/* Expandable/Collapsible Left Navigation Sidebar */}
       <Sidebar
         activeTab={activeTab}
-        onTabChange={(tab) => setActiveTab(tab as any)}
+        onTabChange={(tab) => setActiveTab(tab as 'dashboard' | 'questionnaires' | 'vendors')}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
         userName={formattedName}

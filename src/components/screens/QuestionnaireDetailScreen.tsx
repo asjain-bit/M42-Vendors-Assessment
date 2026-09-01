@@ -81,7 +81,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
   ])
 
   // Handle Question field edits
-  const handleQuestionChange = (id: number, field: keyof QuestionItem, value: any) => {
+  const handleQuestionChange = (id: number, field: keyof QuestionItem, value: string | boolean) => {
     setQuestions(
       questions.map((q) => (q.id === id ? { ...q, [field]: value } : q))
     )

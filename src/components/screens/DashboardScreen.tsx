@@ -190,14 +190,14 @@ export const DashboardScreen: React.FC = () => {
 
       {/* Filter Chips & Search Control Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Filter Chips (Selected chip has 100% opacity solid bg, white text, and no hover stroke) */}
+        {/* Filter Chips (Selected chip has 100% opacity solid primary bg #36c0c9, white text, no hover stroke) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
               activeFilter === 'all'
-                ? 'bg-[#0d212c] text-white shadow-xs'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
+                ? 'bg-[#36c0c9] text-white shadow-xs'
+                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             All assessments ({allAssessments.length})
@@ -205,10 +205,10 @@ export const DashboardScreen: React.FC = () => {
 
           <button
             onClick={() => setActiveFilter('awaiting_evidence')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
               activeFilter === 'awaiting_evidence'
-                ? 'bg-[#0d212c] text-white shadow-xs'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
+                ? 'bg-[#36c0c9] text-white shadow-xs'
+                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             Awaiting evidence ({allAssessments.filter((a) => a.status === 'awaiting_evidence').length})
@@ -216,10 +216,10 @@ export const DashboardScreen: React.FC = () => {
 
           <button
             onClick={() => setActiveFilter('completed')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
               activeFilter === 'completed'
-                ? 'bg-[#0d212c] text-white shadow-xs'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
+                ? 'bg-[#36c0c9] text-white shadow-xs'
+                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             Completed ({allAssessments.filter((a) => a.status === 'completed').length})
@@ -227,10 +227,10 @@ export const DashboardScreen: React.FC = () => {
 
           <button
             onClick={() => setActiveFilter('scheduled')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
               activeFilter === 'scheduled'
-                ? 'bg-[#0d212c] text-white shadow-xs'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
+                ? 'bg-[#36c0c9] text-white shadow-xs'
+                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             Scheduled ({allAssessments.filter((a) => a.status === 'scheduled').length})

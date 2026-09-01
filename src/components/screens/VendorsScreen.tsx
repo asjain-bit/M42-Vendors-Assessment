@@ -25,13 +25,30 @@ interface PublicVendorRecord {
 }
 
 export const VendorsScreen: React.FC = () => {
-  const countryOptions = [
+  // Comprehensive list of countries across the world with flag emojis
+  const worldCountryOptions = [
     { name: 'United Arab Emirates', flag: '🇦🇪' },
     { name: 'United States', flag: '🇺🇸' },
     { name: 'United Kingdom', flag: '🇬🇧' },
+    { name: 'Saudi Arabia', flag: '🇸🇦' },
+    { name: 'Qatar', flag: '🇶🇦' },
+    { name: 'Oman', flag: '🇴🇲' },
+    { name: 'Kuwait', flag: '🇰🇼' },
+    { name: 'Bahrain', flag: '🇧🇭' },
+    { name: 'India', flag: '🇮🇳' },
     { name: 'Singapore', flag: '🇸🇬' },
     { name: 'Germany', flag: '🇩🇪' },
-    { name: 'India', flag: '🇮🇳' },
+    { name: 'France', flag: '🇫🇷' },
+    { name: 'Canada', flag: '🇨🇦' },
+    { name: 'Australia', flag: '🇦🇺' },
+    { name: 'Japan', flag: '🇯🇵' },
+    { name: 'Brazil', flag: '🇧🇷' },
+    { name: 'Egypt', flag: '🇪🇬' },
+    { name: 'Netherlands', flag: '🇳🇱' },
+    { name: 'Switzerland', flag: '🇨🇭' },
+    { name: 'Spain', flag: '🇪🇸' },
+    { name: 'Italy', flag: '🇮🇹' },
+    { name: 'Sweden', flag: '🇸🇪' },
   ]
 
   const publicRecords: PublicVendorRecord[] = [
@@ -112,7 +129,7 @@ export const VendorsScreen: React.FC = () => {
       id: 'v-4',
       name: 'BioHealth Tech',
       sublabel: 'Genomics data analysis & clinical storage',
-      domain: 'biohealth.ae',
+      domain: '—', // Optional field set to '-' in 1-2 rows per user request
       country: 'United Arab Emirates',
       flag: '🇦🇪',
       email: 'support@biohealth.ae',
@@ -163,17 +180,38 @@ export const VendorsScreen: React.FC = () => {
     setShowFindDropdown(false)
   }
 
+  const handleAddVendorFromFind = () => {
+    if (!findLegalName.trim()) return
+    const matchedCountry = worldCountryOptions.find((c) => c.name === findCountry) || worldCountryOptions[0]
+    const newVendor: Vendor = {
+      id: `v-${Date.now()}`,
+      name: findLegalName,
+      sublabel: 'Registered public entity',
+      domain: findWebsite ? findWebsite.replace(/^https?:\/\//, '') : '—',
+      country: findCountry,
+      flag: matchedCountry.flag,
+      email: findVendorEmail || `info@${findLegalName.toLowerCase().replace(/\s+/g, '')}.com`,
+      status: 'Active',
+    }
+
+    setVendors([...vendors, newVendor])
+    setFindLegalName('')
+    setFindVendorEmail('')
+    setFindWebsite('')
+    showToast(`Vendor "${newVendor.name}" successfully added!`)
+  }
+
   const handleAddVendorManually = (e: React.FormEvent) => {
     e.preventDefault()
     if (!manualDisplayName.trim() || !manualVendorEmail.trim()) return
 
-    const matchedCountry = countryOptions.find((c) => c.name === manualCountry) || countryOptions[0]
+    const matchedCountry = worldCountryOptions.find((c) => c.name === manualCountry) || worldCountryOptions[0]
 
     const newVendor: Vendor = {
       id: `v-${Date.now()}`,
       name: manualDisplayName,
       sublabel: manualLegalName || 'Registered vendor partner',
-      domain: manualWebsite ? manualWebsite.replace(/^https?:\/\//, '') : `${manualDisplayName.toLowerCase().replace(/\s+/g, '')}.com`,
+      domain: manualWebsite ? manualWebsite.replace(/^https?:\/\//, '') : '—',
       country: manualCountry,
       flag: matchedCountry.flag,
       email: manualVendorEmail,
@@ -224,7 +262,7 @@ export const VendorsScreen: React.FC = () => {
         <span className="text-[#36c0c9] font-bold">Vendors</span>
       </div>
 
-      {/* SECTION 1: Registered Vendors Directory Table (URL in SEPARATE column, Actions as tertiary text button in light primary color) */}
+      {/* SECTION 1: Registered Vendors Directory Table */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-[#0d212c]">Registered vendors directory</h3>
@@ -258,16 +296,20 @@ export const VendorsScreen: React.FC = () => {
                       </div>
                     </td>
 
-                    {/* URL in a SEPARATE column */}
+                    {/* URL column: No fill or stroke, normal text color with underline (or '-' for optional) */}
                     <td className="py-4 px-5 text-xs">
-                      <a
-                        href={`https://${vendor.domain}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-[#36c0c9] font-medium hover:underline border border-[#e2e8f0] px-2 py-0.5 rounded bg-[#f8fafc] inline-block"
-                      >
-                        {vendor.domain}
-                      </a>
+                      {vendor.domain !== '—' ? (
+                        <a
+                          href={`https://${vendor.domain}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-[#0d212c] font-medium underline hover:text-[#36c0c9] transition"
+                        >
+                          {vendor.domain}
+                        </a>
+                      ) : (
+                        <span className="text-[#64748b] font-medium">—</span>
+                      )}
                     </td>
 
                     <td className="py-4 px-5 text-xs font-medium text-[#64748b]">
@@ -280,7 +322,7 @@ export const VendorsScreen: React.FC = () => {
                       <StatusChip label={vendor.status} status="success" dot={false} />
                     </td>
 
-                    {/* Dispatch call button as a tertiary text button in light primary color */}
+                    {/* Tertiary text button in light primary color */}
                     <td className="py-4 px-5 text-right">
                       <button
                         onClick={() => setActiveDispatchVendor(vendor)}
@@ -297,7 +339,7 @@ export const VendorsScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* SECTION 2: Onboarding - Add a Vendor (Snapshot 1) */}
+      {/* SECTION 2: Onboarding - Add a Vendor */}
       <div className="flex flex-col gap-4 pt-2">
         <div>
           <span className="text-xs font-semibold text-[#64748b] uppercase tracking-wider block mb-1">
@@ -311,7 +353,7 @@ export const VendorsScreen: React.FC = () => {
           </p>
         </div>
 
-        {/* Card 1: FIND VENDOR */}
+        {/* Card 1: FIND VENDOR (Search button renamed to "Add vendor", World countries dropdown) */}
         <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-4">
           <div>
             <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider block">
@@ -336,7 +378,7 @@ export const VendorsScreen: React.FC = () => {
                   setShowFindDropdown(true)
                 }}
                 onFocus={() => setShowFindDropdown(true)}
-                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
               />
 
               {showFindDropdown && matchingPublicRecords.length > 0 && (
@@ -371,7 +413,7 @@ export const VendorsScreen: React.FC = () => {
                 placeholder="vendor@company.com"
                 value={findVendorEmail}
                 onChange={(e) => setFindVendorEmail(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
               />
             </div>
 
@@ -382,9 +424,9 @@ export const VendorsScreen: React.FC = () => {
               <select
                 value={findCountry}
                 onChange={(e) => setFindCountry(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9] bg-white"
+                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1] bg-white"
               >
-                {countryOptions.map((c) => (
+                {worldCountryOptions.map((c) => (
                   <option key={c.name} value={c.name}>
                     {c.flag} {c.name}
                   </option>
@@ -401,17 +443,19 @@ export const VendorsScreen: React.FC = () => {
                 placeholder="https://"
                 value={findWebsite}
                 onChange={(e) => setFindWebsite(e.target.value)}
-                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
               />
             </div>
           </div>
 
           <div>
+            {/* Search button renamed to "Add vendor" per user request */}
             <button
-              onClick={() => showToast(`Public record matched for ${findLegalName || 'vendors'}!`)}
+              type="button"
+              onClick={handleAddVendorFromFind}
               className="bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0d212c] font-bold text-xs px-5 py-2 rounded-xl transition cursor-pointer shadow-xs"
             >
-              Search
+              Add vendor
             </button>
           </div>
         </div>
@@ -439,7 +483,7 @@ export const VendorsScreen: React.FC = () => {
                   value={manualDisplayName}
                   onChange={(e) => setManualDisplayName(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                 />
               </div>
 
@@ -452,7 +496,7 @@ export const VendorsScreen: React.FC = () => {
                   placeholder="Defaults to display name"
                   value={manualLegalName}
                   onChange={(e) => setManualLegalName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                 />
               </div>
 
@@ -466,7 +510,7 @@ export const VendorsScreen: React.FC = () => {
                   value={manualVendorEmail}
                   onChange={(e) => setManualVendorEmail(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                 />
               </div>
             </div>
@@ -479,9 +523,9 @@ export const VendorsScreen: React.FC = () => {
                 <select
                   value={manualCountry}
                   onChange={(e) => setManualCountry(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9] bg-white"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1] bg-white"
                 >
-                  {countryOptions.map((c) => (
+                  {worldCountryOptions.map((c) => (
                     <option key={c.name} value={c.name}>
                       {c.flag} {c.name}
                     </option>
@@ -498,7 +542,7 @@ export const VendorsScreen: React.FC = () => {
                   placeholder="https://"
                   value={manualWebsite}
                   onChange={(e) => setManualWebsite(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                 />
               </div>
             </div>

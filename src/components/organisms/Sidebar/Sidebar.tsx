@@ -1,6 +1,6 @@
 /**
  * Sidebar — Organism
- * Expandable and collapsible left navigation sidebar using M42 white color logo, relevant icons, user avatar, and logout icon.
+ * Expandable and collapsible left navigation sidebar using M42 white color logo, relevant icons, user profile picture, and logout icon.
  */
 
 'use client'
@@ -40,6 +40,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     .join('')
     .substring(0, 2)
     .toUpperCase()
+
+  // Profile picture image URL
+  const profilePicUrl = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80'
 
   return (
     <aside
@@ -88,7 +91,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </div>
 
-      {/* Navigation Items with relevant Lucide icons */}
+      {/* Navigation Items */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-1">
         {navItems.map((item) => {
           const isActive = activeTab === item.id
@@ -111,12 +114,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </nav>
 
-      {/* Sidebar Footer User Section with Avatar and Logout Icon */}
+      {/* Sidebar Footer User Section with Profile Picture and Logout Icon */}
       <div className="p-3 border-t border-[#153443] shrink-0 bg-[#08171f]/50">
         {!collapsed ? (
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2.5 min-w-0">
-              <Avatar fallback={userInitials} size="sm" className="bg-[#153443] text-white border-white/20 shrink-0" />
+              <Avatar
+                src={profilePicUrl}
+                fallback={userInitials}
+                size="sm"
+                className="bg-[#153443] text-white border-white/20 shrink-0"
+              />
               <div className="flex flex-col min-w-0">
                 <span className="text-xs font-bold text-white truncate">{userName}</span>
                 <span className="text-[10px] text-slate-400 truncate">{userEmail}</span>

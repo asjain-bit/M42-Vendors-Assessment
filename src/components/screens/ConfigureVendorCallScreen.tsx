@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Check, ChevronDown, Clock, ShieldCheck, ArrowRight, ArrowLeft, Volume2 } from 'lucide-react'
+import { Check, ChevronDown, Clock, ShieldCheck, ArrowRight, ArrowLeft, Volume2, Copy } from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
 
 export interface VendorDispatchData {
@@ -26,6 +26,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   onComplete,
 }) => {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1)
+  const [isDispatched, setIsDispatched] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
 
   // Step 1 states
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState(
@@ -57,6 +59,170 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
   const extraVoices = ['Alloy', 'Ballad', 'Cedar', 'Echo', 'Sage', 'Shimmer', 'Verse']
 
+  const callJoinLink = 'https://tech-due-diligence.delphiprojects.app/call/E0exXCogAvq0Owdr3qbYhU0vt1CQdBuIFIJN18D6wZM'
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(callJoinLink)
+    setCopiedLink(true)
+    setTimeout(() => setCopiedLink(false), 2500)
+  }
+
+  // SCREEN 2: Assessment Dispatched / Call Scheduled View (Snapshot 1)
+  if (isDispatched) {
+    return (
+      <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full flex flex-col items-center">
+        {/* Breadcrumb Header */}
+        <div className="w-full px-6 lg:px-10 pt-4 pb-2 text-xs font-semibold flex items-center gap-1.5 text-[#64748b]">
+          <button onClick={onBack} className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Vendors</span>
+          </button>
+          <span>/</span>
+          <span>{vendor.name}</span>
+          <span>/</span>
+          <span className="text-[#36c0c9] font-bold">Call scheduled</span>
+        </div>
+
+        {/* Dispatch Screen Container */}
+        <div className="w-full max-w-2xl px-6 mt-8 flex flex-col gap-6">
+          {/* Top Status Header */}
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#ddf7f9] text-[#36c0c9] flex items-center justify-center shrink-0">
+              <Check className="w-6 h-6 stroke-[3]" />
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-xs font-extrabold tracking-wider text-[#64748b] uppercase">
+                ASSESSMENT DISPATCHED
+              </span>
+              <h1 className="text-2xl font-extrabold tracking-tight text-[#0d212c]">
+                Call scheduled
+              </h1>
+              <p className="text-xs text-[#64748b] mt-0.5 font-medium">
+                {vendor.name} • {vendor.domain}
+              </p>
+            </div>
+          </div>
+
+          {/* Main White Card Container (Matching Attached Snapshot) */}
+          <div className="bg-white p-8 rounded-3xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
+            {/* JOIN LINK Section */}
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-extrabold text-[#64748b] uppercase tracking-wider">
+                  JOIN LINK
+                </span>
+                <span className="text-[11px] text-[#64748b]">
+                  The call is open now. Share the link and join.
+                </span>
+              </div>
+
+              {/* Link Input Box */}
+              <div className="p-3.5 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] font-mono text-xs text-[#0d212c] break-all">
+                {callJoinLink}
+              </div>
+
+              {/* Copy link & Open call room buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                <button
+                  onClick={handleCopyLink}
+                  className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 px-6 rounded-xl transition cursor-pointer flex items-center justify-center gap-2 shadow-xs"
+                >
+                  <Copy className="w-4 h-4" />
+                  <span>{copiedLink ? 'Link copied!' : 'Copy link'}</span>
+                </button>
+
+                <button
+                  onClick={() => alert(`Opening call room for ${vendor.name}...`)}
+                  className="border border-[#cbd5e1] hover:bg-[#f1f5f9] text-[#0d212c] font-bold text-xs py-3 px-6 rounded-xl transition cursor-pointer flex items-center justify-center shadow-xs"
+                >
+                  Open call room
+                </button>
+              </div>
+            </div>
+
+            {/* Grid Summary Details */}
+            <div className="border-t border-b border-[#e2e8f0]/80 py-4 grid grid-cols-2 gap-y-4 gap-x-6 text-xs">
+              <div>
+                <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider block mb-1">
+                  ROUND
+                </span>
+                <span className="font-bold text-[#0d212c]">{roundLabel.replace('Round ', '') || '1'}</span>
+              </div>
+
+              <div>
+                <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider block mb-1">
+                  QUESTIONNAIRE
+                </span>
+                <span className="font-bold text-[#0d212c]">{selectedQuestionnaire}</span>
+              </div>
+
+              <div>
+                <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider block mb-1">
+                  VOICE
+                </span>
+                <span className="font-bold text-[#0d212c]">{selectedVoice}</span>
+              </div>
+
+              <div>
+                <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider block mb-1">
+                  OPENS
+                </span>
+                <span className="font-bold text-[#0d212c]">{timing === 'now' ? 'Now' : startTime}</span>
+              </div>
+            </div>
+
+            {/* WHAT HAPPENS NEXT */}
+            <div className="flex flex-col gap-3">
+              <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
+                WHAT HAPPENS NEXT
+              </span>
+
+              <div className="flex flex-col gap-3 text-xs text-[#0d212c]">
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full border border-[#cbd5e1] bg-[#f8fafc] text-[#64748b] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
+                    1
+                  </div>
+                  <p className="leading-relaxed text-[#64748b]">
+                    Share the link with the vendor team. No account needed, they join with their name.
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full border border-[#cbd5e1] bg-[#f8fafc] text-[#64748b] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
+                    2
+                  </div>
+                  <p className="leading-relaxed text-[#64748b]">
+                    Open the link yourself. You enter the room as the M42 moderator.
+                  </p>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full border border-[#cbd5e1] bg-[#f8fafc] text-[#64748b] font-bold text-[11px] flex items-center justify-center shrink-0 mt-0.5">
+                    3
+                  </div>
+                  <p className="leading-relaxed text-[#64748b]">
+                    Press Start assessment once everyone is in. Sam runs the questionnaire from there.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Schedule another call link */}
+          <div className="text-center pt-2">
+            <button
+              onClick={onBack}
+              className="text-xs font-bold text-[#64748b] hover:text-[#0d212c] transition cursor-pointer"
+            >
+              Schedule another call
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full">
       {/* Breadcrumb Header */}
@@ -73,27 +239,18 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
         <span className="text-[#36c0c9] font-bold">New call</span>
       </div>
 
-      {/* Main Title Header */}
-      <div className="w-full px-6 lg:px-10 py-4 bg-white border-b border-[#e2e8f0] flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl lg:text-2xl font-extrabold tracking-tight text-[#0d212c]">
-            Configure vendor call
-          </h1>
-          <p className="text-xs text-[#64748b]">
-            Set up the session, configure Sam, then review before launch.
-          </p>
-        </div>
-
-        <button
-          onClick={onBack}
-          className="text-xs font-semibold px-4 py-2 rounded-xl border border-[#e2e8f0] text-[#64748b] hover:bg-[#f1f5f9] cursor-pointer shrink-0"
-        >
-          Cancel
-        </button>
+      {/* Main Page Title Header — Fill and stroke container removed per user instructions */}
+      <div className="w-full px-6 lg:px-10 py-3 flex flex-col gap-1">
+        <h1 className="text-xl lg:text-2xl font-extrabold tracking-tight text-[#0d212c]">
+          Configure vendor call
+        </h1>
+        <p className="text-xs text-[#64748b]">
+          Set up the session, configure Sam, then review before launch.
+        </p>
       </div>
 
       {/* TOP FULL WIDTH HORIZONTAL STEP INDICATORS BAR */}
-      <div className="w-full px-6 lg:px-10 mt-6">
+      <div className="w-full px-6 lg:px-10 mt-4">
         <div className="bg-white p-5 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-3">
           <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
             CALL SETUP
@@ -189,7 +346,6 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
         <div className="lg:col-span-8 flex flex-col gap-6">
           {currentStep === 1 && (
             <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
-              {/* Header line with BACK ICON BUTTON next to Session setup title */}
               <div className="flex items-center gap-3">
                 <button
                   onClick={onBack}
@@ -208,14 +364,14 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 </div>
               </div>
 
-              {/* CALL TYPE: Assessment Round */}
+              {/* CALL TYPE: Assessment Round (Clean neutral styling, not highlighted in primary cyan) */}
               <div className="flex flex-col gap-2">
                 <span className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
                   CALL TYPE
                 </span>
-                <div className="p-4 rounded-2xl border-2 border-[#36c0c9] bg-[#ddf7f9]/20 flex items-start justify-between gap-3">
+                <div className="p-4 rounded-2xl border border-[#e2e8f0] bg-[#f8fafc] flex items-start justify-between gap-3">
                   <div className="flex items-start gap-3">
-                    <ShieldCheck className="w-5 h-5 text-[#36c0c9] shrink-0 mt-0.5" />
+                    <ShieldCheck className="w-5 h-5 text-[#0d212c] shrink-0 mt-0.5" />
                     <div className="flex flex-col">
                       <span className="font-bold text-xs text-[#0d212c]">
                         Assessment round
@@ -225,7 +381,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                       </span>
                     </div>
                   </div>
-                  <div className="w-4 h-4 rounded-full border-4 border-[#36c0c9] bg-white shrink-0 mt-0.5" />
+                  <div className="w-4 h-4 rounded-full border-2 border-[#cbd5e1] bg-white shrink-0 mt-0.5" />
                 </div>
               </div>
 
@@ -238,7 +394,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <select
                     value={selectedQuestionnaire}
                     onChange={(e) => setSelectedQuestionnaire(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] bg-white text-xs font-semibold text-[#0d212c] appearance-none outline-none focus:border-[#36c0c9]"
+                    className="w-full px-4 py-3 rounded-xl border border-[#e2e8f0] bg-white text-xs font-semibold text-[#0d212c] appearance-none outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                   >
                     {questionnaireOptions.map((opt) => (
                       <option key={opt} value={opt}>
@@ -274,11 +430,11 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   value={roundLabel}
                   onChange={(e) => setRoundLabel(e.target.value)}
                   placeholder="e.g. Round 1"
-                  className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                 />
               </div>
 
-              {/* Actions: Cancel & PRIMARY "Continue to configure Sam" button */}
+              {/* Actions */}
               <div className="flex items-center justify-between border-t border-[#e2e8f0] pt-4">
                 <button
                   onClick={onBack}
@@ -286,7 +442,6 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 >
                   Cancel
                 </button>
-                {/* Primary Button styling in dark navy per user instructions */}
                 <button
                   onClick={() => setCurrentStep(2)}
                   className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-3 rounded-xl transition cursor-pointer flex items-center gap-2 shadow-xs"
@@ -436,7 +591,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                           type="date"
                           value={scheduleDate}
                           onChange={(e) => setScheduleDate(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                         />
                       </div>
 
@@ -447,7 +602,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         <select
                           value={startTime}
                           onChange={(e) => setStartTime(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                         >
                           <option value="09:00 AM">09:00 AM</option>
                           <option value="10:00 AM">10:00 AM</option>
@@ -464,7 +619,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         <select
                           value={endTime}
                           onChange={(e) => setEndTime(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#36c0c9]"
+                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                         >
                           <option value="10:00 AM">10:00 AM</option>
                           <option value="11:00 AM">11:00 AM</option>
@@ -487,7 +642,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <select
                     value={timezone}
                     onChange={(e) => setTimezone(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] appearance-none outline-none focus:border-[#36c0c9]"
+                    className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] appearance-none outline-none focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]"
                   >
                     <option value="Asia/Calcutta - GMT+5:30">
                       Asia/Calcutta - GMT+5:30
@@ -501,7 +656,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 </div>
               </div>
 
-              {/* Actions: Primary "Continue to review" button */}
+              {/* Actions */}
               <div className="flex items-center justify-between border-t border-[#e2e8f0] pt-4">
                 <button
                   onClick={() => setCurrentStep(1)}
@@ -573,7 +728,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   Back to voice config
                 </button>
                 <Button
-                  onClick={onComplete}
+                  onClick={() => setIsDispatched(true)}
                   className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-3 rounded-xl cursor-pointer"
                 >
                   Launch assessment call

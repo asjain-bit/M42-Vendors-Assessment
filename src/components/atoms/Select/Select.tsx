@@ -1,39 +1,41 @@
-/**
- * Select — Atom
- * Dropdown select control adhering to global form & input design guidelines.
- */
-
 import React from 'react'
-import { SelectProps } from './Select.types'
-import { Icon } from '@/components/atoms/Icon'
+
+export interface SelectOption {
+  value: string
+  label: string
+  disabled?: boolean
+}
+
+export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  options: SelectOption[]
+  error?: boolean
+}
 
 export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className = '', error, disabled, options, children, ...props }, ref) => {
-    const baseStyle =
-      'w-full h-10 pl-3.5 pr-10 py-2 text-sm bg-white text-[#0d212c] font-normal border rounded-xl transition-all focus:outline-none disabled:cursor-not-allowed disabled:bg-[#f8fafc] disabled:text-[#94a3b8] appearance-none cursor-pointer'
-
-    const borderStyle = error
-      ? 'border-[#d92d20] focus:border-[#d92d20] focus:ring-2 focus:ring-[#d92d20]/20'
-      : 'border-[#d9e2ec] hover:border-[#cbd5e1] focus:border-[#36c0c9] focus:ring-2 focus:ring-[#36c0c9]/20'
-
-    const combinedClassName = [baseStyle, borderStyle, className].filter(Boolean).join(' ')
-
+  ({ className = '', options, error, disabled, ...props }, ref) => {
     return (
-      <div className="relative w-full">
-        <select ref={ref} className={combinedClassName} disabled={disabled} {...props}>
-          {options && options.length > 0
-            ? options.map((opt) => (
-                <option key={opt.value} value={opt.value} disabled={opt.disabled}>
-                  {opt.label}
-                </option>
-              ))
-            : children}
-        </select>
-        {/* Subtle downward chevron icon */}
-        <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#94a3b8]">
-          <Icon name="chevron-down" size={16} />
-        </div>
-      </div>
+      <select
+        ref={ref}
+        disabled={disabled}
+        className={[
+          'w-full rounded-xl border bg-white px-3.5 py-2.5 text-xs text-[#0d212c] transition-all outline-none appearance-none',
+          'focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]',
+          error
+            ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+            : 'border-[#e2e8f0]',
+          disabled ? 'bg-[#f8fafc] text-[#94a3b8] cursor-not-allowed opacity-60' : '',
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        {...props}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value} disabled={opt.disabled}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
     )
   }
 )

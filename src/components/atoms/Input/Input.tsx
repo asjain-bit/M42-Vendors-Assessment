@@ -1,23 +1,46 @@
-/**
- * Input — Atom
- * Single line text input control adhering to global form & input design guidelines.
- */
-
 import React from 'react'
-import { InputProps } from './Input.types'
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  error?: boolean
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
+}
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className = '', error, disabled, ...props }, ref) => {
-    const baseStyle =
-      'w-full h-10 px-3.5 py-2.5 text-sm bg-white text-[#0d212c] font-normal border rounded-xl transition-all placeholder:text-[#94a3b8] focus:outline-none disabled:cursor-not-allowed disabled:bg-[#f8fafc] disabled:text-[#94a3b8]'
-
-    const borderStyle = error
-      ? 'border-[#d92d20] focus:border-[#d92d20] focus:ring-2 focus:ring-[#d92d20]/20'
-      : 'border-[#d9e2ec] hover:border-[#cbd5e1] focus:border-[#36c0c9] focus:ring-2 focus:ring-[#36c0c9]/20'
-
-    const combinedClassName = [baseStyle, borderStyle, className].filter(Boolean).join(' ')
-
-    return <input ref={ref} className={combinedClassName} disabled={disabled} {...props} />
+  ({ className = '', error, leftIcon, rightIcon, disabled, ...props }, ref) => {
+    return (
+      <div className="relative flex items-center w-full">
+        {leftIcon && (
+          <div className="absolute left-3 flex items-center justify-center text-[#64748b] pointer-events-none">
+            {leftIcon}
+          </div>
+        )}
+        <input
+          ref={ref}
+          disabled={disabled}
+          className={[
+            'w-full rounded-xl border bg-white px-3.5 py-2.5 text-xs text-[#0d212c] transition-all outline-none',
+            'placeholder:text-[#94a3b8]',
+            'focus:border-[#cbd5e1] focus:ring-1 focus:ring-[#cbd5e1]',
+            error
+              ? 'border-[#d92d20] focus:border-[#d92d20] focus:ring-[#d92d20]'
+              : 'border-[#e2e8f0]',
+            disabled ? 'bg-[#f8fafc] text-[#94a3b8] cursor-not-allowed opacity-60' : '',
+            leftIcon ? 'pl-9' : '',
+            rightIcon ? 'pr-9' : '',
+            className,
+          ]
+            .filter(Boolean)
+            .join(' ')}
+          {...props}
+        />
+        {rightIcon && (
+          <div className="absolute right-3 flex items-center justify-center text-[#64748b]">
+            {rightIcon}
+          </div>
+        )}
+      </div>
+    )
   }
 )
 Input.displayName = 'Input'

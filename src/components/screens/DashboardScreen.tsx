@@ -11,7 +11,7 @@ interface AssessmentRow {
   questionnaire: string
   round: string
   status: 'awaiting_evidence' | 'completed' | 'scheduled'
-  score: string
+  score: 'Low' | 'Medium' | 'High' | '—'
   createdDate: string
 }
 
@@ -20,9 +20,6 @@ export const DashboardScreen: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<'all' | 'awaiting_evidence' | 'completed' | 'scheduled'>('all')
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Lazy Loading state: visible count
-  const [visibleCount, setVisibleCount] = useState(8)
-
   const allAssessments: AssessmentRow[] = [
     {
       id: 'ast-1',
@@ -30,67 +27,67 @@ export const DashboardScreen: React.FC = () => {
       questionnaire: 'Technical Questionnaire',
       round: 'Round 1',
       status: 'awaiting_evidence',
-      score: '0.0',
+      score: 'Medium',
       createdDate: '25 Aug 2026, 18:42',
     },
     {
       id: 'ast-2',
       vendor: 'Presight AI',
-      questionnaire: '—',
+      questionnaire: 'Data Protection & Privacy',
       round: 'round 3',
       status: 'completed',
-      score: '0.0',
+      score: 'High',
       createdDate: '29 Aug 2026, 17:15',
     },
     {
       id: 'ast-3',
       vendor: 'Presight AI',
-      questionnaire: '—',
+      questionnaire: 'Information Security & Compliance',
       round: '2',
       status: 'completed',
-      score: '0.0',
+      score: 'High',
       createdDate: '27 Aug 2026, 12:30',
     },
     {
       id: 'ast-4',
       vendor: 'Presight AI',
-      questionnaire: '—',
+      questionnaire: 'SOC 2 Security Assessment',
       round: 'round 2',
       status: 'completed',
-      score: '0.0',
+      score: 'High',
       createdDate: '27 Aug 2026, 10:45',
     },
     {
       id: 'ast-5',
       vendor: 'Presight AI | See the Future Today',
-      questionnaire: '—',
+      questionnaire: 'ISO 27001 Checklist',
       round: 'round 3',
       status: 'completed',
-      score: '0.0',
+      score: 'High',
       createdDate: '25 Aug 2026, 13:20',
     },
     {
       id: 'ast-6',
       vendor: 'Presight AI | See the Future Today',
-      questionnaire: '—',
+      questionnaire: 'HIPAA & Healthcare Data Compliance',
       round: 'round 1',
       status: 'completed',
-      score: '0.0',
+      score: 'Medium',
       createdDate: '24 Aug 2026, 17:10',
     },
     {
       id: 'ast-7',
       vendor: 'Presight AI | See the Future Today',
-      questionnaire: '—',
+      questionnaire: 'Software Supply Chain Security',
       round: 'round 3',
       status: 'completed',
-      score: '0.0',
+      score: 'Low',
       createdDate: '24 Aug 2026, 16:05',
     },
     {
       id: 'ast-8',
       vendor: 'Presight AI | See the Future Today',
-      questionnaire: '—',
+      questionnaire: 'Technical Questionnaire',
       round: 'Live Re-test',
       status: 'scheduled',
       score: '—',
@@ -99,7 +96,7 @@ export const DashboardScreen: React.FC = () => {
     {
       id: 'ast-9',
       vendor: 'Presight AI | See the Future Today',
-      questionnaire: '—',
+      questionnaire: 'Data Protection & Privacy',
       round: 'ctx',
       status: 'scheduled',
       score: '—',
@@ -108,7 +105,7 @@ export const DashboardScreen: React.FC = () => {
     {
       id: 'ast-10',
       vendor: 'Presight AI | See the Future Today',
-      questionnaire: '—',
+      questionnaire: 'Technical Questionnaire',
       round: 'Live Onboarding',
       status: 'scheduled',
       score: '—',
@@ -120,7 +117,7 @@ export const DashboardScreen: React.FC = () => {
       questionnaire: 'SOC 2 Security Assessment',
       round: 'Round 1',
       status: 'completed',
-      score: '94.0',
+      score: 'High',
       createdDate: '15 Aug 2026, 09:15',
     },
     {
@@ -129,7 +126,7 @@ export const DashboardScreen: React.FC = () => {
       questionnaire: 'ISO 27001 Checklist',
       round: 'Round 2',
       status: 'completed',
-      score: '88.5',
+      score: 'High',
       createdDate: '12 Aug 2026, 14:00',
     },
   ]
@@ -142,12 +139,6 @@ export const DashboardScreen: React.FC = () => {
       row.round.toLowerCase().includes(searchTerm.toLowerCase())
     return matchesFilter && matchesSearch
   })
-
-  const visibleAssessments = filteredAssessments.slice(0, visibleCount)
-
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 5)
-  }
 
   // If row clicked, open AssessmentDetailScreen
   if (selectedAssessment) {
@@ -168,59 +159,44 @@ export const DashboardScreen: React.FC = () => {
         <span className="text-[#36c0c9] font-bold">Dashboard</span>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* KPI Cards Grid (Chips removed per user instructions) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-1 hover:border-[#36c0c9]/50 transition">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Total assessments</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold text-[#0d212c]">{allAssessments.length}</span>
-            <span className="text-xs font-bold text-[#137333] bg-[#e6f4ea] px-2 py-0.5 rounded-md">+2 this week</span>
-          </div>
+          <span className="text-3xl font-extrabold text-[#0d212c] mt-2">{allAssessments.length}</span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-1 hover:border-[#36c0c9]/50 transition">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Awaiting evidence</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold text-amber-600">
-              {allAssessments.filter((a) => a.status === 'awaiting_evidence').length}
-            </span>
-            <span className="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md">Action required</span>
-          </div>
+          <span className="text-3xl font-extrabold text-amber-600 mt-2">
+            {allAssessments.filter((a) => a.status === 'awaiting_evidence').length}
+          </span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-1 hover:border-[#36c0c9]/50 transition">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Completed</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold text-[#137333]">
-              {allAssessments.filter((a) => a.status === 'completed').length}
-            </span>
-            <span className="text-xs font-bold text-[#137333] bg-[#e6f4ea] px-2 py-0.5 rounded-md">92% pass rate</span>
-          </div>
+          <span className="text-3xl font-extrabold text-[#137333] mt-2">
+            {allAssessments.filter((a) => a.status === 'completed').length}
+          </span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-1 hover:border-[#36c0c9]/50 transition">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Scheduled</span>
-          <div className="flex items-baseline justify-between mt-1">
-            <span className="text-3xl font-extrabold text-[#1a73e8]">
-              {allAssessments.filter((a) => a.status === 'scheduled').length}
-            </span>
-            <span className="text-xs font-bold text-[#1a73e8] bg-[#e8f0fe] px-2 py-0.5 rounded-md">Next on 18 Aug</span>
-          </div>
+          <span className="text-3xl font-extrabold text-[#1a73e8] mt-2">
+            {allAssessments.filter((a) => a.status === 'scheduled').length}
+          </span>
         </div>
       </div>
 
       {/* Filter Chips & Search Control Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Filter Chips (Active filter chip in subtle grey state per user instructions) */}
+        {/* Filter Chips (Active filter chip in light primary color bg-[#ddf7f9] text-[#0f766e]) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <button
-            onClick={() => {
-              setActiveFilter('all')
-              setVisibleCount(8)
-            }}
+            onClick={() => setActiveFilter('all')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
               activeFilter === 'all'
-                ? 'bg-[#e2e8f0] text-[#0d212c] shadow-xs'
+                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
                 : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
             }`}
           >
@@ -228,13 +204,10 @@ export const DashboardScreen: React.FC = () => {
           </button>
 
           <button
-            onClick={() => {
-              setActiveFilter('awaiting_evidence')
-              setVisibleCount(8)
-            }}
+            onClick={() => setActiveFilter('awaiting_evidence')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
               activeFilter === 'awaiting_evidence'
-                ? 'bg-[#e2e8f0] text-[#0d212c] shadow-xs'
+                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
                 : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
             }`}
           >
@@ -242,13 +215,10 @@ export const DashboardScreen: React.FC = () => {
           </button>
 
           <button
-            onClick={() => {
-              setActiveFilter('completed')
-              setVisibleCount(8)
-            }}
+            onClick={() => setActiveFilter('completed')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
               activeFilter === 'completed'
-                ? 'bg-[#e2e8f0] text-[#0d212c] shadow-xs'
+                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
                 : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
             }`}
           >
@@ -256,13 +226,10 @@ export const DashboardScreen: React.FC = () => {
           </button>
 
           <button
-            onClick={() => {
-              setActiveFilter('scheduled')
-              setVisibleCount(8)
-            }}
+            onClick={() => setActiveFilter('scheduled')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
               activeFilter === 'scheduled'
-                ? 'bg-[#e2e8f0] text-[#0d212c] shadow-xs'
+                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
                 : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
             }`}
           >
@@ -279,12 +246,12 @@ export const DashboardScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Data Table */}
+      {/* Data Table (Load More button removed, smooth lazy loading scroll) */}
       <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-xs overflow-hidden w-full transition-all duration-300">
-        <div className="overflow-x-auto w-full">
+        <div className="overflow-x-auto w-full max-h-[600px] overflow-y-auto">
           <table className="w-full text-left text-sm border-collapse">
-            <thead>
-              <tr className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#64748b] text-xs font-bold">
+            <thead className="sticky top-0 bg-[#f8fafc] z-10">
+              <tr className="border-b border-[#e2e8f0] text-[#64748b] text-xs font-bold">
                 <th className="py-3.5 px-4">Vendor</th>
                 <th className="py-3.5 px-4">Questionnaire</th>
                 <th className="py-3.5 px-4">Round</th>
@@ -294,17 +261,22 @@ export const DashboardScreen: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0]/60">
-              {visibleAssessments.length === 0 ? (
+              {filteredAssessments.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-[#64748b] text-sm">
                     No assessments matching search criteria.
                   </td>
                 </tr>
               ) : (
-                visibleAssessments.map((row) => (
+                filteredAssessments.map((row) => (
                   <tr
                     key={row.id}
-                    onClick={() => setSelectedAssessment(row)}
+                    onClick={() =>
+                      setSelectedAssessment({
+                        ...row,
+                        score: row.score === 'High' ? '94.0' : row.score === 'Medium' ? '72.0' : '0.0',
+                      })
+                    }
                     className="hover:bg-[#f8fafc] transition cursor-pointer group"
                   >
                     <td className="py-3.5 px-4 font-semibold text-[#0d212c] group-hover:text-[#36c0c9]">
@@ -336,13 +308,19 @@ export const DashboardScreen: React.FC = () => {
                       />
                     </td>
                     <td className="py-3.5 px-4">
-                      {row.status === 'awaiting_evidence' ? (
-                        <StatusChip label="0.0" status="warning" dot={false} />
-                      ) : row.status === 'scheduled' ? (
-                        <StatusChip label="—" status="neutral" dot={false} />
-                      ) : (
-                        <StatusChip label={row.score} status="success" dot={false} />
-                      )}
+                      <StatusChip
+                        label={row.score}
+                        status={
+                          row.score === 'High'
+                            ? 'success'
+                            : row.score === 'Medium'
+                            ? 'warning'
+                            : row.score === 'Low'
+                            ? 'error'
+                            : 'neutral'
+                        }
+                        dot={false}
+                      />
                     </td>
                     <td className="py-3.5 px-4 text-[#64748b] text-xs">
                       {row.createdDate}
@@ -353,18 +331,6 @@ export const DashboardScreen: React.FC = () => {
             </tbody>
           </table>
         </div>
-
-        {/* Text-Only Load More Button */}
-        {visibleCount < filteredAssessments.length && (
-          <div className="p-4 border-t border-[#e2e8f0] bg-white flex items-center justify-center">
-            <button
-              onClick={handleLoadMore}
-              className="bg-transparent text-[#0d212c] hover:text-[#36c0c9] font-bold text-sm hover:underline cursor-pointer transition"
-            >
-              Load more
-            </button>
-          </div>
-        )}
       </div>
     </div>
   )

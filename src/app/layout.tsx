@@ -18,13 +18,22 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: 'Atomic Design Reference App',
-  description: 'Next.js 15 exact architecture scaffolding with atomic design and design tokens.',
+  title: 'Vendor Assessment',
+  description: 'M42 Vendor Assessment Portal',
+  icons: {
+    icon: '/white-logo.png',
+    shortcut: '/white-logo.png',
+    apple: '/white-logo.png',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${fraunces.variable}`} data-theme="light">
+      <head>
+        <link rel="icon" href="/white-logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/white-logo.png" />
+      </head>
       <body className="bg-bg-default text-text-primary antialiased min-h-screen">
         <ThemeProvider>{children}</ThemeProvider>
       </body>

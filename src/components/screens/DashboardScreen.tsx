@@ -190,14 +190,14 @@ export const DashboardScreen: React.FC = () => {
 
       {/* Filter Chips & Search Control Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Filter Chips */}
+        {/* Filter Chips (Selected chip has 100% opacity solid bg, white text, and no hover stroke) */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
               activeFilter === 'all'
-                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
+                ? 'bg-[#0d212c] text-white shadow-xs'
+                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             All assessments ({allAssessments.length})
@@ -205,10 +205,10 @@ export const DashboardScreen: React.FC = () => {
 
           <button
             onClick={() => setActiveFilter('awaiting_evidence')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
               activeFilter === 'awaiting_evidence'
-                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
+                ? 'bg-[#0d212c] text-white shadow-xs'
+                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             Awaiting evidence ({allAssessments.filter((a) => a.status === 'awaiting_evidence').length})
@@ -216,10 +216,10 @@ export const DashboardScreen: React.FC = () => {
 
           <button
             onClick={() => setActiveFilter('completed')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
               activeFilter === 'completed'
-                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
+                ? 'bg-[#0d212c] text-white shadow-xs'
+                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             Completed ({allAssessments.filter((a) => a.status === 'completed').length})
@@ -227,10 +227,10 @@ export const DashboardScreen: React.FC = () => {
 
           <button
             onClick={() => setActiveFilter('scheduled')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none ${
+            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-none outline-none ${
               activeFilter === 'scheduled'
-                ? 'bg-[#ddf7f9] text-[#0f766e] shadow-xs border border-[#36c0c9]/30'
-                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#f1f5f9]'
+                ? 'bg-[#0d212c] text-white shadow-xs'
+                : 'text-[#64748b] hover:text-[#0d212c] hover:bg-[#e2e8f0]'
             }`}
           >
             Scheduled ({allAssessments.filter((a) => a.status === 'scheduled').length})
@@ -246,7 +246,7 @@ export const DashboardScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Data Table (Entire page scrolls naturally per user instructions) */}
+      {/* Data Table */}
       <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-xs overflow-hidden w-full transition-all duration-300">
         <div className="overflow-x-auto w-full">
           <table className="w-full text-left text-sm border-collapse">

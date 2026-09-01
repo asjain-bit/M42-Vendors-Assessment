@@ -1,0 +1,32 @@
+import { FlatCompat } from '@eslint/eslintrc'
+import path from 'path'
+import { fileURLToPath } from 'url'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+})
+
+const eslintConfig = [
+  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  {
+    ignores: [
+      'next-env.d.ts',
+      'src/components/ai-elements/**',
+      'src/components/ui/**',
+      '.next/**',
+      'out/**',
+      'storybook-static/**',
+      'coverage/**',
+    ],
+  },
+  {
+    rules: {
+      'no-console': ['warn', { allow: ['error', 'warn'] }],
+    },
+  },
+]
+
+export default eslintConfig

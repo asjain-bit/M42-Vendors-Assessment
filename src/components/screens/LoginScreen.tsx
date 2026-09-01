@@ -33,8 +33,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen w-full flex flex-col md:flex-row bg-[#f8f9fc] font-sans antialiased text-[#0d212c]">
-      {/* Left Side — Information Panel (Background texture removed per user instructions) */}
-      <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center relative border-r border-[#e2e8f0]">
+      {/* Left Side — Information Panel with requested #D9E6EB background color */}
+      <div className="flex-1 p-8 lg:p-16 flex flex-col justify-center relative bg-[#D9E6EB] border-r border-[#e2e8f0]">
         <div className="max-w-md mx-auto w-full flex flex-col gap-8">
           {/* Header Brand: Dark Logo PNG without background */}
           <div className="flex items-center gap-3">
@@ -49,7 +49,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           </div>
 
           <div>
-            <p className="text-slate-500 text-base leading-relaxed font-normal">
+            <p className="text-slate-600 text-base leading-relaxed font-normal">
               M42 Vendor Assessment gives procurement and compliance teams a single, auditable view of every supplier relationship.
             </p>
           </div>
@@ -60,7 +60,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               <ShieldCheck className="w-6 h-6 text-[#0f766e] shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-bold text-[#0d212c] text-sm">Trusted & secure</h3>
-                <p className="text-slate-500 text-xs mt-0.5 leading-relaxed">
+                <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">
                   Enterprise-grade security with Single Sign-On and role-based access.
                 </p>
               </div>
@@ -70,7 +70,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               <Users className="w-6 h-6 text-[#0f766e] shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-bold text-[#0d212c] text-sm">Collaborative</h3>
-                <p className="text-slate-500 text-xs mt-0.5 leading-relaxed">
+                <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">
                   Align procurement, compliance and vendors in one unified workspace.
                 </p>
               </div>
@@ -80,7 +80,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               <PieChart className="w-6 h-6 text-[#0f766e] shrink-0 mt-0.5" />
               <div>
                 <h3 className="font-bold text-[#0d212c] text-sm">Actionable insights</h3>
-                <p className="text-slate-500 text-xs mt-0.5 leading-relaxed">
+                <p className="text-slate-600 text-xs mt-0.5 leading-relaxed">
                   Get real-time visibility and make confident, data-driven decisions.
                 </p>
               </div>

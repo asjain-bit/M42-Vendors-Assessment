@@ -1,6 +1,6 @@
 import React from 'react'
 
-export type StatusCategory = 'success' | 'warning' | 'error' | 'info' | 'neutral'
+export type StatusCategory = 'success' | 'warning' | 'error' | 'info' | 'neutral' | 'finalised'
 
 export interface StatusChipProps {
   label: string
@@ -25,6 +25,8 @@ export const StatusChip: React.FC<StatusChipProps> = ({
         return 'bg-[#fce8e6] text-[#c5221f] border-[#f8c4c0]'
       case 'info':
         return 'bg-[#e8f0fe] text-[#1a73e8] border-[#c6dafc]'
+      case 'finalised':
+        return 'bg-[#f3e8ff] text-[#6b21a8] border-[#e9d5ff]'
       case 'neutral':
       default:
         return 'bg-[#f1f3f4] text-[#5f6368] border-[#e0e0e0]'
@@ -41,6 +43,8 @@ export const StatusChip: React.FC<StatusChipProps> = ({
         return 'bg-[#c5221f]'
       case 'info':
         return 'bg-[#1a73e8]'
+      case 'finalised':
+        return 'bg-[#6b21a8]'
       case 'neutral':
       default:
         return 'bg-[#5f6368]'

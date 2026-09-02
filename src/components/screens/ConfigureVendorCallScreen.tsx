@@ -34,7 +34,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
     'Technical Questionnaire'
   )
   const [roundLabel, setRoundLabel] = useState('Round 1')
-  const [estimatedDuration, setEstimatedDuration] = useState('135–205 min')
+  const [estimatedDuration, setEstimatedDuration] = useState('135-205 min')
 
   // Step 2 states (Configure Sam)
   const [selectedVoice, setSelectedVoice] = useState('Marin')
@@ -420,7 +420,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 </span>
               </div>
 
-              {/* ESTIMATED DURATION Input Field (Title: ESTIMATED DURATION, Input: 135–205 min) */}
+              {/* ESTIMATED DURATION Input Field (Title: ESTIMATED DURATION, Input: 135-205 min) */}
               <div className="flex flex-col gap-1.5">
                 <label className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
                   ESTIMATED DURATION

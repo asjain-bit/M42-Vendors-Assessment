@@ -11,7 +11,7 @@ interface AssessmentRow {
   questionnaire: string
   round: string
   status: 'awaiting_evidence' | 'completed' | 'scheduled'
-  score: 'Low' | 'Medium' | 'High' | '—'
+  score: 'Low' | 'Medium' | 'High' | '-'
   createdDate: string
 }
 
@@ -90,7 +90,7 @@ export const DashboardScreen: React.FC = () => {
       questionnaire: 'Technical Questionnaire',
       round: 'Live Re-test',
       status: 'scheduled',
-      score: '—',
+      score: '-',
       createdDate: '18 Aug 2026, 22:10',
     },
     {
@@ -99,7 +99,7 @@ export const DashboardScreen: React.FC = () => {
       questionnaire: 'Data Protection & Privacy',
       round: 'ctx',
       status: 'scheduled',
-      score: '—',
+      score: '-',
       createdDate: '18 Aug 2026, 20:45',
     },
     {
@@ -108,7 +108,7 @@ export const DashboardScreen: React.FC = () => {
       questionnaire: 'Technical Questionnaire',
       round: 'Live Onboarding',
       status: 'scheduled',
-      score: '—',
+      score: '-',
       createdDate: '18 Aug 2026, 20:30',
     },
     {
@@ -159,28 +159,28 @@ export const DashboardScreen: React.FC = () => {
         <span className="text-[#36c0c9] font-bold">Dashboard</span>
       </div>
 
-      {/* KPI Cards Grid (Subtle hover stroke #cbd5e1 per user instructions) */}
+      {/* KPI Cards Grid (Very very subtle hover stroke per user instructions) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Total assessments</span>
           <span className="text-3xl font-extrabold text-[#0d212c] mt-2">{allAssessments.length}</span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Awaiting evidence</span>
           <span className="text-3xl font-extrabold text-amber-600 mt-2">
             {allAssessments.filter((a) => a.status === 'awaiting_evidence').length}
           </span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Completed</span>
           <span className="text-3xl font-extrabold text-[#137333] mt-2">
             {allAssessments.filter((a) => a.status === 'completed').length}
           </span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Scheduled</span>
           <span className="text-3xl font-extrabold text-[#1a73e8] mt-2">
             {allAssessments.filter((a) => a.status === 'scheduled').length}
@@ -308,19 +308,21 @@ export const DashboardScreen: React.FC = () => {
                       />
                     </td>
                     <td className="py-3.5 px-4">
-                      <StatusChip
-                        label={row.score}
-                        status={
-                          row.score === 'High'
-                            ? 'success'
-                            : row.score === 'Medium'
-                            ? 'warning'
-                            : row.score === 'Low'
-                            ? 'error'
-                            : 'neutral'
-                        }
-                        dot={false}
-                      />
+                      {row.score === '-' ? (
+                        <span className="text-[#64748b] font-semibold text-xs pl-2.5">-</span>
+                      ) : (
+                        <StatusChip
+                          label={row.score}
+                          status={
+                            row.score === 'High'
+                              ? 'success'
+                              : row.score === 'Medium'
+                              ? 'warning'
+                              : 'error'
+                          }
+                          dot={false}
+                        />
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-[#64748b] text-xs">
                       {row.createdDate}

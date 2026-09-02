@@ -128,7 +128,7 @@ export const VendorsScreen: React.FC = () => {
       id: 'v-4',
       name: 'BioHealth Tech',
       sublabel: 'Genomics data analysis & clinical storage',
-      domain: '—',
+      domain: '-',
       country: 'United Arab Emirates',
       flag: '🇦🇪',
       email: 'support@biohealth.ae',
@@ -186,7 +186,7 @@ export const VendorsScreen: React.FC = () => {
       id: `v-${Date.now()}`,
       name: findLegalName,
       sublabel: 'Registered public entity',
-      domain: findWebsite ? findWebsite.replace(/^https?:\/\//, '') : '—',
+      domain: findWebsite ? findWebsite.replace(/^https?:\/\//, '') : '-',
       country: findCountry,
       flag: matchedCountry.flag,
       email: findVendorEmail || `info@${findLegalName.toLowerCase().replace(/\s+/g, '')}.com`,
@@ -210,7 +210,7 @@ export const VendorsScreen: React.FC = () => {
       id: `v-${Date.now()}`,
       name: manualDisplayName,
       sublabel: manualLegalName || 'Registered vendor partner',
-      domain: manualWebsite ? manualWebsite.replace(/^https?:\/\//, '') : '—',
+      domain: manualWebsite ? manualWebsite.replace(/^https?:\/\//, '') : '-',
       country: manualCountry,
       flag: matchedCountry.flag,
       email: manualVendorEmail,
@@ -296,7 +296,7 @@ export const VendorsScreen: React.FC = () => {
                     </td>
 
                     <td className="py-4 px-5 text-xs">
-                      {vendor.domain !== '—' ? (
+                      {vendor.domain !== '-' ? (
                         <a
                           href={`https://${vendor.domain}`}
                           target="_blank"
@@ -306,7 +306,7 @@ export const VendorsScreen: React.FC = () => {
                           {vendor.domain}
                         </a>
                       ) : (
-                        <span className="text-[#64748b] font-medium">—</span>
+                        <span className="text-[#64748b] font-medium">-</span>
                       )}
                     </td>
 
@@ -320,10 +320,11 @@ export const VendorsScreen: React.FC = () => {
                       <StatusChip label={vendor.status} status="success" dot={false} />
                     </td>
 
+                    {/* Actions column right aligned with Dispatch call button */}
                     <td className="py-4 px-5 text-right">
                       <button
                         onClick={() => setActiveDispatchVendor(vendor)}
-                        className="text-[#36c0c9] hover:text-[#0f766e] hover:underline font-bold text-xs bg-transparent cursor-pointer transition px-1 py-1"
+                        className="text-[#36c0c9] hover:text-[#0f766e] hover:underline font-bold text-xs bg-transparent cursor-pointer transition px-1 py-1 text-right inline-block"
                       >
                         Dispatch call
                       </button>
@@ -350,7 +351,7 @@ export const VendorsScreen: React.FC = () => {
           </p>
         </div>
 
-        {/* Card 1: FIND VENDOR (Add vendor button in dark primary color, disabled until mandatory legal name is filled) */}
+        {/* Card 1: FIND VENDOR */}
         <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-4">
           <div>
             <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider block">
@@ -457,7 +458,7 @@ export const VendorsScreen: React.FC = () => {
           </div>
         </div>
 
-        {/* Card 2: ADD VENDOR MANUALLY (Add vendor button in dark primary color, disabled until mandatory display name and email are filled) */}
+        {/* Card 2: ADD VENDOR MANUALLY */}
         <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-4">
           <div>
             <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider block">

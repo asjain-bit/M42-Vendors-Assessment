@@ -1,7 +1,7 @@
 /**
  * SearchBar — Molecule
  * Single modern search field pattern with left search icon, enter-key trigger, and clear reset action.
- * Used in: SiteHeader, DataTable, DashboardScreen, VendorsScreen
+ * Hover & clicked focus state use subtle grey color without increasing stroke weight.
  */
 
 import React, { useState } from 'react'
@@ -57,7 +57,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
-        className="w-full h-10 pl-10 pr-9 text-sm bg-white text-[#0d212c] border border-[#d9e2ec] rounded-xl transition-all placeholder:text-[#94a3b8] focus:outline-none focus:border-[#36c0c9] focus:ring-2 focus:ring-[#36c0c9]/20 disabled:cursor-not-allowed disabled:bg-[#f8fafc] disabled:text-[#94a3b8]"
+        className="w-full h-10 pl-10 pr-9 text-xs bg-white text-[#0d212c] border border-[#e2e8f0] hover:border-[#cbd5e1] focus:border-[#cbd5e1] rounded-xl transition-all placeholder:text-[#94a3b8] focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:bg-[#f8fafc] disabled:text-[#94a3b8]"
       />
 
       {/* Right Clear Icon (Visible when input has value) */}

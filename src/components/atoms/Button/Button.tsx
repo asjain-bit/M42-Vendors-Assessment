@@ -9,14 +9,14 @@ import { ButtonProps } from './Button.types'
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = 'primary', size = 'md', className = '', children, disabled, ...props }, ref) => {
     const baseStyle =
-      'inline-flex items-center justify-center font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#36c0c9] disabled:pointer-events-none disabled:opacity-50 cursor-pointer rounded-xl select-none'
+      'inline-flex items-center justify-center font-semibold transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#cbd5e1] disabled:pointer-events-none disabled:opacity-50 cursor-pointer rounded-xl select-none'
 
     const variantStyles: Record<NonNullable<ButtonProps['variant']>, string> = {
-      primary: 'bg-[#0d212c] text-white hover:bg-[#08171f] active:bg-[#051016] shadow-xs',
-      secondary: 'bg-white text-[#0d212c] border border-[#d9e2ec] hover:bg-[#f1f5f9] active:bg-[#e2e8f0] shadow-xs',
-      accent: 'bg-[#36c0c9] text-[#0d212c] hover:bg-[#2baab3] active:bg-[#23959c] shadow-xs',
+      primary: 'bg-[#0d212c] text-white hover:bg-[#122e3d] active:bg-[#08171f] shadow-xs font-bold',
+      secondary: 'bg-white text-[#0d212c] border border-[#e2e8f0] hover:bg-[#f1f5f9] active:bg-[#e2e8f0] shadow-xs font-semibold',
+      accent: 'bg-[#0d212c] text-white hover:bg-[#122e3d] active:bg-[#08171f] shadow-xs font-bold',
       ghost: 'bg-transparent text-[#0d212c] hover:bg-[#f1f5f9] active:bg-[#e2e8f0]',
-      outline: 'bg-transparent text-[#0d212c] border border-[#d9e2ec] hover:bg-[#f1f5f9]',
+      outline: 'bg-transparent text-[#0d212c] border border-[#e2e8f0] hover:bg-[#f1f5f9]',
       destructive: 'bg-[#d92d20] text-white hover:bg-[#b42318] active:bg-[#91180f] shadow-xs',
     }
 

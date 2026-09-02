@@ -210,8 +210,8 @@ export const QuestionnairesScreen: React.FC = () => {
               </label>
 
               {!uploadedFile ? (
-                <label className="border-2 border-dashed border-[#e2e8f0] hover:border-[#36c0c9] bg-[#f8fafc] hover:bg-[#f1f5f9] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition text-center">
-                  <Upload className="w-6 h-6 text-[#36c0c9]" />
+                <label className="border-2 border-dashed border-[#e2e8f0] hover:border-[#cbd5e1] bg-[#f8fafc] hover:bg-[#f1f5f9] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition text-center">
+                  <Upload className="w-6 h-6 text-[#0d212c]" />
                   <span className="text-xs font-bold text-[#0d212c]">
                     Click to choose file or drag and drop
                   </span>
@@ -226,9 +226,9 @@ export const QuestionnairesScreen: React.FC = () => {
                   />
                 </label>
               ) : (
-                <div className="p-4 rounded-xl border border-[#36c0c9]/40 bg-[#ddf7f9]/30 flex items-center justify-between gap-3">
+                <div className="p-4 rounded-xl border border-[#cbd5e1] bg-[#f8fafc] flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <FileText className="w-5 h-5 text-[#36c0c9] shrink-0" />
+                    <FileText className="w-5 h-5 text-[#0d212c] shrink-0" />
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-[#0d212c] truncate">
                         {uploadedFile.name}
@@ -252,10 +252,11 @@ export const QuestionnairesScreen: React.FC = () => {
             </div>
 
             <div>
+              {/* Primary action button updated to dark primary color bg-[#0d212c] per user request */}
               <button
                 type="submit"
                 disabled={isUploading || !title.trim() || !uploadedFile}
-                className="bg-[#e2e8f0] hover:bg-[#cbd5e1] text-[#0d212c] font-bold py-2.5 px-6 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold py-2.5 px-6 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 {isUploading ? 'Parsing & structuring document...' : 'Upload & structure'}
               </button>

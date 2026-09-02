@@ -159,28 +159,28 @@ export const DashboardScreen: React.FC = () => {
         <span className="text-[#36c0c9] font-bold">Dashboard</span>
       </div>
 
-      {/* KPI Cards Grid */}
+      {/* KPI Cards Grid (Subtle hover stroke #cbd5e1 per user instructions) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Total assessments</span>
           <span className="text-3xl font-extrabold text-[#0d212c] mt-2">{allAssessments.length}</span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Awaiting evidence</span>
           <span className="text-3xl font-extrabold text-amber-600 mt-2">
             {allAssessments.filter((a) => a.status === 'awaiting_evidence').length}
           </span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Completed</span>
           <span className="text-3xl font-extrabold text-[#137333] mt-2">
             {allAssessments.filter((a) => a.status === 'completed').length}
           </span>
         </div>
 
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#36c0c9]/50 transition min-h-[96px]">
+        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1] transition min-h-[96px]">
           <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Scheduled</span>
           <span className="text-3xl font-extrabold text-[#1a73e8] mt-2">
             {allAssessments.filter((a) => a.status === 'scheduled').length}
@@ -190,7 +190,7 @@ export const DashboardScreen: React.FC = () => {
 
       {/* Filter Chips & Search Control Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Filter Chips (Selected chip has 100% opacity solid primary bg #36c0c9, white text, no hover stroke) */}
+        {/* Filter Chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
           <button
             onClick={() => setActiveFilter('all')}

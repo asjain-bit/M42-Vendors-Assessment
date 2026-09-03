@@ -481,30 +481,30 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       <div className="w-full px-6 lg:px-10 mt-6 flex flex-col gap-6">
         {/* Navigation Tabs Bar — Reference Image Style */}
         <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-0">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             <button
               onClick={() => setActiveTab('assessment')}
-              className={`pb-3 text-sm font-bold flex items-center gap-2 transition cursor-pointer border-b-2 ${
+              className={`pb-3.5 text-sm font-bold flex items-center gap-2.5 transition cursor-pointer border-b-2 -mb-px ${
                 activeTab === 'assessment'
                   ? 'border-[#36c0c9] text-[#36c0c9]'
                   : 'border-transparent text-[#64748b] hover:text-[#0d212c]'
               }`}
             >
               <FileText
-                className={`w-4 h-4 ${activeTab === 'assessment' ? 'text-[#36c0c9]' : 'text-[#64748b]'}`}
+                className={`w-4.5 h-4.5 ${activeTab === 'assessment' ? 'text-[#36c0c9]' : 'text-[#64748b]'}`}
               />
               <span>Assessment</span>
             </button>
             <button
               onClick={() => setActiveTab('audit_trail')}
-              className={`pb-3 text-sm font-bold flex items-center gap-2 transition cursor-pointer border-b-2 ${
+              className={`pb-3.5 text-sm font-bold flex items-center gap-2.5 transition cursor-pointer border-b-2 -mb-px ${
                 activeTab === 'audit_trail'
                   ? 'border-[#36c0c9] text-[#36c0c9]'
                   : 'border-transparent text-[#64748b] hover:text-[#0d212c]'
               }`}
             >
               <Clock
-                className={`w-4 h-4 ${activeTab === 'audit_trail' ? 'text-[#36c0c9]' : 'text-[#64748b]'}`}
+                className={`w-4.5 h-4.5 ${activeTab === 'audit_trail' ? 'text-[#36c0c9]' : 'text-[#64748b]'}`}
               />
               <span>Audit trail</span>
             </button>

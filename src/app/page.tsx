@@ -9,9 +9,11 @@ import { Sidebar } from '@/components/organisms/Sidebar'
 import { SiteHeader } from '@/components/organisms/SiteHeader'
 
 export default function HomePage() {
-  // Default to true so the user is logged in by default and lands on the Dashboard page immediately
-  const [isAuthenticated, setIsAuthenticated] = useState(true)
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'questionnaires' | 'vendors'>('dashboard')
+  // Default to false so the user lands on the SSO Login Screen first
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'questionnaires' | 'vendors'>(
+    'dashboard'
+  )
   const [userEmail, setUserEmail] = useState('john.doe@m42.ae')
 
   // Expandable/Collapsible Sidebar state
@@ -30,7 +32,10 @@ export default function HomePage() {
     return <LoginScreen onLogin={handleLogin} />
   }
 
-  const formattedName = userEmail.split('@')[0].replace('.', ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+  const formattedName = userEmail
+    .split('@')[0]
+    .replace('.', ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
 
   const getPageHeaderProps = () => {
     switch (activeTab) {
@@ -75,10 +80,7 @@ export default function HomePage() {
         }`}
       >
         {/* Top Header Bar */}
-        <SiteHeader
-          title={headerProps.title}
-          subtitle={headerProps.subtitle}
-        />
+        <SiteHeader title={headerProps.title} subtitle={headerProps.subtitle} />
 
         {/* Main Full-Width Content Area */}
         <main className="flex-1 w-full">

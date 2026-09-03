@@ -16,6 +16,7 @@ import {
   ChevronUp,
   X,
   CircleDot,
+  AlertTriangle,
 } from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
 import { CallRoomScreen } from './CallRoomScreen'
@@ -173,17 +174,25 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   const callJoinLink =
     'https://tech-due-diligence.delphiprojects.app/call/E0exXCogAvq0Owdr3qbYhU0vt1CQdBuIFIJN18D6wZM'
 
-  // Convert "HH:MM AM/PM" to minutes from midnight
+  // Convert time string (12h AM/PM or 24h HH:MM) to minutes from midnight
   const timeToMinutes = (timeStr: string): number => {
     if (!timeStr) return -1
-    const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
-    if (!match) return -1
-    let hours = parseInt(match[1], 10)
-    const minutes = parseInt(match[2], 10)
-    const period = match[3].toUpperCase()
-    if (period === 'PM' && hours < 12) hours += 12
-    if (period === 'AM' && hours === 12) hours = 0
-    return hours * 60 + minutes
+    const match12 = timeStr.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
+    if (match12) {
+      let hours = parseInt(match12[1], 10)
+      const minutes = parseInt(match12[2], 10)
+      const period = match12[3].toUpperCase()
+      if (period === 'PM' && hours < 12) hours += 12
+      if (period === 'AM' && hours === 12) hours = 0
+      return hours * 60 + minutes
+    }
+    const match24 = timeStr.trim().match(/^(\d{1,2}):(\d{2})$/)
+    if (match24) {
+      const hours = parseInt(match24[1], 10)
+      const minutes = parseInt(match24[2], 10)
+      return hours * 60 + minutes
+    }
+    return -1
   }
 
   // Handle Start Time changes: revalidate End Time & clear if now invalid
@@ -933,7 +942,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         <select
                           value={startTime}
                           onChange={(e) => handleStartTimeChange(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] cursor-pointer"
+                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] cursor-pointer font-medium"
                         >
                           <option value="">Select start time</option>
                           {timeSlots.map((t) => (
@@ -952,15 +961,17 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                           disabled={!startTime}
                           value={endTime}
                           onChange={(e) => setEndTime(e.target.value)}
-                          className={`w-full px-3 py-2 rounded-xl border bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] ${
+                          className={`w-full px-3 py-2 rounded-xl border bg-white text-xs outline-none focus:border-[#cbd5e1] transition ${
                             !startTime
-                              ? 'opacity-50 cursor-not-allowed bg-slate-50 border-[#e2e8f0]'
+                              ? 'opacity-40 cursor-not-allowed bg-slate-50 border-[#e2e8f0] text-[#94a3b8]'
                               : isTimeInvalid
-                                ? 'border-red-400'
-                                : 'border-[#e2e8f0] cursor-pointer'
+                                ? 'border-red-500 text-red-700 font-semibold cursor-pointer'
+                                : 'border-[#e2e8f0] text-[#0d212c] cursor-pointer font-medium'
                           }`}
                         >
-                          <option value="">Select end time</option>
+                          <option value="">
+                            {!startTime ? 'Select start time first' : 'Select end time'}
+                          </option>
                           {timeSlots
                             .filter(
                               (t) => !startTime || timeToMinutes(t) > timeToMinutes(startTime)
@@ -971,6 +982,12 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                               </option>
                             ))}
                         </select>
+                        {isTimeInvalid && (
+                          <p className="text-[11px] text-red-600 font-semibold flex items-center gap-1 mt-1">
+                            <AlertTriangle className="w-3 h-3" />
+                            <span>End time must be after the start time.</span>
+                          </p>
+                        )}
                       </div>
                     </div>
 

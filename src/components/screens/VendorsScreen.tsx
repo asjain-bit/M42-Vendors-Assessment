@@ -13,6 +13,7 @@ import {
   Info,
   Loader2,
   Check,
+  AlertTriangle,
 } from 'lucide-react'
 
 import { StatusChip } from '@/components/atoms/StatusChip'
@@ -469,19 +470,19 @@ export const VendorsScreen: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-5 w-full px-6 lg:px-10 py-4 text-[#0d212c]">
-      {/* Toast Notification */}
+      {/* Toast Notification — subtle light semantic styling */}
       {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-[#0d212c] text-white px-4 py-3 rounded-xl shadow-xl border border-[#36c0c9]/50 flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <CheckCircle2 className="w-4 h-4 text-[#36c0c9]" />
+        <div className="fixed top-4 right-4 z-50 bg-[#f0fdf4] text-[#15803d] px-4 py-3 rounded-xl shadow-md border border-[#bbf7d0] flex items-center gap-3 animate-in slide-in-from-top duration-300">
+          <CheckCircle2 className="w-4 h-4 text-[#16a34a]" />
           <span className="text-sm font-medium">{toastMessage}</span>
         </div>
       )}
 
-      {/* Dispatch Success Banner Toast */}
+      {/* Dispatch Success Banner Toast — subtle light semantic styling */}
       {dispatchSuccessToast && (
-        <div className="fixed top-5 right-5 z-50 bg-[#0d212c] text-white text-xs font-bold px-5 py-3.5 rounded-xl shadow-2xl border border-[#36c0c9] flex items-center gap-3 animate-in fade-in slide-in-from-top-3 duration-200">
-          <div className="w-7 h-7 rounded-full bg-[#137333] flex items-center justify-center shrink-0">
-            <PhoneCall className="w-3.5 h-3.5 text-white" />
+        <div className="fixed top-5 right-5 z-50 bg-[#f0fdf4] text-[#15803d] text-xs font-bold px-5 py-3.5 rounded-xl shadow-md border border-[#bbf7d0] flex items-center gap-3 animate-in fade-in slide-in-from-top-3 duration-200">
+          <div className="w-7 h-7 rounded-full bg-[#dcfce7] flex items-center justify-center shrink-0">
+            <PhoneCall className="w-3.5 h-3.5 text-[#16a34a]" />
           </div>
           <span>{dispatchSuccessToast}</span>
         </div>
@@ -848,23 +849,28 @@ export const VendorsScreen: React.FC = () => {
       {/* Delete Vendor Confirmation Popup Modal (Center Aligned) */}
       {deletingVendor && (
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-[#e2e8f0] text-center flex flex-col items-center">
-            <h3 className="text-lg font-bold text-[#0d212c] mb-2">Confirm deletion</h3>
-            <p className="text-xs text-[#64748b] mb-6">
-              Are you sure you want to delete{' '}
-              <span className="font-bold text-[#0d212c]">{deletingVendor.name}</span>? This action
-              cannot be undone.
-            </p>
-            <div className="flex justify-center gap-3 w-full">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-8 sm:p-10 shadow-2xl border border-[#e2e8f0] text-center flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-200 min-h-[240px] justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100 shadow-2xs">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-extrabold text-[#0d212c] mb-1.5">Confirm deletion</h3>
+              <p className="text-xs text-[#64748b] leading-relaxed max-w-md">
+                Are you sure you want to delete{' '}
+                <strong className="font-bold text-[#0d212c]">{deletingVendor.name}</strong>? This
+                action is permanent and cannot be undone.
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 w-full mt-2">
               <button
                 onClick={() => setDeletingVendor(null)}
-                className="px-4 py-2 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#0d212c] hover:bg-slate-50 cursor-pointer flex-1 bg-transparent"
+                className="px-6 py-3 rounded-xl border border-[#e2e8f0] text-xs font-bold text-[#0d212c] hover:bg-slate-50 cursor-pointer flex-1 bg-transparent transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteVendorConfirm}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer flex-1 border-0"
+                className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer flex-1 border-0 transition shadow-2xs"
               >
                 Delete vendor
               </button>

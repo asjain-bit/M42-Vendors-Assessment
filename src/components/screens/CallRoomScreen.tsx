@@ -354,33 +354,37 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
     <div className="fixed inset-0 z-[9999] bg-[#f8fafc] flex flex-col overflow-hidden">
       {/* Leave Confirmation Popup */}
       {showLeaveConfirm && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-[#0d212c]/20 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[#0d212c]/40 backdrop-blur-xs"
             onClick={() => setShowLeaveConfirm(false)}
           />
-          <div className="relative bg-white rounded-2xl border border-[#e2e8f0] shadow-2xl p-6 w-[300px] flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative bg-white rounded-3xl border border-[#e2e8f0] shadow-2xl p-8 sm:p-10 max-w-lg w-full flex flex-col items-center text-center gap-4 animate-in fade-in zoom-in-95 duration-150 min-h-[220px] justify-center z-10">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100 shadow-2xs">
+              <DoorOpen className="w-6 h-6" />
+            </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-sm font-extrabold text-[#0d212c]">Leave the call?</h3>
-              <p className="text-xs text-[#64748b] leading-relaxed">
-                You can rejoin with the same link while the call is live.
+              <h3 className="text-xl font-extrabold text-[#0d212c]">Leave the call?</h3>
+              <p className="text-xs text-[#64748b] leading-relaxed max-w-md">
+                You will leave the active audio room session. You can rejoin with the same link
+                while the call is live.
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 w-full mt-2">
               <button
                 onClick={() => {
                   setShowLeaveConfirm(false)
                   setRoomState('left')
                 }}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0 shadow-2xs"
               >
-                Leave
+                Leave call
               </button>
               <button
                 onClick={() => setShowLeaveConfirm(false)}
-                className="flex-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0d212c] font-bold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
+                className="flex-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0d212c] font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0"
               >
-                Stay
+                Stay in call
               </button>
             </div>
           </div>
@@ -389,32 +393,36 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
 
       {/* End & Finalise Confirmation Popup */}
       {showFinaliseConfirm && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center">
+        <div className="absolute inset-0 z-50 flex items-center justify-center p-4">
           <div
-            className="absolute inset-0 bg-[#0d212c]/20 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[#0d212c]/40 backdrop-blur-xs"
             onClick={() => setShowFinaliseConfirm(false)}
           />
-          <div className="relative bg-white rounded-2xl border border-[#e2e8f0] shadow-2xl p-6 w-[340px] flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative bg-white rounded-3xl border border-[#e2e8f0] shadow-2xl p-8 sm:p-10 max-w-lg w-full flex flex-col items-center text-center gap-4 animate-in fade-in zoom-in-95 duration-150 min-h-[240px] justify-center z-10">
+            <div className="w-12 h-12 rounded-2xl bg-[#ddf7f9] text-[#0d7280] flex items-center justify-center border border-[#b2ecf2] shadow-2xs">
+              <CheckCircle2 className="w-6 h-6" />
+            </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-sm font-extrabold text-[#0d212c]">End & Finalise Assessment?</h3>
-              <p className="text-xs text-[#64748b] leading-relaxed">
-                This will end the call and mark the assessment as complete. The audit log and
-                transcript will be saved. This action cannot be undone.
+              <h3 className="text-xl font-extrabold text-[#0d212c]">End & Finalise Assessment?</h3>
+              <p className="text-xs text-[#64748b] leading-relaxed max-w-md">
+                This will end the live call for all participants and mark the assessment as
+                complete. The audit log and call transcript will be saved. This action cannot be
+                undone.
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 w-full mt-2">
               <button
                 onClick={() => {
                   setShowFinaliseConfirm(false)
                   setRoomState('finalised')
                 }}
-                className="flex-1 bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
+                className="flex-1 bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0 shadow-2xs"
               >
                 End & Finalise
               </button>
               <button
                 onClick={() => setShowFinaliseConfirm(false)}
-                className="flex-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0d212c] font-bold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
+                className="flex-1 bg-[#f1f5f9] hover:bg-[#e2e8f0] text-[#0d212c] font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0"
               >
                 Cancel
               </button>

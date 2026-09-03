@@ -70,29 +70,87 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState('1')
 
-  const [currentStatus, setCurrentStatus] = useState<AssessmentDetailData['status']>(assessment.status)
+  const [currentStatus, setCurrentStatus] = useState<AssessmentDetailData['status']>(
+    assessment.status
+  )
   const [copiedUrl, setCopiedUrl] = useState(false)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const [questionFiles, setQuestionFiles] = useState<Record<number, AttachedFile[]>>({
-    1: [
-      { name: 'SOC2_Type2_Report_2026.pdf', size: '1.4 MB', type: 'PDF', date: '25 Aug 2026' },
-    ],
+    1: [{ name: 'SOC2_Type2_Report_2026.pdf', size: '1.4 MB', type: 'PDF', date: '25 Aug 2026' }],
     3: [
-      { name: 'ISO_27001_Readiness_Report_2026.pdf', size: '2.8 MB', type: 'PDF', date: '24 Aug 2026' },
+      {
+        name: 'ISO_27001_Readiness_Report_2026.pdf',
+        size: '2.8 MB',
+        type: 'PDF',
+        date: '24 Aug 2026',
+      },
     ],
     5: [
-      { name: 'Penetration_Test_Executive_Summary.pdf', size: '850 KB', type: 'PDF', date: '20 Aug 2026' },
+      {
+        name: 'Penetration_Test_Executive_Summary.pdf',
+        size: '850 KB',
+        type: 'PDF',
+        date: '20 Aug 2026',
+      },
     ],
   })
 
   const meetingUrl = 'https://meet.m42.ae/call/vendor-audit-9823'
   const lifecycleSteps = [
-    { title: 'Call dispatched', actor: 'Admin', time: '1 Sept 2026, 01:15 PM', icon: Send },
-    { title: 'Meeting Scheduled', actor: 'System', time: '1 Sept 2026, 01:14 PM', icon: Calendar, hasMeetingUrl: true },
-    { title: 'Participants joined', actor: 'Vendor', time: '1 Sept 2026, 01:15 PM', icon: Users },
-    { title: 'Assessment call', actor: 'AI Agent', time: '1 Sept 2026, 01:15 PM', icon: PhoneCall },
-    { title: 'Call ended', actor: 'System', time: '1 Sept 2026, 01:19 PM', icon: CheckCircle2 },
+    {
+      title: 'Call dispatched',
+      actor: 'Admin',
+      time: '1 Sept 2026, 01:15 PM',
+      icon: Send,
+      status: 'DONE',
+    },
+    {
+      title: 'Meeting Scheduled',
+      actor: 'System',
+      time: '1 Sept 2026, 01:14 PM',
+      icon: Calendar,
+      hasMeetingUrl: true,
+      status: 'DONE',
+    },
+    {
+      title: 'Participants joined',
+      actor: 'Vendor',
+      time: '1 Sept 2026, 01:15 PM',
+      icon: Users,
+      status: 'DONE',
+    },
+    {
+      title: 'Assessment call',
+      actor: 'AI Agent',
+      time: '1 Sept 2026, 01:15 PM',
+      icon: PhoneCall,
+      status: 'DONE',
+    },
+    {
+      title: 'Call ended',
+      actor: 'System',
+      time: '3 Sep 2026, 11:21 AM',
+      icon: PhoneCall,
+      status: 'DONE',
+    },
+    {
+      title: 'Transcript composed',
+      actor: 'System',
+      time: 'Queued',
+      icon: FileText,
+      status: 'DONE',
+    },
+    { title: 'Scoring', actor: 'AI Agent', time: 'Queued', icon: FileCheck, status: 'DONE' },
+    { title: 'Report ready', actor: 'System', time: 'Queued', icon: FileCheck, status: 'DONE' },
+    {
+      title: 'Finalized',
+      actor: 'Admin',
+      time:
+        currentStatus === 'completed' || currentStatus === 'finalised' ? 'Completed' : 'Awaiting',
+      icon: currentStatus === 'completed' || currentStatus === 'finalised' ? CheckCircle2 : Clock,
+      status: currentStatus === 'completed' || currentStatus === 'finalised' ? 'DONE' : 'AWAITING',
+    },
   ]
 
   // Requirement 2: Audit Trail Timeline Data
@@ -103,7 +161,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'Admin',
       timestamp: '1 Sept 2026, 02:05 PM',
       actor: 'Admin User (M42 Compliance)',
-      details: 'Reviewed evidence submissions, verified ADX public registry proof, and marked assessment status as Ready.',
+      details:
+        'Reviewed evidence submissions, verified ADX public registry proof, and marked assessment status as Ready.',
       icon: ShieldCheck,
     },
     {
@@ -121,7 +180,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'AI Agent',
       timestamp: '1 Sept 2026, 01:22 PM',
       actor: 'M42 Research Subagent',
-      details: 'Matched ADX ticker PRESIGHT against official Abu Dhabi Securities Exchange public registry (4/4 sources verified).',
+      details:
+        'Matched ADX ticker PRESIGHT against official Abu Dhabi Securities Exchange public registry (4/4 sources verified).',
       icon: Bot,
     },
     {
@@ -130,7 +190,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'AI Agent',
       timestamp: '1 Sept 2026, 01:19 PM',
       actor: 'Voice Agent Sam',
-      details: 'Recorded 3:47 audio interview session and generated text transcript with 7/7 questions evaluated.',
+      details:
+        'Recorded 3:47 audio interview session and generated text transcript with 7/7 questions evaluated.',
       icon: PhoneCall,
     },
     {
@@ -148,7 +209,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'System',
       timestamp: '1 Sept 2026, 01:14 PM',
       actor: 'M42 System Scheduler',
-      details: 'Created meeting URL (https://meet.m42.ae/call/vendor-audit-9823) with secure 256-bit access token.',
+      details:
+        'Created meeting URL (https://meet.m42.ae/call/vendor-audit-9823) with secure 256-bit access token.',
       icon: Calendar,
     },
     {
@@ -166,7 +228,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'Admin',
       timestamp: '1 Sept 2026, 10:30 AM',
       actor: 'Admin User (M42 Compliance)',
-      details: 'Created Round 1 assessment for Presight AI using Technical Questionnaire compliance template.',
+      details:
+        'Created Round 1 assessment for Presight AI using Technical Questionnaire compliance template.',
       icon: Send,
     },
   ]
@@ -203,7 +266,9 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
     if (onStatusChange) {
       onStatusChange(nextStatus)
     }
-    setToastMessage(`Assessment finalized! Status updated to ${nextStatus === 'ready' ? 'Ready' : 'Finalised'}.`)
+    setToastMessage(
+      `Assessment finalized! Status updated to ${nextStatus === 'ready' ? 'Ready' : 'Finalised'}.`
+    )
     setTimeout(() => setToastMessage(null), 3500)
   }
 
@@ -211,13 +276,17 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
     {
       id: 1,
       category: 'Corporate',
-      question: 'State the city and country of your headquarters and any stock exchange you are listed on.',
+      question:
+        'State the city and country of your headquarters and any stock exchange you are listed on.',
       confidence: 'High confidence',
       confidenceType: 'success' as const,
-      confidenceTooltip: 'High confidence: Official Abu Dhabi Securities Exchange public registry matched.',
-      answer: 'Presight AI Holding PLC is headquartered in Abu Dhabi, United Arab Emirates, and is listed on the Abu Dhabi Securities Exchange (ADX) under the ticker PRESIGHT.',
+      confidenceTooltip:
+        'High confidence: Official Abu Dhabi Securities Exchange public registry matched.',
+      answer:
+        'Presight AI Holding PLC is headquartered in Abu Dhabi, United Arab Emirates, and is listed on the Abu Dhabi Securities Exchange (ADX) under the ticker PRESIGHT.',
       whyScore: 'Scored on the quality of the answer.',
-      answerNotes: 'The answer explicitly names the HQ city (Abu Dhabi), country (United Arab Emirates), and the exchange (Abu Dhabi Securities Exchange) as required by the cue.',
+      answerNotes:
+        'The answer explicitly names the HQ city (Abu Dhabi), country (United Arab Emirates), and the exchange (Abu Dhabi Securities Exchange) as required by the cue.',
       requiresEvidence: false,
       research: {
         text: 'Presight AI Holding PLC is headquartered in Abu Dhabi, United Arab Emirates, and is listed on the Abu Dhabi Securities Exchange (ADX) under the ticker PRESIGHT.',
@@ -236,10 +305,13 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       question: 'Describe how you encrypt customer data at rest and in transit.',
       confidence: 'High confidence',
       confidenceType: 'success' as const,
-      confidenceTooltip: 'High confidence: Explicit technical match for AES-256 and TLS 1.2+ encryption standards.',
-      answer: 'Customer data is encrypted at rest with AES-256 and in transit with TLS 1.2 or higher, with managed key rotation.',
+      confidenceTooltip:
+        'High confidence: Explicit technical match for AES-256 and TLS 1.2+ encryption standards.',
+      answer:
+        'Customer data is encrypted at rest with AES-256 and in transit with TLS 1.2 or higher, with managed key rotation.',
       whyScore: 'Scored on the quality of the answer.',
-      answerNotes: 'The answer explicitly names AES-256 for data at rest and TLS 1.2 or higher for data in transit, fully meeting the cue requirements.',
+      answerNotes:
+        'The answer explicitly names AES-256 for data at rest and TLS 1.2 or higher for data in transit, fully meeting the cue requirements.',
       requiresEvidence: false,
     },
     {
@@ -248,34 +320,43 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       question: 'Provide your current ISO/IEC 27001 certificate.',
       confidence: 'Low confidence',
       confidenceType: 'error' as const,
-      confidenceTooltip: 'Low confidence: Stage 1 review uploaded; full Stage 2 certificate pending verification.',
-      answer: 'The uploaded document states completion of Stage 1 readiness review for ISO/IEC 27001 with Stage 2 certification audit scheduled. Later the certificate was uploaded and received successfully.',
+      confidenceTooltip:
+        'Low confidence: Stage 1 review uploaded; full Stage 2 certificate pending verification.',
+      answer:
+        'The uploaded document states completion of Stage 1 readiness review for ISO/IEC 27001 with Stage 2 certification audit scheduled. Later the certificate was uploaded and received successfully.',
       whyScore: 'No valid, authentic document was provided initially, so this scores low.',
-      answerNotes: 'The answer confirms that a certificate was uploaded and received successfully, but initially only mentions completion of Stage 1 readiness review.',
+      answerNotes:
+        'The answer confirms that a certificate was uploaded and received successfully, but initially only mentions completion of Stage 1 readiness review.',
       requiresEvidence: true,
     },
     {
       id: 4,
       category: 'Security',
-      question: 'Describe your identity and access management controls (SSO, MFA, least privilege).',
+      question:
+        'Describe your identity and access management controls (SSO, MFA, least privilege).',
       confidence: 'Medium confidence',
       confidenceType: 'warning' as const,
-      confidenceTooltip: 'Medium confidence: Partial response; role-based access described without enforced MFA details.',
+      confidenceTooltip:
+        'Medium confidence: Partial response; role-based access described without enforced MFA details.',
       answer: '(not answered)',
       whyScore: 'Scored on the quality of the answer.',
-      answerNotes: 'The answer addresses role-based least-privilege access and access controls but fails to explicitly mention SSO or enforced MFA.',
+      answerNotes:
+        'The answer addresses role-based least-privilege access and access controls but fails to explicitly mention SSO or enforced MFA.',
       requiresEvidence: true,
     },
     {
       id: 5,
       category: 'Resilience',
-      question: 'Describe your incident-response process and typical time to notify affected customers.',
+      question:
+        'Describe your incident-response process and typical time to notify affected customers.',
       confidence: 'Medium confidence',
       confidenceType: 'warning' as const,
-      confidenceTooltip: 'Medium confidence: Document confirms IR framework without stated customer SLA window.',
+      confidenceTooltip:
+        'Medium confidence: Document confirms IR framework without stated customer SLA window.',
       answer: '(not answered)',
       whyScore: 'Scored on the quality of the answer.',
-      answerNotes: 'The answer confirms the existence of a documented incident-response process but fails to provide a stated notification window.',
+      answerNotes:
+        'The answer confirms the existence of a documented incident-response process but fails to provide a stated notification window.',
       requiresEvidence: true,
     },
     {
@@ -284,10 +365,12 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       question: 'Provide your most recent penetration test summary or SOC 2 Type II report.',
       confidence: 'Low confidence',
       confidenceType: 'error' as const,
-      confidenceTooltip: 'Low confidence: Missing mandatory penetration test summary or SOC 2 report attachment.',
+      confidenceTooltip:
+        'Low confidence: Missing mandatory penetration test summary or SOC 2 report attachment.',
       answer: '(not answered)',
       whyScore: 'No valid, authentic document was provided, so this scores low.',
-      answerNotes: 'The answer is empty and does not provide any information about a recent pen-test summary or SOC 2 Type II report.',
+      answerNotes:
+        'The answer is empty and does not provide any information about a recent pen-test summary or SOC 2 Type II report.',
       requiresEvidence: true,
     },
     {
@@ -299,7 +382,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       confidenceTooltip: 'Low confidence: Missing UAE cloud tenant data residency proof.',
       answer: '(not answered)',
       whyScore: 'Scored on the quality of the answer.',
-      answerNotes: 'Response lacks specific cloud tenant location proof for UAE residency restrictions.',
+      answerNotes:
+        'Response lacks specific cloud tenant location proof for UAE residency restrictions.',
       requiresEvidence: true,
     },
   ]
@@ -307,108 +391,143 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full">
       {/* Toast Notification */}
+      {/* Toast Notification — subtle light semantic styling */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 bg-[#0d212c] text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-xl border border-white/10 flex items-center gap-2 animate-in fade-in slide-in-from-top-3 duration-200">
-          <CheckCircle2 className="w-4 h-4 text-[#36c0c9]" />
+        <div className="fixed top-5 right-5 z-50 bg-[#f0fdf4] text-[#15803d] text-xs font-semibold px-4 py-3 rounded-xl shadow-md border border-[#bbf7d0] flex items-center gap-2.5 animate-in fade-in slide-in-from-top-3 duration-200">
+          <CheckCircle2 className="w-4 h-4 text-[#16a34a]" />
           <span>{toastMessage}</span>
         </div>
       )}
 
-      {/* Breadcrumb Menu */}
-      <div className="w-full px-6 lg:px-10 pt-4 pb-2 text-xs font-semibold flex items-center gap-1.5 text-[#64748b]">
-        <button onClick={onBack} className="hover:text-[#36c0c9] cursor-pointer">
+      {/* Breadcrumb Menu (Moved outside of Header Card) */}
+      <div className="w-full px-6 lg:px-10 pt-4 pb-1 text-xs font-medium flex items-center gap-1.5 text-[#64748b]">
+        <button onClick={onBack} className="hover:text-[#0d7280] cursor-pointer">
           M42 admin
         </button>
         <span>/</span>
-        <button onClick={onBack} className="hover:text-[#36c0c9] cursor-pointer">
+        <button onClick={onBack} className="hover:text-[#0d7280] cursor-pointer">
           Dashboard
         </button>
         <span>/</span>
-        <span className="text-[#36c0c9] font-bold">Presight AI | See the Future Today</span>
+        <span>{assessment.vendor.split('|')[0]?.trim() || assessment.vendor}</span>
+        <span>/</span>
+        <span className="text-[#0d7280] font-bold">
+          {assessment.vendor.includes('|')
+            ? assessment.vendor.split('|')[1]?.trim()
+            : assessment.vendor}
+        </span>
       </div>
 
-      {/* Header Section */}
-      <div className="w-full px-6 lg:px-10 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl lg:text-2xl font-extrabold tracking-tight text-[#0d212c]">
-            {assessment.vendor}
-          </h1>
-          <h2 className="text-sm font-bold text-[#64748b]">
-            {assessment.questionnaire}
-          </h2>
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b] mt-0.5">
-            <StatusChip
-              label={
-                currentStatus === 'completed'
-                  ? 'Completed'
-                  : currentStatus === 'ready'
-                  ? 'Ready'
-                  : currentStatus === 'scheduled'
-                  ? 'Scheduled'
-                  : currentStatus === 'finalised'
-                  ? 'Finalised'
-                  : 'Awaiting evidence'
-              }
-              status={
-                currentStatus === 'completed'
-                  ? 'success'
-                  : currentStatus === 'ready'
-                  ? 'info'
-                  : currentStatus === 'scheduled'
-                  ? 'info'
-                  : currentStatus === 'finalised'
-                  ? 'finalised'
-                  : 'warning'
-              }
-              dot={false}
-            />
-            <span className="text-slate-300">|</span>
-            <span>Round 1</span>
-          </div>
-        </div>
+      {/* Header Container Card — Very light shade of light primary color with minimal stroke */}
+      <div className="w-full px-6 lg:px-10 pt-3">
+        <div className="bg-[#ddf7f9]/20 rounded-3xl border border-[#36c0c9]/30 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col gap-3">
+            {/* Main Title & Subtitle */}
+            <div className="flex flex-col gap-1">
+              <h1 className="text-2xl font-extrabold tracking-tight text-[#0d212c]">
+                {assessment.vendor}
+              </h1>
+              <h2 className="text-xs font-bold text-[#64748b]">{assessment.questionnaire}</h2>
+            </div>
 
-        {/* Header Action Buttons */}
-        <div className="flex items-center gap-3 shrink-0">
-          <button
-            onClick={() => alert(`Downloading report for ${assessment.vendor}...`)}
-            className="px-5 py-2.5 rounded-xl border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-[#f8fafc] text-[#0d212c] bg-white font-bold text-xs flex items-center gap-2 shadow-xs cursor-pointer transition"
-          >
-            <Download className="w-4 h-4 text-[#64748b]" />
-            <span>Download report</span>
-          </button>
-          <button
-            onClick={handleFinalize}
-            className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs border-0 flex items-center gap-1.5"
-          >
-            <span>Finalize</span>
-          </button>
+            {/* Status Chips Row */}
+            <div className="flex items-center gap-2.5 flex-wrap mt-0.5">
+              <StatusChip
+                label={
+                  currentStatus === 'completed'
+                    ? 'Completed'
+                    : currentStatus === 'ready'
+                      ? 'Ready'
+                      : currentStatus === 'scheduled'
+                        ? 'Scheduled'
+                        : currentStatus === 'finalised'
+                          ? 'Finalised'
+                          : 'Awaiting evidence'
+                }
+                status={
+                  currentStatus === 'completed'
+                    ? 'success'
+                    : currentStatus === 'ready'
+                      ? 'info'
+                      : currentStatus === 'scheduled'
+                        ? 'info'
+                        : currentStatus === 'finalised'
+                          ? 'finalised'
+                          : 'warning'
+                }
+                dot={false}
+              />
+              <span className="text-[#36c0c9]/30 font-bold">|</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#e0f2fe] text-[#0369a1] text-xs font-bold">
+                <Clock className="w-3.5 h-3.5" />
+                <span>Round 1</span>
+              </span>
+              <span className="text-[#36c0c9]/30 font-bold">|</span>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#ddf7f9] text-[#0f766e] text-xs font-bold border border-[#36c0c9]/30 shadow-2xs">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#0d7280]" />
+                <span>
+                  Overall confidence:{' '}
+                  <strong className="text-[#0d212c] font-extrabold">
+                    {assessment.score === 'High' ||
+                    assessment.score === 'High confidence' ||
+                    currentStatus === 'completed' ||
+                    currentStatus === 'finalised'
+                      ? 'High'
+                      : assessment.score === 'Low' || assessment.score === 'Low confidence'
+                        ? 'Low'
+                        : 'Medium'}
+                  </strong>
+                </span>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Main Content Area */}
       <div className="w-full px-6 lg:px-10 mt-6 flex flex-col gap-6">
-        {/* Navigation Tabs */}
-        <div className="flex items-center gap-3 border-b border-[#e2e8f0] pb-2">
-          <button
-            onClick={() => setActiveTab('assessment')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-              activeTab === 'assessment'
-                ? 'bg-[#e2e8f0] text-[#0d212c] shadow-xs'
-                : 'text-[#64748b] hover:bg-[#f1f5f9]'
-            }`}
-          >
-            Assessment
-          </button>
-          <button
-            onClick={() => setActiveTab('audit_trail')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition cursor-pointer ${
-              activeTab === 'audit_trail'
-                ? 'bg-[#e2e8f0] text-[#0d212c] shadow-xs'
-                : 'text-[#64748b] hover:bg-[#f1f5f9]'
-            }`}
-          >
-            Audit trail
-          </button>
+        {/* Navigation Tabs Bar — Image 2 Style */}
+        <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-0">
+          <div className="flex items-center gap-6">
+            <button
+              onClick={() => setActiveTab('assessment')}
+              className={`pb-3 text-sm font-extrabold flex items-center gap-2 transition cursor-pointer border-b-2 ${
+                activeTab === 'assessment'
+                  ? 'border-[#0d7280] text-[#0d7280]'
+                  : 'border-transparent text-[#64748b] hover:text-[#0d212c]'
+              }`}
+            >
+              <FileText className="w-4 h-4 text-[#0d7280]" />
+              <span>Assessment</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('audit_trail')}
+              className={`pb-3 text-sm font-extrabold flex items-center gap-2 transition cursor-pointer border-b-2 ${
+                activeTab === 'audit_trail'
+                  ? 'border-[#0d7280] text-[#0d7280]'
+                  : 'border-transparent text-[#64748b] hover:text-[#0d212c]'
+              }`}
+            >
+              <Clock className="w-4 h-4 text-[#64748b]" />
+              <span>Audit trail</span>
+            </button>
+          </div>
+
+          <div className="flex items-center gap-3 pb-3">
+            <button
+              onClick={() => alert(`Downloading report for ${assessment.vendor}...`)}
+              className="px-4 py-2 rounded-xl border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-slate-50 text-[#0d212c] bg-white font-bold text-xs flex items-center gap-2 shadow-2xs cursor-pointer transition"
+            >
+              <Download className="w-4 h-4 text-[#0d212c]" />
+              <span>Download report</span>
+            </button>
+            <button
+              onClick={handleFinalize}
+              className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-5 py-2 rounded-xl transition cursor-pointer shadow-2xs border-0"
+            >
+              Finalize
+            </button>
+          </div>
         </div>
 
         {/* Audit Trail Tab View */}
@@ -421,124 +540,142 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
               <div className="flex flex-col gap-1 max-w-md">
                 <h4 className="font-extrabold text-sm text-[#0d212c]">Audit log scheduled</h4>
                 <p className="text-xs text-[#64748b] leading-relaxed">
-                  The audit trail and call transcript will be generated automatically after the assessment meeting is completed.
+                  The audit trail and call transcript will be generated automatically after the
+                  assessment meeting is completed.
                 </p>
               </div>
             </div>
           ) : (
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-extrabold text-[#0d212c]">Assessment Audit Trail</h3>
-                <p className="text-xs text-[#64748b] mt-0.5">
-                  Complete chronological activity log capturing all system events, AI agent interactions, and admin actions.
-                </p>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-base font-extrabold text-[#0d212c]">
+                    Assessment Audit Trail
+                  </h3>
+                  <p className="text-xs text-[#64748b] mt-0.5">
+                    Complete chronological activity log capturing all system events, AI agent
+                    interactions, and admin actions.
+                  </p>
+                </div>
+                <span className="text-xs font-semibold text-[#0f766e] bg-[#ddf7f9] px-3 py-1 rounded-full">
+                  8 events logged
+                </span>
               </div>
-              <span className="text-xs font-semibold text-[#0f766e] bg-[#ddf7f9] px-3 py-1 rounded-full">
-                8 events logged
-              </span>
-            </div>
 
-            <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#e2e8f0] shadow-xs">
-              <div className="relative pl-6 border-l-2 border-[#e2e8f0] flex flex-col gap-8">
-                {auditEvents.map((event) => {
-                  const EventIcon = event.icon
-                  return (
-                    <div key={event.id} className="relative flex flex-col gap-1.5">
-                      {/* Timeline Node Icon Circle (no hover state) */}
-                      <div className="absolute -left-[35px] top-0.5 w-7 h-7 rounded-full bg-[#f8fafc] border-2 border-[#36c0c9] flex items-center justify-center text-[#36c0c9] shadow-2xs">
-                        <EventIcon className="w-3.5 h-3.5" />
-                      </div>
+              <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#e2e8f0] shadow-xs">
+                <div className="relative pl-6 border-l-2 border-[#e2e8f0] flex flex-col gap-8">
+                  {auditEvents.map((event) => {
+                    const EventIcon = event.icon
+                    return (
+                      <div key={event.id} className="relative flex flex-col gap-1.5">
+                        {/* Timeline Node Icon Circle (no hover state) */}
+                        <div className="absolute -left-[35px] top-0.5 w-7 h-7 rounded-full bg-[#f8fafc] border-2 border-[#36c0c9] flex items-center justify-center text-[#36c0c9] shadow-2xs">
+                          <EventIcon className="w-3.5 h-3.5" />
+                        </div>
 
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <h4 className="font-extrabold text-sm text-[#0d212c]">{event.title}</h4>
-                          <span
-                            className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                              event.category === 'Admin'
-                                ? 'bg-purple-100 text-purple-800'
-                                : event.category === 'AI Agent'
-                                ? 'bg-[#ddf7f9] text-[#0f766e]'
-                                : event.category === 'Vendor'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-slate-100 text-slate-700'
-                            }`}
-                          >
-                            {event.category}
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2.5">
+                            <h4 className="font-extrabold text-sm text-[#0d212c]">{event.title}</h4>
+                            <span
+                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                event.category === 'Admin'
+                                  ? 'bg-purple-100 text-purple-800'
+                                  : event.category === 'AI Agent'
+                                    ? 'bg-[#ddf7f9] text-[#0f766e]'
+                                    : event.category === 'Vendor'
+                                      ? 'bg-blue-100 text-blue-800'
+                                      : 'bg-slate-100 text-slate-700'
+                              }`}
+                            >
+                              {event.category}
+                            </span>
+                          </div>
+                          <span className="text-xs font-medium text-[#64748b] flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-slate-400" />
+                            {event.timestamp}
                           </span>
                         </div>
-                        <span className="text-xs font-medium text-[#64748b] flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-slate-400" />
-                          {event.timestamp}
-                        </span>
-                      </div>
 
-                      <p className="text-xs text-[#0d212c] leading-relaxed mt-0.5">
-                        {event.details}
-                      </p>
+                        <p className="text-xs text-[#0d212c] leading-relaxed mt-0.5">
+                          {event.details}
+                        </p>
 
-                      <div className="text-[11px] text-[#64748b] font-medium flex items-center gap-1.5 mt-0.5">
-                        <User className="w-3 h-3 text-slate-400" />
-                        <span>Actor: <strong className="text-[#0d212c] font-semibold">{event.actor}</strong></span>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </div>
-          )
-        ) : (
-          <>
-            {/* Section 1: Assessment lifecycle (Requirement 1: Outer container stroke & fill REMOVED, card height set to exact h-[145px], text top-aligned) */}
-            <div className="flex flex-col gap-2">
-              <h3 className="text-sm font-bold text-[#0d212c]">Assessment lifecycle</h3>
-              <div className="w-full">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                  {lifecycleSteps.map((step, idx) => {
-                    return (
-                      <React.Fragment key={step.title}>
-                        {/* Requirement 1: Height matched to Meeting Scheduled card (h-[145px]), text top aligned (justify-start) */}
-                        <div className="p-4 rounded-2xl bg-white shadow-xs border border-[#e2e8f0]/60 flex-1 flex flex-col justify-start gap-2 h-[145px] min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <h4 className="font-bold text-[#0d212c] text-sm truncate" title={step.title}>{step.title}</h4>
-                            <CheckCircle2 className="w-4.5 h-4.5 text-white fill-[#137333] shrink-0" />
-                          </div>
-
-                          <div className="flex flex-col gap-0.5">
-                            <p className="text-[11px] text-[#64748b]">{step.actor}</p>
-                            <p className="text-[10px] text-[#64748b] font-medium">{step.time}</p>
-                          </div>
-
-                          {step.hasMeetingUrl && (
-                            <div className="mt-auto pt-1.5 border-t border-[#e2e8f0] flex items-center justify-between gap-1 text-[11px]">
-                              <span className="text-[#36c0c9] font-medium truncate" title={meetingUrl}>
-                                {meetingUrl.replace('https://', '')}
-                              </span>
-                              <button
-                                onClick={handleCopyMeetingUrl}
-                                className="p-1 text-[#64748b] hover:text-[#0d212c] transition cursor-pointer shrink-0 rounded hover:bg-slate-200/60"
-                                title="Copy meeting URL"
-                              >
-                                {copiedUrl ? (
-                                  <Check className="w-3.5 h-3.5 text-[#137333]" />
-                                ) : (
-                                  <Copy className="w-3.5 h-3.5" />
-                                )}
-                              </button>
-                            </div>
-                          )}
+                        <div className="text-[11px] text-[#64748b] font-medium flex items-center gap-1.5 mt-0.5">
+                          <User className="w-3 h-3 text-slate-400" />
+                          <span>
+                            Actor:{' '}
+                            <strong className="text-[#0d212c] font-semibold">{event.actor}</strong>
+                          </span>
                         </div>
-
-                        {idx < lifecycleSteps.length - 1 && (
-                          <div className="hidden lg:flex items-center justify-center shrink-0 px-1 self-center">
-                            <ArrowRight className="w-5 h-5 text-[#36c0c9] stroke-[2.5]" />
-                          </div>
-                        )}
-                      </React.Fragment>
+                      </div>
                     )
                   })}
                 </div>
+              </div>
+            </div>
+          )
+        ) : (
+          <>
+            {/* Section 1: Assessment lifecycle (Previous Card Theme with horizontal scroll for all 9 steps) */}
+            <div className="flex flex-col gap-2">
+              <h3 className="text-sm font-bold text-[#0d212c]">Assessment lifecycle</h3>
+              <div className="w-full overflow-x-auto pb-2 pt-1 flex items-center gap-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+                {lifecycleSteps.map((step, idx) => {
+                  const isAwaiting = step.status === 'AWAITING'
+
+                  return (
+                    <React.Fragment key={step.title}>
+                      <div className="p-4 rounded-2xl bg-white shadow-xs border border-[#e2e8f0]/60 flex flex-col justify-start gap-2 h-[145px] w-[210px] shrink-0 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <h4
+                            className="font-bold text-[#0d212c] text-sm truncate"
+                            title={step.title}
+                          >
+                            {step.title}
+                          </h4>
+                          {isAwaiting ? (
+                            <Clock className="w-4.5 h-4.5 text-[#b45309] shrink-0" />
+                          ) : (
+                            <CheckCircle2 className="w-4.5 h-4.5 text-white fill-[#137333] shrink-0" />
+                          )}
+                        </div>
+
+                        <div className="flex flex-col gap-0.5">
+                          <p className="text-[11px] text-[#64748b]">{step.actor}</p>
+                          <p className="text-[10px] text-[#64748b] font-medium">{step.time}</p>
+                        </div>
+
+                        {step.hasMeetingUrl && (
+                          <div className="mt-auto pt-1.5 border-t border-[#e2e8f0] flex items-center justify-between gap-1 text-[11px]">
+                            <span
+                              className="text-[#36c0c9] font-medium truncate"
+                              title={meetingUrl}
+                            >
+                              {meetingUrl.replace('https://', '')}
+                            </span>
+                            <button
+                              onClick={handleCopyMeetingUrl}
+                              className="p-1 text-[#64748b] hover:text-[#0d212c] transition cursor-pointer shrink-0 rounded hover:bg-slate-200/60"
+                              title="Copy meeting URL"
+                            >
+                              {copiedUrl ? (
+                                <Check className="w-3.5 h-3.5 text-[#137333]" />
+                              ) : (
+                                <Copy className="w-3.5 h-3.5" />
+                              )}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {idx < lifecycleSteps.length - 1 && (
+                        <div className="flex items-center justify-center shrink-0 px-1">
+                          <ArrowRight className="w-5 h-5 text-[#36c0c9] stroke-[2.5]" />
+                        </div>
+                      )}
+                    </React.Fragment>
+                  )
+                })}
               </div>
             </div>
 
@@ -562,7 +699,9 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                       </span>
                       <StatusChip label="Medium confidence" status="warning" dot={false} />
                     </div>
-                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">7/7 answered</div>
+                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
+                      7/7 answered
+                    </div>
                   </div>
 
                   {/* Column 2: DOCUMENTS */}
@@ -574,7 +713,9 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                       </span>
                       <StatusChip label="Low confidence" status="error" dot={false} />
                     </div>
-                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">3/7 files uploaded</div>
+                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
+                      3/7 files uploaded
+                    </div>
                   </div>
 
                   {/* Column 3: RESEARCH */}
@@ -586,7 +727,9 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                       </span>
                       <StatusChip label="High confidence" status="success" dot={false} />
                     </div>
-                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">4/4 sources verified</div>
+                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
+                      4/4 sources verified
+                    </div>
                   </div>
                 </div>
               </div>
@@ -601,12 +744,18 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                     onClick={() => setIsPlayingAudio(!isPlayingAudio)}
                     className="w-10 h-10 rounded-xl bg-[#0d212c] text-white flex items-center justify-center shadow-xs shrink-0 hover:bg-[#08171f] transition cursor-pointer"
                   >
-                    {isPlayingAudio ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
+                    {isPlayingAudio ? (
+                      <Pause className="w-4 h-4" />
+                    ) : (
+                      <Play className="w-4 h-4 ml-0.5" />
+                    )}
                   </button>
 
                   <div className="flex-1 flex flex-col gap-1">
                     <div className="h-2 w-full bg-[#e2e8f0] rounded-full overflow-hidden">
-                      <div className={`h-full bg-[#36c0c9] ${isPlayingAudio ? 'w-1/3 transition-all duration-1000' : 'w-0'}`} />
+                      <div
+                        className={`h-full bg-[#36c0c9] ${isPlayingAudio ? 'w-1/3 transition-all duration-1000' : 'w-0'}`}
+                      />
                     </div>
                     <div className="flex justify-between text-[11px] text-[#64748b]">
                       <span>0:00</span>
@@ -669,7 +818,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                   {questions.map((q) => {
                     const attachmentsForQuestion = questionFiles[q.id] || []
                     const canUpload = currentStatus !== 'completed' && q.requiresEvidence
-                    const shouldShowAttachmentSection = attachmentsForQuestion.length > 0 || canUpload
+                    const shouldShowAttachmentSection =
+                      attachmentsForQuestion.length > 0 || canUpload
 
                     return (
                       <div key={q.id} className="py-5 first:pt-0 last:pb-0 flex flex-col gap-3">
@@ -721,7 +871,11 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
 
                             <div className="flex flex-col gap-1 text-[#0f766e]">
                               {q.research.links.map((link) => (
-                                <a key={link} href="#" className="hover:underline truncate text-[11px]">
+                                <a
+                                  key={link}
+                                  href="#"
+                                  className="hover:underline truncate text-[11px]"
+                                >
                                   {link}
                                 </a>
                               ))}
@@ -730,63 +884,83 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                         )}
 
                         {shouldShowAttachmentSection && (
-                          <div className="mt-2 pt-3 border-t border-slate-100 flex flex-col gap-3">
-                            <div className="flex flex-wrap items-center justify-between gap-3">
-                              {attachmentsForQuestion.length > 0 && (
-                                <span className="text-xs font-bold text-[#0d212c] flex items-center gap-1.5">
-                                  <Paperclip className="w-3.5 h-3.5 text-[#36c0c9]" />
-                                  <span>Attachments ({attachmentsForQuestion.length})</span>
-                                </span>
-                              )}
-
-                              {canUpload && (
-                                <label className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#36c0c9] hover:bg-[#2cb0b9] text-white font-bold text-xs cursor-pointer transition shadow-2xs shrink-0">
-                                  <Upload className="w-3.5 h-3.5" />
-                                  <span>Upload evidence attachment</span>
-                                  <input
-                                    type="file"
-                                    className="hidden"
-                                    onChange={(e) => handleFileUpload(q.id, e)}
-                                  />
-                                </label>
-                              )}
-                            </div>
-
+                          <div className="mt-3 p-4 sm:p-5 rounded-2xl bg-[#f8fafc] border border-[#e2e8f0] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                            {/* Column 1: Attachments (if available) */}
                             {attachmentsForQuestion.length > 0 && (
-                              <div className="flex flex-wrap gap-3">
-                                {attachmentsForQuestion.map((file, idx) => (
-                                  <div
-                                    key={idx}
-                                    className="p-3 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] inline-flex items-center justify-between gap-4 text-xs w-full sm:w-auto max-w-md shadow-2xs"
-                                  >
-                                    <div className="flex items-center gap-2.5 min-w-0">
-                                      <div className="p-2 rounded-lg bg-[#e8f0fe] text-[#1a73e8] font-bold text-[10px] shrink-0">
-                                        {file.type}
+                              <div className="flex flex-col gap-2.5 min-w-0 flex-1">
+                                <div className="flex items-center gap-1.5 text-xs font-bold text-[#0d212c]">
+                                  <Paperclip className="w-4 h-4 text-[#0d7280]" />
+                                  <span>Attachments ({attachmentsForQuestion.length})</span>
+                                </div>
+                                <div className="flex flex-wrap gap-3">
+                                  {attachmentsForQuestion.map((file, idx) => (
+                                    <div
+                                      key={idx}
+                                      className="p-3 rounded-xl border border-[#e2e8f0] bg-white inline-flex items-center justify-between gap-4 text-xs w-full sm:w-auto min-w-[300px] shadow-2xs"
+                                    >
+                                      <div className="flex items-center gap-2.5 min-w-0">
+                                        <div className="px-2.5 py-1 rounded-lg bg-[#eff6ff] text-[#2563eb] font-bold text-[10px] shrink-0">
+                                          {file.type}
+                                        </div>
+                                        <div className="min-w-0">
+                                          <h5 className="font-bold text-xs text-[#0d212c] truncate">
+                                            {file.name}
+                                          </h5>
+                                          <span className="text-[10px] text-[#64748b] block">
+                                            {file.size} • {file.date}
+                                          </span>
+                                        </div>
                                       </div>
-                                      <div className="min-w-0">
-                                        <h5 className="font-bold text-xs text-[#0d212c] truncate">{file.name}</h5>
-                                        <span className="text-[10px] text-[#64748b] block">{file.size} • {file.date}</span>
-                                      </div>
-                                    </div>
 
-                                    <div className="flex items-center gap-1 shrink-0">
-                                      <button
-                                        onClick={() => alert(`Viewing ${file.name}...`)}
-                                        className="p-1 text-[#64748b] hover:text-[#0d212c] cursor-pointer"
-                                        title="View file"
-                                      >
-                                        <Eye className="w-3.5 h-3.5" />
-                                      </button>
-                                      <button
-                                        onClick={() => alert(`Downloading ${file.name}...`)}
-                                        className="p-1 text-[#64748b] hover:text-[#0d212c] cursor-pointer"
-                                        title="Download file"
-                                      >
-                                        <Download className="w-3.5 h-3.5" />
-                                      </button>
+                                      <div className="flex items-center gap-1 shrink-0">
+                                        <button
+                                          onClick={() => alert(`Viewing ${file.name}...`)}
+                                          className="p-1 text-[#64748b] hover:text-[#0d212c] cursor-pointer"
+                                          title="View file"
+                                        >
+                                          <Eye className="w-3.5 h-3.5" />
+                                        </button>
+                                        <button
+                                          onClick={() => alert(`Downloading ${file.name}...`)}
+                                          className="p-1 text-[#64748b] hover:text-[#0d212c] cursor-pointer"
+                                          title="Download file"
+                                        >
+                                          <Download className="w-3.5 h-3.5" />
+                                        </button>
+                                      </div>
                                     </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Column 2: Evidence Section (Shown ONLY if evidence is NOT uploaded yet) */}
+                            {attachmentsForQuestion.length === 0 && (
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 flex-1">
+                                <div className="flex flex-col gap-0.5">
+                                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#0d212c] mb-1">
+                                    <ShieldCheck className="w-4 h-4 text-[#0d7280]" />
+                                    <span>Evidence</span>
                                   </div>
-                                ))}
+                                  <span className="text-xs font-bold text-[#0d212c]">
+                                    No evidence uploaded yet
+                                  </span>
+                                  <span className="text-[11px] text-[#64748b]">
+                                    Upload supporting evidence for this answer.
+                                  </span>
+                                </div>
+
+                                {canUpload && (
+                                  <label className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-white border border-[#0d7280] text-[#0d7280] hover:bg-[#f0fdfa] font-bold text-xs cursor-pointer transition shadow-2xs shrink-0 self-start sm:self-center">
+                                    <Upload className="w-3.5 h-3.5 text-[#0d7280]" />
+                                    <span>Upload evidence</span>
+                                    <input
+                                      type="file"
+                                      className="hidden"
+                                      onChange={(e) => handleFileUpload(q.id, e)}
+                                    />
+                                  </label>
+                                )}
                               </div>
                             )}
                           </div>

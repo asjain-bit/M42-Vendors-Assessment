@@ -24,10 +24,10 @@ export const Toast: React.FC<ToastProps> = ({
   }
 
   const containerStyles: Record<NonNullable<ToastProps['type']>, string> = {
-    success: 'bg-status-success-bg border-status-success-border text-status-success-text',
-    warning: 'bg-status-warning-bg border-status-warning-border text-status-warning-text',
-    error: 'bg-status-error-bg border-status-error-border text-status-error-text',
-    info: 'bg-status-info-bg border-status-info-border text-status-info-text',
+    success: 'bg-[#f0fdf4] border-[#bbf7d0] text-[#15803d]',
+    warning: 'bg-[#fffbeb] border-[#fde68a] text-[#b45309]',
+    error: 'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]',
+    info: 'bg-[#f0f9ff] border-[#bae6fd] text-[#0369a1]',
   }
 
   return (

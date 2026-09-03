@@ -193,10 +193,10 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full">
-      {/* Toast Notification */}
+      {/* Toast Notification — subtle light semantic styling */}
       {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-[#0d212c] text-white px-4 py-3 rounded-xl shadow-xl border border-[#36c0c9]/50 flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <Check className="w-4 h-4 text-[#36c0c9]" />
+        <div className="fixed top-4 right-4 z-50 bg-[#f0fdf4] text-[#15803d] px-4 py-3 rounded-xl shadow-md border border-[#bbf7d0] flex items-center gap-3 animate-in slide-in-from-top duration-300">
+          <Check className="w-4 h-4 text-[#16a34a]" />
           <span className="text-sm font-medium">{toastMessage}</span>
         </div>
       )}

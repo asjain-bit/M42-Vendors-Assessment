@@ -1,7 +1,18 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Upload, Trash2, FileText, X, Pencil, ChevronLeft, ChevronRight, Info, Download } from 'lucide-react'
+import {
+  Upload,
+  Trash2,
+  FileText,
+  X,
+  Pencil,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  Download,
+  AlertTriangle,
+} from 'lucide-react'
 import { Input } from '@/components/atoms/Input'
 import { Textarea } from '@/components/atoms/Textarea'
 import { StatusChip } from '@/components/atoms/StatusChip'
@@ -17,7 +28,8 @@ interface Questionnaire {
 }
 
 export const QuestionnairesScreen: React.FC = () => {
-  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState<QuestionnaireDetailData | null>(null)
+  const [selectedQuestionnaire, setSelectedQuestionnaire] =
+    useState<QuestionnaireDetailData | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const ITEMS_PER_PAGE = 8
 
@@ -25,7 +37,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-1',
       title: 'Technical Questionnaire',
-      description: 'Core architectural, clinical risk, and technical data pipeline compliance questionnaire.',
+      description:
+        'Core architectural, clinical risk, and technical data pipeline compliance questionnaire.',
       fileType: 'PDF',
       questionsCount: 62,
       status: 'Ready',
@@ -33,7 +46,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-2',
       title: 'Data Protection & Privacy',
-      description: 'Comprehensive 45-question audit covering ISMS policies, encryption controls, access management, and incident response.',
+      description:
+        'Comprehensive 45-question audit covering ISMS policies, encryption controls, access management, and incident response.',
       fileType: 'PDF',
       questionsCount: 45,
       status: 'Ready',
@@ -41,7 +55,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-3',
       title: 'Presight Technical & Compliance',
-      description: 'Presight AI platform-specific integration safety, API authorization, and model governance audit.',
+      description:
+        'Presight AI platform-specific integration safety, API authorization, and model governance audit.',
       fileType: 'DOCX',
       questionsCount: 50,
       status: 'Draft',
@@ -49,7 +64,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-4',
       title: 'Information Security & Compliance',
-      description: 'Trust Services Criteria evaluation for security, availability, processing integrity, confidentiality, and privacy.',
+      description:
+        'Trust Services Criteria evaluation for security, availability, processing integrity, confidentiality, and privacy.',
       fileType: 'DOCX',
       questionsCount: 38,
       status: 'Ready',
@@ -57,7 +73,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-5',
       title: 'SOC 2 Type II Vendor Risk Assessment',
-      description: 'SOC 2 Type II controls auditing third-party hosting, access controls, and data residency.',
+      description:
+        'SOC 2 Type II controls auditing third-party hosting, access controls, and data residency.',
       fileType: 'PDF',
       questionsCount: 32,
       status: 'Ready',
@@ -65,7 +82,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-6',
       title: 'HIPAA & Healthcare Data Compliance Checklist',
-      description: 'PHI safeguarding, EHR system integrations, BAA agreements, and UAE DOH data residency verification.',
+      description:
+        'PHI safeguarding, EHR system integrations, BAA agreements, and UAE DOH data residency verification.',
       fileType: 'PDF',
       questionsCount: 29,
       status: 'Draft',
@@ -73,7 +91,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-7',
       title: 'Third-Party Software Supply Chain Security',
-      description: 'SaaS dependency scanning, SBOM verification, open-source license compliance, and vulnerability disclosure policies.',
+      description:
+        'SaaS dependency scanning, SBOM verification, open-source license compliance, and vulnerability disclosure policies.',
       fileType: 'MD',
       questionsCount: 20,
       status: 'Ready',
@@ -81,7 +100,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-8',
       title: 'ISO 27001 ISMS Security Checklist',
-      description: 'Information Security Management System policies and annual audit verification checklist.',
+      description:
+        'Information Security Management System policies and annual audit verification checklist.',
       fileType: 'PDF',
       questionsCount: 40,
       status: 'Ready',
@@ -89,7 +109,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-9',
       title: 'Cloud Infrastructure Audit Questionnaire',
-      description: 'Multi-cloud tenant isolation, IAM role hierarchy, and automated vulnerability remediation audit.',
+      description:
+        'Multi-cloud tenant isolation, IAM role hierarchy, and automated vulnerability remediation audit.',
       fileType: 'PDF',
       questionsCount: 35,
       status: 'Draft',
@@ -97,7 +118,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-10',
       title: 'Clinical AI Safety & Ethics Questionnaire',
-      description: 'Algorithmic bias testing, patient safety monitoring, and diagnostic model performance auditing.',
+      description:
+        'Algorithmic bias testing, patient safety monitoring, and diagnostic model performance auditing.',
       fileType: 'DOCX',
       questionsCount: 48,
       status: 'Ready',
@@ -105,7 +127,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-11',
       title: 'UAE DOH Health Data Residency Compliance',
-      description: 'Verification of data residency, local cloud node hosting, and UAE Ministry of Health compliance.',
+      description:
+        'Verification of data residency, local cloud node hosting, and UAE Ministry of Health compliance.',
       fileType: 'PDF',
       questionsCount: 25,
       status: 'Ready',
@@ -113,7 +136,8 @@ export const QuestionnairesScreen: React.FC = () => {
     {
       id: 'q-12',
       title: 'Business Continuity & Disaster Recovery Audit',
-      description: 'RTO/RPO targets, failover drills, offsite backup verification, and incident management procedures.',
+      description:
+        'RTO/RPO targets, failover drills, offsite backup verification, and incident management procedures.',
       fileType: 'PDF',
       questionsCount: 30,
       status: 'Ready',
@@ -157,7 +181,8 @@ export const QuestionnairesScreen: React.FC = () => {
       const newQuestionnaire: Questionnaire = {
         id: `q-${Date.now()}`,
         title,
-        description: description || `Custom vendor compliance checklist parsed from ${uploadedFile.name}.`,
+        description:
+          description || `Custom vendor compliance checklist parsed from ${uploadedFile.name}.`,
         fileType: extension || 'PDF',
         questionsCount: Math.floor(Math.random() * 20) + 15,
         status: 'Draft',
@@ -202,10 +227,10 @@ export const QuestionnairesScreen: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-6 w-full px-6 lg:px-10 py-4 text-[#0d212c]">
-      {/* Toast Notification */}
+      {/* Toast Notification — subtle light semantic styling */}
       {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-[#0d212c] text-white px-4 py-3 rounded-xl shadow-xl border border-[#36c0c9]/50 flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <FileText className="w-4 h-4 text-[#36c0c9]" />
+        <div className="fixed top-4 right-4 z-50 bg-[#f0fdf4] text-[#15803d] px-4 py-3 rounded-xl shadow-md border border-[#bbf7d0] flex items-center gap-3 animate-in slide-in-from-top duration-300">
+          <FileText className="w-4 h-4 text-[#16a34a]" />
           <span className="text-sm font-medium">{toastMessage}</span>
         </div>
       )}
@@ -278,7 +303,10 @@ export const QuestionnairesScreen: React.FC = () => {
                   </td>
                   {/* Requirement 4: Delete icon color is red with hover interaction removed */}
                   <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
+                    <div
+                      className="flex items-center justify-end gap-1.5"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <button
                         onClick={() =>
                           setSelectedQuestionnaire({
@@ -366,9 +394,7 @@ export const QuestionnairesScreen: React.FC = () => {
           <div className="bg-white rounded-3xl max-w-3xl w-full p-8 shadow-2xl border border-[#e2e8f0] animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-4 mb-6">
               <div>
-                <h3 className="text-lg font-extrabold text-[#0d212c]">
-                  Upload questionnaire
-                </h3>
+                <h3 className="text-lg font-extrabold text-[#0d212c]">Upload questionnaire</h3>
                 <p className="text-xs text-[#64748b] mt-0.5 font-medium">
                   Upload custom compliance checklist document for AI automated parsing.
                 </p>
@@ -398,9 +424,7 @@ export const QuestionnairesScreen: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#0d212c] mb-2">
-                  Description
-                </label>
+                <label className="block text-xs font-bold text-[#0d212c] mb-2">Description</label>
                 <Textarea
                   placeholder="Brief summary of what this questionnaire covers..."
                   value={description}
@@ -414,12 +438,14 @@ export const QuestionnairesScreen: React.FC = () => {
               <div>
                 <div className="flex items-center gap-1.5 mb-2">
                   <label className="block text-xs font-bold text-[#0d212c]">
-                    Document upload (PDF, DOCX, MD - Max 1 file, up to 20 MB) <span className="text-red-500 font-bold">*</span>
+                    Document upload (PDF, DOCX, MD - Max 1 file, up to 20 MB){' '}
+                    <span className="text-red-500 font-bold">*</span>
                   </label>
                   <div className="relative group cursor-pointer">
                     <Info className="w-3.5 h-3.5 text-[#64748b]" />
                     <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-6 z-50 w-64 bg-[#0d212c] text-white text-xs p-2.5 rounded-xl shadow-xl border border-white/10 text-center">
-                      The questionnaire will be created based on the document you will be uploading, which can be edited later on.
+                      The questionnaire will be created based on the document you will be uploading,
+                      which can be edited later on.
                     </div>
                   </div>
                 </div>
@@ -468,7 +494,9 @@ export const QuestionnairesScreen: React.FC = () => {
 
                 <div className="mt-3 p-3.5 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] flex flex-col gap-2">
                   <p className="text-[11px] text-[#64748b] leading-relaxed">
-                    <strong>Note:</strong> Please make sure to include all questions in the specified format along with all response details. Below is the reference template which you can download.
+                    <strong>Note:</strong> Please make sure to include all questions in the
+                    specified format along with all response details. Below is the reference
+                    template which you can download.
                   </p>
                   <button
                     type="button"
@@ -505,23 +533,27 @@ export const QuestionnairesScreen: React.FC = () => {
       {/* Delete Questionnaire Confirmation Modal Popup (Center Aligned) */}
       {deletingId && (
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-[#e2e8f0] animate-in fade-in zoom-in-95 duration-150 text-center flex flex-col items-center">
-            <h3 className="text-lg font-bold text-[#0d212c] mb-2">
-              Confirm deletion
-            </h3>
-            <p className="text-xs text-[#64748b] mb-6">
-              Are you sure you want to remove this questionnaire template? This action cannot be undone.
-            </p>
-            <div className="flex justify-center gap-3 w-full">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-8 sm:p-10 shadow-2xl border border-[#e2e8f0] animate-in fade-in zoom-in-95 duration-150 text-center flex flex-col items-center gap-4 min-h-[240px] justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100 shadow-2xs">
+              <AlertTriangle className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-extrabold text-[#0d212c] mb-1.5">Confirm deletion</h3>
+              <p className="text-xs text-[#64748b] leading-relaxed max-w-md">
+                Are you sure you want to remove this questionnaire template? This action is
+                permanent and cannot be undone.
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 w-full mt-2">
               <button
                 onClick={() => setDeletingId(null)}
-                className="px-4 py-2 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#0d212c] hover:bg-slate-50 cursor-pointer flex-1"
+                className="px-6 py-3 rounded-xl border border-[#e2e8f0] text-xs font-bold text-[#0d212c] hover:bg-slate-50 cursor-pointer flex-1 bg-transparent transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDelete}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer flex-1"
+                className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer flex-1 border-0 transition shadow-2xs"
               >
                 Delete template
               </button>

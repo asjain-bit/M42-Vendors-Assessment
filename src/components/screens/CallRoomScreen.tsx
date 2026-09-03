@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { Mic, MicOff, MonitorUp, MessageSquare, DoorOpen, PauseCircle, PlayCircle, CheckCircle2 } from 'lucide-react'
 import { VendorDispatchData } from './ConfigureVendorCallScreen'
 
-type CallRoomState = 'join' | 'waiting' | 'left'
+type CallRoomState = 'join' | 'waiting' | 'left' | 'finalised'
 
 interface TranscriptEntry {
   speaker: 'Sam' | 'Vendor'
@@ -190,6 +190,69 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
     )
   }
 
+  // ─── FINALISED SCREEN ─────────────────────────────────────────────────────────
+  if (roomState === 'finalised') {
+    return (
+      <div className="fixed inset-0 z-[9999] bg-[#f8fafc] flex flex-col items-center justify-center p-6 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-[#ddf7f9]/20 blur-3xl" />
+        </div>
+
+        <div className="relative bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-8 max-w-md w-full flex flex-col gap-5">
+          <div className="flex flex-col items-center text-center gap-3">
+            <Image src="/dark-logo.png" alt="M42" width={72} height={28} className="object-contain" />
+            <div className="w-12 h-12 rounded-full bg-[#ddf7f9] flex items-center justify-center">
+              <CheckCircle2 className="w-6 h-6 text-[#0d7280]" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <h2 className="text-xl font-extrabold text-[#0d212c]">Assessment finalised</h2>
+              <p className="text-xs text-[#64748b] leading-relaxed">
+                The call has ended for all participants. The transcript and audit log have been saved.
+              </p>
+            </div>
+          </div>
+
+          {/* Transcript preview */}
+          <div className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] p-4 flex flex-col gap-3 max-h-[260px] overflow-y-auto">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#64748b]">Call Transcript</span>
+            {sampleTranscript.map((entry, idx) => (
+              <div key={idx} className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className={`text-[10px] font-extrabold ${entry.speaker === 'Sam' ? 'text-[#0d7280]' : 'text-[#0d212c]'}`}>
+                    {entry.speaker}
+                  </span>
+                  <span className="text-[9px] text-[#94a3b8]">{entry.time}</span>
+                </div>
+                <p className="text-xs text-[#0d212c] leading-relaxed">{entry.text}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Actions */}
+          <div className="flex flex-col gap-2">
+            <button
+              id="callroom-download-transcript-btn"
+              onClick={() => alert('Downloading transcript...')}
+              className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0 flex items-center justify-center gap-2"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Download transcript
+            </button>
+            <button
+              onClick={() => {
+                if (onExitToVendors) onExitToVendors()
+                else onBack()
+              }}
+              className="w-full bg-transparent hover:bg-slate-100 text-[#64748b] hover:text-[#0d212c] font-semibold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
+            >
+              Back to vendors
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // ─── LEFT CALL SCREEN ─────────────────────────────────────────────────────────
   if (roomState === 'left') {
     return (
@@ -288,7 +351,7 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => { setShowFinaliseConfirm(false); setRoomState('left') }}
+                onClick={() => { setShowFinaliseConfirm(false); setRoomState('finalised') }}
                 className="flex-1 bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
               >
                 End & Finalise
@@ -576,24 +639,17 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
           <span className="text-[9px] text-[#94a3b8] font-medium">Finalise</span>
         </div>
 
-        {/* Leave */}
-        <div className="flex flex-col items-center gap-0.5 relative group">
-          <div className="relative">
-            <button
-              id="callroom-leave-btn"
-              onClick={() => setShowLeaveConfirm(true)}
-              title="Leave call"
-              className="h-10 px-4 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-1.5 transition cursor-pointer border-0 shadow-md font-bold text-xs"
-            >
-              <DoorOpen className="w-3.5 h-3.5" />
-              <span>Leave</span>
-            </button>
-
-            {/* Tooltip: Admin only */}
-            <div className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-[#0d212c] text-white text-[10px] font-medium px-2.5 py-1.5 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50">
-              This will not be there for vendor
-            </div>
-          </div>
+        {/* Leave — no tooltip, visible to vendor too */}
+        <div className="flex flex-col items-center gap-0.5">
+          <button
+            id="callroom-leave-btn"
+            onClick={() => setShowLeaveConfirm(true)}
+            title="Leave call"
+            className="h-10 px-4 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center gap-1.5 transition cursor-pointer border-0 shadow-md font-bold text-xs"
+          >
+            <DoorOpen className="w-3.5 h-3.5" />
+            <span>Leave</span>
+          </button>
           <span className="text-[9px] text-[#94a3b8] font-medium">Leave</span>
         </div>
       </div>

@@ -23,6 +23,7 @@ import {
   Bot,
   Mail,
   FileText,
+  MessageSquare,
 } from 'lucide-react'
 import { StatusChip } from '@/components/atoms/StatusChip'
 
@@ -330,8 +331,11 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       <div className="w-full px-6 lg:px-10 py-3 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <h1 className="text-xl lg:text-2xl font-extrabold tracking-tight text-[#0d212c]">
-            Presight AI | See the Future Today
+            {assessment.vendor}
           </h1>
+          <h2 className="text-sm font-bold text-[#64748b]">
+            {assessment.questionnaire}
+          </h2>
           <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b] mt-0.5">
             <StatusChip
               label={
@@ -497,7 +501,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                         {/* Requirement 1: Height matched to Meeting Scheduled card (h-[145px]), text top aligned (justify-start) */}
                         <div className="p-4 rounded-2xl bg-white shadow-xs border border-[#e2e8f0]/60 flex-1 flex flex-col justify-start gap-2 h-[145px] min-w-0">
                           <div className="flex items-center justify-between gap-2">
-                            <h4 className="font-bold text-[#0d212c] text-sm truncate">{step.title}</h4>
+                            <h4 className="font-bold text-[#0d212c] text-sm truncate" title={step.title}>{step.title}</h4>
                             <CheckCircle2 className="w-4.5 h-4.5 text-white fill-[#137333] shrink-0" />
                           </div>
 
@@ -552,7 +556,10 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                   {/* Column 1: ANSWERS */}
                   <div className="py-3 md:py-0 md:pr-6 flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider">ANSWERS</span>
+                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        ANSWERS
+                      </span>
                       <StatusChip label="Medium confidence" status="warning" dot={false} />
                     </div>
                     <div className="text-base font-extrabold text-[#0d212c] mt-0.5">7/7 answered</div>
@@ -561,7 +568,10 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                   {/* Column 2: DOCUMENTS */}
                   <div className="py-3 md:py-0 md:px-6 flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider">DOCUMENTS</span>
+                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
+                        <FileText className="w-3.5 h-3.5" />
+                        DOCUMENTS
+                      </span>
                       <StatusChip label="Low confidence" status="error" dot={false} />
                     </div>
                     <div className="text-base font-extrabold text-[#0d212c] mt-0.5">3/7 files uploaded</div>
@@ -570,7 +580,10 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                   {/* Column 3: RESEARCH */}
                   <div className="py-3 md:py-0 md:pl-6 flex flex-col gap-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider">RESEARCH</span>
+                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
+                        <Bot className="w-3.5 h-3.5" />
+                        EVALUATION
+                      </span>
                       <StatusChip label="High confidence" status="success" dot={false} />
                     </div>
                     <div className="text-base font-extrabold text-[#0d212c] mt-0.5">4/4 sources verified</div>

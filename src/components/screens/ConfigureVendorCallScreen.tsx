@@ -48,7 +48,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   const [showAllVoices, setShowAllVoices] = useState(false)
   const [playingVoiceId, setPlayingVoiceId] = useState<string | null>(null)
   const [timing, setTiming] = useState<'now' | 'later'>('now')
-  const [scheduleDate, setScheduleDate] = useState('2026-09-02')
+  const todayStr = new Date().toISOString().split('T')[0]
+  const [scheduleDate, setScheduleDate] = useState(todayStr)
   const [startTime, setStartTime] = useState('10:30 AM')
   const [endTime, setEndTime] = useState('12:30 PM')
   
@@ -769,6 +770,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         <input
                           type="date"
                           value={scheduleDate}
+                          min={new Date().toISOString().split('T')[0]}
                           onChange={(e) => setScheduleDate(e.target.value)}
                           className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
                         />
@@ -804,12 +806,16 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                             list="end-time-slots"
                             value={endTime}
                             onChange={(e) => setEndTime(e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                            className={`w-full px-3 py-2 rounded-xl border bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] ${
+                              isTimeInvalid ? 'border-red-400' : 'border-[#e2e8f0]'
+                            }`}
                           />
                           <datalist id="end-time-slots">
-                            {timeSlots.map((t) => (
-                              <option key={t} value={t} />
-                            ))}
+                            {timeSlots
+                              .filter((t) => getTimeIndex(t) > getTimeIndex(startTime))
+                              .map((t) => (
+                                <option key={t} value={t} />
+                              ))}
                           </datalist>
                         </div>
                       </div>

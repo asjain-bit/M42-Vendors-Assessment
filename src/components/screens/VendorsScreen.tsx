@@ -28,6 +28,8 @@ interface VendorRow {
   flag: string
   status: string
   score: string
+  website?: string
+  recipients?: string[]
 }
 
 interface SearchVendorResult {
@@ -82,6 +84,10 @@ export const VendorsScreen: React.FC = () => {
   const [editingVendor, setEditingVendor] = useState<VendorRow | null>(null)
   const [deletingVendor, setDeletingVendor] = useState<VendorRow | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
+
+  // Edit vendor recipients tag input state
+  const [editRecipientInput, setEditRecipientInput] = useState('')
+  const [editRecipientError, setEditRecipientError] = useState<string | null>(null)
 
   const worldCountryOptions = [
     { name: 'United Arab Emirates', flag: '🇦🇪' },
@@ -644,7 +650,7 @@ export const VendorsScreen: React.FC = () => {
                 Edit vendor details
               </h3>
               <button
-                onClick={() => setEditingVendor(null)}
+                onClick={() => { setEditingVendor(null); setEditRecipientInput(''); setEditRecipientError(null) }}
                 className="p-1 rounded-lg text-slate-400 hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent"
               >
                 <X className="w-5 h-5" />
@@ -652,9 +658,10 @@ export const VendorsScreen: React.FC = () => {
             </div>
 
             <form onSubmit={handleSaveEditedVendor} className="flex flex-col gap-4">
+              {/* Vendor name */}
               <div>
                 <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                  Display name <span className="text-red-500 font-bold">*</span>
+                  Vendor name <span className="text-red-500 font-bold">*</span>
                 </label>
                 <input
                   type="text"
@@ -665,19 +672,7 @@ export const VendorsScreen: React.FC = () => {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                  Vendor email <span className="text-red-500 font-bold">*</span>
-                </label>
-                <input
-                  type="email"
-                  value={editingVendor.email}
-                  onChange={(e) => setEditingVendor({ ...editingVendor, email: e.target.value })}
-                  required
-                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                />
-              </div>
-
+              {/* Country */}
               <div>
                 <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
                   Country
@@ -702,10 +697,71 @@ export const VendorsScreen: React.FC = () => {
                 </select>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-[#e2e8f0]">
+              {/* Website URL */}
+              <div>
+                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                  Website URL
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://example.com"
+                  value={editingVendor.website || ''}
+                  onChange={(e) => setEditingVendor({ ...editingVendor, website: e.target.value })}
+                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                />
+              </div>
+
+              {/* Recipients tag input */}
+              <div className="flex flex-col gap-1.5">
+                <label className="block text-xs font-bold text-[#0d212c]">
+                  Recipients
+                </label>
+                <input
+                  type="text"
+                  placeholder="Type email and press Enter"
+                  value={editRecipientInput}
+                  onChange={(e) => { setEditRecipientInput(e.target.value); setEditRecipientError(null) }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault()
+                      const trimmed = editRecipientInput.trim().replace(/,/g, '')
+                      if (!trimmed) return
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                      if (!emailRegex.test(trimmed)) { setEditRecipientError('Please enter a valid email address.'); return }
+                      const existingRecipients = editingVendor.recipients || []
+                      if (existingRecipients.includes(trimmed)) { setEditRecipientError('This email has already been added.'); return }
+                      setEditingVendor({ ...editingVendor, recipients: [...existingRecipients, trimmed] })
+                      setEditRecipientInput('')
+                      setEditRecipientError(null)
+                    }
+                  }}
+                  className={`w-full px-3.5 py-2 rounded-xl border text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] ${
+                    editRecipientError ? 'border-red-500' : 'border-[#e2e8f0]'
+                  }`}
+                />
+                {editRecipientError && <span className="text-xs text-red-600">{editRecipientError}</span>}
+                {(editingVendor.recipients || []).length > 0 && (
+                  <div className="flex items-center gap-2 flex-wrap pt-1">
+                    {(editingVendor.recipients || []).map((rec) => (
+                      <span key={rec} className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]">
+                        {rec}
+                        <button
+                          type="button"
+                          onClick={() => setEditingVendor({ ...editingVendor, recipients: (editingVendor.recipients || []).filter(r => r !== rec) })}
+                          className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => setEditingVendor(null)}
+                  onClick={() => { setEditingVendor(null); setEditRecipientInput(''); setEditRecipientError(null) }}
                   className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#0d212c] hover:bg-slate-50 cursor-pointer bg-transparent"
                 >
                   Cancel

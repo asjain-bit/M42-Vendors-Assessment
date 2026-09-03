@@ -1,7 +1,22 @@
 'use client'
 
-import React, { useState } from 'react'
-import { Check, ChevronDown, Clock, ShieldCheck, ArrowRight, ArrowLeft, Volume2, Play, Pause, Copy, SlidersHorizontal, ChevronUp, X, CircleDot } from 'lucide-react'
+import React, { useState, useMemo } from 'react'
+import {
+  Check,
+  ChevronDown,
+  Clock,
+  ShieldCheck,
+  ArrowRight,
+  ArrowLeft,
+  Volume2,
+  Play,
+  Pause,
+  Copy,
+  SlidersHorizontal,
+  ChevronUp,
+  X,
+  CircleDot,
+} from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
 import { CallRoomScreen } from './CallRoomScreen'
 
@@ -27,6 +42,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   onComplete,
 }) => {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1)
+  const [hasCompletedStep2, setHasCompletedStep2] = useState(false)
   const [isDispatched, setIsDispatched] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
   const [showCallRoom, setShowCallRoom] = useState(false)
@@ -34,10 +50,10 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   // Step 1 states (empty by default)
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState('')
   const [roundLabel, setRoundLabel] = useState('')
-  
+
   // Estimated duration is auto-populated and non-editable
-  const estimatedDuration = '135-205 min'
-  
+  const estimatedDuration = '60-120 minutes'
+
   // Recipients tag state with email validation
   const [recipientInput, setRecipientInput] = useState('')
   const [recipients, setRecipients] = useState<string[]>([])
@@ -52,7 +68,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   const [scheduleDate, setScheduleDate] = useState(todayStr)
   const [startTime, setStartTime] = useState('10:30 AM')
   const [endTime, setEndTime] = useState('12:30 PM')
-  
+
   // Primary Timezone: GST (UTC+4)
   const [timezone, setTimezone] = useState('GST - Gulf Standard Time (UTC+4)')
 
@@ -71,9 +87,24 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
   // Requirement 6: Full text "Marin Agent recommended" chip used without truncation
   const primaryVoiceOptions = [
-    { id: 'Marin', label: 'Marin', recommended: true, desc: 'Warm and steady. Keeps vendor teams at ease.' },
-    { id: 'Ash', label: 'Ash', recommended: false, desc: 'Crisp and direct. Suits fast-moving walkthroughs.' },
-    { id: 'Coral', label: 'Coral', recommended: false, desc: 'Bright and encouraging. Ideal for onboarding.' },
+    {
+      id: 'Marin',
+      label: 'Marin',
+      recommended: true,
+      desc: 'Warm and steady. Keeps vendor teams at ease.',
+    },
+    {
+      id: 'Ash',
+      label: 'Ash',
+      recommended: false,
+      desc: 'Crisp and direct. Suits fast-moving walkthroughs.',
+    },
+    {
+      id: 'Coral',
+      label: 'Coral',
+      recommended: false,
+      desc: 'Bright and encouraging. Ideal for onboarding.',
+    },
   ]
 
   const extraVoiceOptions = [
@@ -86,18 +117,94 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
     { id: 'Breeze', label: 'Breeze', desc: 'Soft and reassuring auditor.' },
   ]
 
-  // 24 time slot options for dropdown selection & manual typing
+  // 15-minute interval time slot options
   const timeSlots = [
-    '08:00 AM', '08:30 AM', '09:00 AM', '09:30 AM', '10:00 AM', '10:30 AM',
-    '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM', '01:00 PM', '01:30 PM',
-    '02:00 PM', '02:30 PM', '03:00 PM', '03:30 PM', '04:00 PM', '04:30 PM',
-    '05:00 PM', '05:30 PM', '06:00 PM', '06:30 PM', '07:00 PM', '07:30 PM',
+    '08:00 AM',
+    '08:15 AM',
+    '08:30 AM',
+    '08:45 AM',
+    '09:00 AM',
+    '09:15 AM',
+    '09:30 AM',
+    '09:45 AM',
+    '10:00 AM',
+    '10:15 AM',
+    '10:30 AM',
+    '10:45 AM',
+    '11:00 AM',
+    '11:15 AM',
+    '11:30 AM',
+    '11:45 AM',
+    '12:00 PM',
+    '12:15 PM',
+    '12:30 PM',
+    '12:45 PM',
+    '01:00 PM',
+    '01:15 PM',
+    '01:30 PM',
+    '01:45 PM',
+    '02:00 PM',
+    '02:15 PM',
+    '02:30 PM',
+    '02:45 PM',
+    '03:00 PM',
+    '03:15 PM',
+    '03:30 PM',
+    '03:45 PM',
+    '04:00 PM',
+    '04:15 PM',
+    '04:30 PM',
+    '04:45 PM',
+    '05:00 PM',
+    '05:15 PM',
+    '05:30 PM',
+    '05:45 PM',
+    '06:00 PM',
+    '06:15 PM',
+    '06:30 PM',
+    '06:45 PM',
+    '07:00 PM',
+    '07:15 PM',
+    '07:30 PM',
+    '07:45 PM',
+    '08:00 PM',
   ]
 
-  const callJoinLink = 'https://tech-due-diligence.delphiprojects.app/call/E0exXCogAvq0Owdr3qbYhU0vt1CQdBuIFIJN18D6wZM'
+  const callJoinLink =
+    'https://tech-due-diligence.delphiprojects.app/call/E0exXCogAvq0Owdr3qbYhU0vt1CQdBuIFIJN18D6wZM'
+
+  // Convert "HH:MM AM/PM" to minutes from midnight
+  const timeToMinutes = (timeStr: string): number => {
+    if (!timeStr) return -1
+    const match = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i)
+    if (!match) return -1
+    let hours = parseInt(match[1], 10)
+    const minutes = parseInt(match[2], 10)
+    const period = match[3].toUpperCase()
+    if (period === 'PM' && hours < 12) hours += 12
+    if (period === 'AM' && hours === 12) hours = 0
+    return hours * 60 + minutes
+  }
+
+  // Handle Start Time changes: revalidate End Time & clear if now invalid
+  const handleStartTimeChange = (newStart: string) => {
+    setStartTime(newStart)
+    if (!newStart) {
+      setEndTime('')
+      return
+    }
+    if (endTime) {
+      const startM = timeToMinutes(newStart)
+      const endM = timeToMinutes(endTime)
+      if (startM < 0 || endM <= startM) {
+        setEndTime('')
+      }
+    }
+  }
 
   // Step 1 Validation: Questionnaire, Round Label, and at least 1 Recipient are mandatory
-  const isStep1Valid = selectedQuestionnaire.trim() !== '' && roundLabel.trim() !== '' && recipients.length > 0
+  const isStep1Valid =
+    selectedQuestionnaire.trim() !== '' && roundLabel.trim() !== '' && recipients.length > 0
 
   // Email validation on Enter key press
   const handleKeyDownRecipient = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -147,11 +254,58 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   }
 
   // Time validation helper
-  const getTimeIndex = (timeStr: string) => timeSlots.indexOf(timeStr)
-  const isTimeInvalid = timing === 'later' && getTimeIndex(startTime) >= getTimeIndex(endTime) && getTimeIndex(startTime) !== -1 && getTimeIndex(endTime) !== -1
+  const isTimeInvalid =
+    timing === 'later' &&
+    Boolean(startTime) &&
+    Boolean(endTime) &&
+    timeToMinutes(endTime) <= timeToMinutes(startTime)
 
-  // Format meeting time range string for Call Summary (Requirement 8)
-  const formattedTimeRange = `${startTime} - ${endTime} GST`
+  // Step 2 Validation: Voice selected and, if scheduled later, date and valid start/end times selected
+  const isStep2Valid =
+    selectedVoice.trim() !== '' &&
+    (timing === 'now' ||
+      (Boolean(scheduleDate) && Boolean(startTime) && Boolean(endTime) && !isTimeInvalid))
+
+  // Step 3 is unlocked strictly after Step 1 is valid, Step 2 is valid, and Step 2 has been submitted/visited
+  const isStep3Unlocked = isStep1Valid && isStep2Valid && (currentStep === 3 || hasCompletedStep2)
+
+  // Calculate duration between Start and End Time
+  const durationText = useMemo(() => {
+    if (!startTime || !endTime) return null
+    const startM = timeToMinutes(startTime)
+    const endM = timeToMinutes(endTime)
+    if (startM < 0 || endM < 0 || endM <= startM) return null
+    const diff = endM - startM
+    const hrs = Math.floor(diff / 60)
+    const mins = diff % 60
+    if (hrs === 0) return `${mins} mins`
+    if (mins === 0) return `${hrs} hr${hrs > 1 ? 's' : ''}`
+    return `${hrs} hr${hrs > 1 ? 's' : ''} ${mins} mins`
+  }, [startTime, endTime])
+
+  // Format meeting time range string for Call Summary & Dispatched Screen
+  const formattedTimeRange = useMemo(() => {
+    if (timing === 'now') {
+      const now = new Date()
+      // Real dynamic time currently in Dubai (Asia/Dubai)
+      const startDubaiStr = now.toLocaleTimeString('en-US', {
+        timeZone: 'Asia/Dubai',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
+      const endNow = new Date(now.getTime() + 60 * 60 * 1000)
+      const endDubaiStr = endNow.toLocaleTimeString('en-US', {
+        timeZone: 'Asia/Dubai',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
+      return `${startDubaiStr} - ${endDubaiStr} GST`
+    }
+    if (!startTime || !endTime) return 'Time not set'
+    return `${startTime} - ${endTime} GST`
+  }, [timing, startTime, endTime])
 
   // SCREEN 3: Call Room View
   if (showCallRoom) {
@@ -169,7 +323,10 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
     return (
       <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full flex flex-col items-center">
         <div className="w-full px-6 lg:px-10 pt-4 pb-2 text-xs font-semibold flex items-center gap-1.5 text-[#64748b]">
-          <button onClick={onBack} className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1">
+          <button
+            onClick={onBack}
+            className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1"
+          >
             <ArrowLeft className="w-3.5 h-3.5" />
             <span>Vendors</span>
           </button>
@@ -221,7 +378,11 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   className="absolute right-3 p-1.5 rounded-lg text-slate-400 hover:text-[#0d212c] hover:bg-[#e2e8f0] transition cursor-pointer"
                   title="Copy join link"
                 >
-                  {copiedLink ? <Check className="w-4 h-4 text-[#137333]" /> : <Copy className="w-4 h-4" />}
+                  {copiedLink ? (
+                    <Check className="w-4 h-4 text-[#137333]" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
                 </button>
               </div>
 
@@ -263,7 +424,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                     1
                   </div>
                   <p className="leading-relaxed text-[#64748b]">
-                    Share the link with the vendor team. No account needed, they join with their name.
+                    Share the link with the vendor team. No account needed, they join with their
+                    name.
                   </p>
                 </div>
 
@@ -281,7 +443,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                     3
                   </div>
                   <p className="leading-relaxed text-[#64748b]">
-                    Press Start assessment once everyone is in. Agent runs the questionnaire from there.
+                    Press Start assessment once everyone is in. Agent runs the questionnaire from
+                    there.
                   </p>
                 </div>
               </div>
@@ -305,7 +468,10 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
     <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full">
       {/* Breadcrumb Header */}
       <div className="w-full px-6 lg:px-10 pt-4 pb-2 text-xs font-semibold flex items-center gap-1.5 text-[#64748b]">
-        <button onClick={onBack} className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1">
+        <button
+          onClick={onBack}
+          className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1"
+        >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Vendors</span>
         </button>
@@ -341,8 +507,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 currentStep === 1
                   ? 'border-[#36c0c9] bg-[#ddf7f9]/20'
                   : currentStep > 1
-                  ? 'border-[#e2e8f0] bg-[#f8fafc]'
-                  : 'border-[#e2e8f0] bg-white'
+                    ? 'border-[#e2e8f0] bg-[#f8fafc]'
+                    : 'border-[#e2e8f0] bg-white'
               }`}
               onClick={() => setCurrentStep(1)}
             >
@@ -351,8 +517,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   currentStep === 1
                     ? 'bg-[#36c0c9] text-white'
                     : currentStep > 1
-                    ? 'bg-[#137333] text-white'
-                    : 'bg-[#e2e8f0] text-[#64748b]'
+                      ? 'bg-[#137333] text-white'
+                      : 'bg-[#e2e8f0] text-[#64748b]'
                 }`}
               >
                 {currentStep > 1 ? <Check className="w-4 h-4" /> : '01'}
@@ -370,23 +536,23 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
               className={`p-3.5 rounded-xl border transition flex items-center gap-3 text-left w-full ${
                 currentStep === 2
                   ? 'border-[#36c0c9] bg-[#ddf7f9]/20'
-                  : currentStep > 2
-                  ? 'border-[#e2e8f0] bg-[#f8fafc]'
-                  : isStep1Valid
-                  ? 'border-[#e2e8f0] bg-white cursor-pointer hover:border-[#cbd5e1]'
-                  : 'border-[#e2e8f0] bg-slate-50 opacity-40 cursor-not-allowed'
+                  : currentStep > 2 || hasCompletedStep2
+                    ? 'border-[#e2e8f0] bg-[#f8fafc] cursor-pointer'
+                    : isStep1Valid
+                      ? 'border-[#e2e8f0] bg-white cursor-pointer hover:border-[#cbd5e1]'
+                      : 'border-[#e2e8f0] bg-slate-50 opacity-40 cursor-not-allowed'
               }`}
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
                   currentStep === 2
                     ? 'bg-[#36c0c9] text-white'
-                    : currentStep > 2
-                    ? 'bg-[#137333] text-white'
-                    : 'bg-[#e2e8f0] text-[#64748b]'
+                    : currentStep > 2 || hasCompletedStep2
+                      ? 'bg-[#137333] text-white'
+                      : 'bg-[#e2e8f0] text-[#64748b]'
                 }`}
               >
-                {currentStep > 2 ? <Check className="w-4 h-4" /> : '02'}
+                {currentStep > 2 || hasCompletedStep2 ? <Check className="w-4 h-4" /> : '02'}
               </div>
               <div className="flex flex-col">
                 <span className="text-xs font-bold text-[#0d212c]">02 Configure Agent</span>
@@ -396,21 +562,19 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
             {/* Step 3 Indicator */}
             <button
-              disabled={!isStep1Valid}
-              onClick={() => isStep1Valid && setCurrentStep(3)}
+              disabled={!isStep3Unlocked}
+              onClick={() => isStep3Unlocked && setCurrentStep(3)}
               className={`p-3.5 rounded-xl border transition flex items-center gap-3 text-left w-full ${
                 currentStep === 3
                   ? 'border-[#36c0c9] bg-[#ddf7f9]/20'
-                  : isStep1Valid
-                  ? 'border-[#e2e8f0] bg-white cursor-pointer hover:border-[#cbd5e1]'
-                  : 'border-[#e2e8f0] bg-slate-50 opacity-40 cursor-not-allowed'
+                  : isStep3Unlocked
+                    ? 'border-[#e2e8f0] bg-white cursor-pointer hover:border-[#cbd5e1]'
+                    : 'border-[#e2e8f0] bg-slate-50 opacity-40 cursor-not-allowed'
               }`}
             >
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                  currentStep === 3
-                    ? 'bg-[#36c0c9] text-white'
-                    : 'bg-[#e2e8f0] text-[#64748b]'
+                  currentStep === 3 ? 'bg-[#36c0c9] text-white' : 'bg-[#e2e8f0] text-[#64748b]'
                 }`}
               >
                 03
@@ -439,9 +603,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div>
-                  <h2 className="text-base font-extrabold text-[#0d212c]">
-                    Session setup
-                  </h2>
+                  <h2 className="text-base font-extrabold text-[#0d212c]">Session setup</h2>
                   <p className="text-xs text-[#64748b] mt-0.5">
                     Choose the session type, questionnaire, and duration.
                   </p>
@@ -457,9 +619,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <div className="flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-[#0d212c] shrink-0 mt-0.5" />
                     <div className="flex flex-col">
-                      <span className="font-bold text-xs text-[#0d212c]">
-                        Assessment round
-                      </span>
+                      <span className="font-bold text-xs text-[#0d212c]">Assessment round</span>
                       <span className="text-[11px] text-[#64748b] mt-0.5">
                         Structured due-diligence interview using an approved questionnaire.
                       </span>
@@ -494,9 +654,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <ChevronDown className="w-4 h-4 text-[#64748b] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
                 {selectedQuestionnaire && (
-                  <span className="text-[11px] text-[#64748b] pl-1">
-                    62 questions structured
-                  </span>
+                  <span className="text-[11px] text-[#64748b] pl-1">62 questions structured</span>
                 )}
               </div>
 
@@ -515,7 +673,9 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <Clock className="w-4 h-4 text-[#36c0c9] absolute left-3.5 pointer-events-none" />
                 </div>
                 <p className="text-[11px] text-[#64748b] mt-1 leading-relaxed">
-                  <strong>Note:</strong> This is the estimated duration based on the number of questions. The minimum time is 135 minutes and the maximum time is 205 minutes an agent will take to complete the assessment.
+                  <strong>Note:</strong> This is the estimated duration based on the number of
+                  questions. The minimum time is 135 minutes and the maximum time is 205 minutes an
+                  agent will take to complete the assessment.
                 </p>
               </div>
 
@@ -538,7 +698,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 <label className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
                   RECIPIENTS <span className="text-red-500">*</span>
                 </label>
-                
+
                 <input
                   type="email"
                   value={recipientInput}
@@ -614,9 +774,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div>
-                  <h2 className="text-base font-extrabold text-[#0d212c]">
-                    Configure Agent
-                  </h2>
+                  <h2 className="text-base font-extrabold text-[#0d212c]">Configure Agent</h2>
                   <p className="text-xs text-[#64748b] mt-0.5">
                     Choose Agent voice and when the session should begin.
                   </p>
@@ -643,9 +801,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                       {/* Requirement 6: Full text "Marin Agent recommended" chip untruncated */}
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                          <h4 className="font-bold text-xs text-[#0d212c] shrink-0">
-                            {v.label}
-                          </h4>
+                          <h4 className="font-bold text-xs text-[#0d212c] shrink-0">{v.label}</h4>
                           {v.recommended && (
                             <span className="text-[9px] font-extrabold px-2 py-0.5 rounded-full bg-[#ddf7f9] text-[#0f766e] whitespace-nowrap shrink-0">
                               Marin Agent recommended
@@ -671,9 +827,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         </button>
                       </div>
 
-                      <p className="text-[10px] text-[#64748b] leading-tight">
-                        {v.desc}
-                      </p>
+                      <p className="text-[10px] text-[#64748b] leading-tight">{v.desc}</p>
                     </div>
                   ))}
                 </div>
@@ -734,9 +888,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         : 'border-[#e2e8f0] bg-white'
                     }`}
                   >
-                    <span className="font-bold text-xs text-[#0d212c]">
-                      Start now
-                    </span>
+                    <span className="font-bold text-xs text-[#0d212c]">Start now</span>
                     <span className="text-[10px] text-[#64748b]">
                       Open the call room as soon as setup is complete.
                     </span>
@@ -750,9 +902,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         : 'border-[#e2e8f0] bg-white'
                     }`}
                   >
-                    <span className="font-bold text-xs text-[#0d212c]">
-                      Schedule for later
-                    </span>
+                    <span className="font-bold text-xs text-[#0d212c]">Schedule for later</span>
                     <span className="text-[10px] text-[#64748b]">
                       Choose a date and time for this session.
                     </span>
@@ -780,54 +930,68 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                         <label className="block text-[11px] font-bold text-[#0d212c] mb-1">
                           Start time
                         </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            list="start-time-slots"
-                            value={startTime}
-                            onChange={(e) => setStartTime(e.target.value)}
-                            className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                          />
-                          <datalist id="start-time-slots">
-                            {timeSlots.map((t) => (
-                              <option key={t} value={t} />
-                            ))}
-                          </datalist>
-                        </div>
+                        <select
+                          value={startTime}
+                          onChange={(e) => handleStartTimeChange(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] cursor-pointer"
+                        >
+                          <option value="">Select start time</option>
+                          {timeSlots.map((t) => (
+                            <option key={t} value={t}>
+                              {t}
+                            </option>
+                          ))}
+                        </select>
                       </div>
 
                       <div>
                         <label className="block text-[11px] font-bold text-[#0d212c] mb-1">
                           End time
                         </label>
-                        <div className="relative">
-                          <input
-                            type="text"
-                            list="end-time-slots"
-                            value={endTime}
-                            onChange={(e) => setEndTime(e.target.value)}
-                            className={`w-full px-3 py-2 rounded-xl border bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] ${
-                              isTimeInvalid ? 'border-red-400' : 'border-[#e2e8f0]'
-                            }`}
-                          />
-                          <datalist id="end-time-slots">
-                            {timeSlots
-                              .filter((t) => getTimeIndex(t) > getTimeIndex(startTime))
-                              .map((t) => (
-                                <option key={t} value={t} />
-                              ))}
-                          </datalist>
-                        </div>
+                        <select
+                          disabled={!startTime}
+                          value={endTime}
+                          onChange={(e) => setEndTime(e.target.value)}
+                          className={`w-full px-3 py-2 rounded-xl border bg-white text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] ${
+                            !startTime
+                              ? 'opacity-50 cursor-not-allowed bg-slate-50 border-[#e2e8f0]'
+                              : isTimeInvalid
+                                ? 'border-red-400'
+                                : 'border-[#e2e8f0] cursor-pointer'
+                          }`}
+                        >
+                          <option value="">Select end time</option>
+                          {timeSlots
+                            .filter(
+                              (t) => !startTime || timeToMinutes(t) > timeToMinutes(startTime)
+                            )
+                            .map((t) => (
+                              <option key={t} value={t}>
+                                {t}
+                              </option>
+                            ))}
+                        </select>
                       </div>
                     </div>
 
+                    {durationText && (
+                      <div className="flex items-center gap-1.5 text-xs text-[#0d7280] font-bold bg-[#ddf7f9] px-3 py-1.5 rounded-xl self-start border border-[#b2ecf2]">
+                        <Clock className="w-3.5 h-3.5" />
+                        <span>Calculated duration: {durationText}</span>
+                      </div>
+                    )}
+
                     <p className="text-[11px] text-[#64748b] leading-relaxed">
-                      <strong>Note:</strong> The assessment begins when the user selects “Start Assessment” within the meeting. At this point, the system records the start time and begins tracking the elapsed duration. Completion is expected to take 135–205 minutes (approximately 2 hours 15 minutes to 3 hours 25 minutes) and the total time is measured between the recorded start time and end time, including any pauses.
+                      <strong>Note:</strong> The assessment begins when the user selects “Start
+                      Assessment” within the meeting. At this point, the system records the start
+                      time and begins tracking the elapsed duration. Completion is expected to take
+                      60–120 minutes and the total time is measured between the recorded start time
+                      and end time, including any pauses.
                     </p>
 
                     {isTimeInvalid && (
                       <p className="text-[11px] font-semibold text-red-600">
-                        Start time cannot be after or equal to end time.
+                        End time must be after the start time.
                       </p>
                     )}
                   </div>
@@ -848,12 +1012,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                     <option value="GST - Gulf Standard Time (UTC+4)">
                       GST - Gulf Standard Time (UTC+4)
                     </option>
-                    <option value="Asia/Riyadh - GMT+3:00">
-                      Asia/Riyadh - GMT+3:00
-                    </option>
-                    <option value="Asia/Calcutta - GMT+5:30">
-                      Asia/Calcutta - GMT+5:30
-                    </option>
+                    <option value="Asia/Riyadh - GMT+3:00">Asia/Riyadh - GMT+3:00</option>
+                    <option value="Asia/Calcutta - GMT+5:30">Asia/Calcutta - GMT+5:30</option>
                     <option value="UTC - GMT+0:00">UTC - GMT+0:00</option>
                   </select>
                   <ChevronDown className="w-4 h-4 text-[#64748b] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -869,9 +1029,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <div className="flex items-center gap-3">
                     <SlidersHorizontal className="w-4 h-4 text-[#64748b]" />
                     <div className="flex flex-col">
-                      <span className="font-bold text-xs text-[#0d212c]">
-                        Advanced settings
-                      </span>
+                      <span className="font-bold text-xs text-[#0d212c]">Advanced settings</span>
                       <span className="text-[11px] text-[#64748b]">
                         Document reminders and room behaviour
                       </span>
@@ -880,7 +1038,9 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#64748b]">
                     <span>{nudgeWaitSeconds}s reminder</span>
-                    <ChevronUp className={`w-4 h-4 transition-transform ${showAdvancedSettings ? '' : 'rotate-180'}`} />
+                    <ChevronUp
+                      className={`w-4 h-4 transition-transform ${showAdvancedSettings ? '' : 'rotate-180'}`}
+                    />
                   </div>
                 </div>
 
@@ -911,8 +1071,13 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   Back to setup
                 </button>
                 <button
-                  disabled={isTimeInvalid}
-                  onClick={() => !isTimeInvalid && setCurrentStep(3)}
+                  disabled={!isStep2Valid}
+                  onClick={() => {
+                    if (isStep2Valid) {
+                      setHasCompletedStep2(true)
+                      setCurrentStep(3)
+                    }
+                  }}
                   className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-3 rounded-xl transition cursor-pointer flex items-center gap-2 shadow-xs disabled:opacity-40 disabled:cursor-not-allowed border-0"
                 >
                   <span>Continue to review</span>
@@ -933,9 +1098,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <div>
-                  <h2 className="text-base font-extrabold text-[#0d212c]">
-                    Review & launch
-                  </h2>
+                  <h2 className="text-base font-extrabold text-[#0d212c]">Review & launch</h2>
                   <p className="text-xs text-[#64748b] mt-0.5">
                     Confirm configuration and initiate automated vendor assessment call.
                   </p>
@@ -1001,9 +1164,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 {vendor.name.slice(0, 2).toUpperCase()}
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="font-bold text-[#0d212c] truncate">
-                  {vendor.name}
-                </span>
+                <span className="font-bold text-[#0d212c] truncate">{vendor.name}</span>
                 <span className="text-[11px] text-[#64748b] truncate">
                   {vendor.flag} {vendor.country} • {vendor.domain}
                 </span>
@@ -1034,7 +1195,11 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
               <div className="flex justify-between text-[11px]">
                 <span className="font-bold text-[#64748b]">READINESS</span>
                 <span className="font-bold text-[#0d212c]">
-                  {isStep1Valid ? (currentStep === 3 ? '3 of 3 complete' : `${currentStep} of 3 complete`) : '0 of 3 complete'}
+                  {isStep1Valid
+                    ? currentStep === 3
+                      ? '3 of 3 complete'
+                      : `${currentStep} of 3 complete`
+                    : '0 of 3 complete'}
                 </span>
               </div>
               <div className="flex flex-col gap-1.5 text-[11px]">

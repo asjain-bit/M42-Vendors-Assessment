@@ -102,11 +102,41 @@ export const VendorsScreen: React.FC = () => {
 
   // Mock search results list
   const searchVendorResults: SearchVendorResult[] = [
-    { id: 'sr-1', name: 'Presight AI Holding PLC', domain: 'presight.ai', confidence: 'High confidence', confidenceType: 'success' },
-    { id: 'sr-2', name: 'Directus Open Source Ltd', domain: 'directus.io', confidence: 'High confidence', confidenceType: 'success' },
-    { id: 'sr-3', name: 'Pango Cybersecurity Global', domain: 'pango.com', confidence: 'Medium confidence', confidenceType: 'warning' },
-    { id: 'sr-4', name: 'Apex Healthcare Advisory', domain: 'apexhealth.co', confidence: 'Medium confidence', confidenceType: 'warning' },
-    { id: 'sr-5', name: 'Delphi Intelligence Systems', domain: 'delphiai.de', confidence: 'Low confidence', confidenceType: 'error' },
+    {
+      id: 'sr-1',
+      name: 'Presight AI Holding PLC',
+      domain: 'presight.ai',
+      confidence: 'High confidence',
+      confidenceType: 'success',
+    },
+    {
+      id: 'sr-2',
+      name: 'Directus Open Source Ltd',
+      domain: 'directus.io',
+      confidence: 'High confidence',
+      confidenceType: 'success',
+    },
+    {
+      id: 'sr-3',
+      name: 'Pango Cybersecurity Global',
+      domain: 'pango.com',
+      confidence: 'Medium confidence',
+      confidenceType: 'warning',
+    },
+    {
+      id: 'sr-4',
+      name: 'Apex Healthcare Advisory',
+      domain: 'apexhealth.co',
+      confidence: 'Medium confidence',
+      confidenceType: 'warning',
+    },
+    {
+      id: 'sr-5',
+      name: 'Delphi Intelligence Systems',
+      domain: 'delphiai.de',
+      confidence: 'Low confidence',
+      confidenceType: 'error',
+    },
   ]
 
   const [vendors, setVendors] = useState<VendorRow[]>([
@@ -294,8 +324,14 @@ export const VendorsScreen: React.FC = () => {
       e.preventDefault()
       const trimmed = findRecipientInput.trim().replace(/,/g, '')
       if (!trimmed) return
-      if (!emailRegex.test(trimmed)) { setFindRecipientError('Please enter a valid email address.'); return }
-      if (findRecipients.includes(trimmed)) { setFindRecipientError('Already added.'); return }
+      if (!emailRegex.test(trimmed)) {
+        setFindRecipientError('Please enter a valid email address.')
+        return
+      }
+      if (findRecipients.includes(trimmed)) {
+        setFindRecipientError('Already added.')
+        return
+      }
       setFindRecipients([...findRecipients, trimmed])
       setFindRecipientInput('')
       setFindRecipientError(null)
@@ -307,8 +343,14 @@ export const VendorsScreen: React.FC = () => {
       e.preventDefault()
       const trimmed = manualRecipientInput.trim().replace(/,/g, '')
       if (!trimmed) return
-      if (!emailRegex.test(trimmed)) { setManualRecipientError('Please enter a valid email address.'); return }
-      if (manualRecipients.includes(trimmed)) { setManualRecipientError('Already added.'); return }
+      if (!emailRegex.test(trimmed)) {
+        setManualRecipientError('Please enter a valid email address.')
+        return
+      }
+      if (manualRecipients.includes(trimmed)) {
+        setManualRecipientError('Already added.')
+        return
+      }
       setManualRecipients([...manualRecipients, trimmed])
       setManualRecipientInput('')
       setManualRecipientError(null)
@@ -317,12 +359,15 @@ export const VendorsScreen: React.FC = () => {
 
   // Handle Add Vendor from Find Flow (NO auto-population)
   const handleAddVendorFromFind = () => {
-    const vendorTitle = findSearchQuery.trim() || (selectedSearchResult ? selectedSearchResult.name : '')
+    const vendorTitle =
+      findSearchQuery.trim() || (selectedSearchResult ? selectedSearchResult.name : '')
     if (!vendorTitle) return
 
     const countryObj = worldCountryOptions.find((c) => c.name === findCountry)
-    const domainStr = findWebsite.replace('https://', '').replace('http://', '').split('/')[0] || (selectedSearchResult ? selectedSearchResult.domain : 'vendor.com')
-    
+    const domainStr =
+      findWebsite.replace('https://', '').replace('http://', '').split('/')[0] ||
+      (selectedSearchResult ? selectedSearchResult.domain : 'vendor.com')
+
     const newVendor: VendorRow = {
       id: `v-${Date.now()}`,
       name: vendorTitle,
@@ -355,7 +400,9 @@ export const VendorsScreen: React.FC = () => {
       id: `v-${Date.now()}`,
       name: manualDisplayName.trim(),
       legalName: manualLegalName.trim() || manualDisplayName.trim(),
-      email: manualRecipients[0] || `contact@${manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com'}`,
+      email:
+        manualRecipients[0] ||
+        `contact@${manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com'}`,
       domain: manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com',
       country: manualCountry,
       flag: countryObj ? countryObj.flag : '🌐',
@@ -531,9 +578,7 @@ export const VendorsScreen: React.FC = () => {
                       )}
                     </td>
 
-                    <td className="py-4 px-5 text-xs font-medium text-[#64748b]">
-                      {vendor.email}
-                    </td>
+                    <td className="py-4 px-5 text-xs font-medium text-[#64748b]">{vendor.email}</td>
                     <td className="py-4 px-5 text-xs text-[#0d212c] font-medium">
                       {vendor.flag} {vendor.country}
                     </td>
@@ -646,11 +691,13 @@ export const VendorsScreen: React.FC = () => {
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-[#e2e8f0] animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-4 border-b border-[#e2e8f0] mb-5">
-              <h3 className="text-lg font-bold text-[#0d212c]">
-                Edit vendor details
-              </h3>
+              <h3 className="text-lg font-bold text-[#0d212c]">Edit vendor details</h3>
               <button
-                onClick={() => { setEditingVendor(null); setEditRecipientInput(''); setEditRecipientError(null) }}
+                onClick={() => {
+                  setEditingVendor(null)
+                  setEditRecipientInput('')
+                  setEditRecipientError(null)
+                }}
                 className="p-1 rounded-lg text-slate-400 hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent"
               >
                 <X className="w-5 h-5" />
@@ -674,9 +721,7 @@ export const VendorsScreen: React.FC = () => {
 
               {/* Country */}
               <div>
-                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                  Country
-                </label>
+                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">Country</label>
                 <select
                   value={editingVendor.country}
                   onChange={(e) => {
@@ -699,9 +744,7 @@ export const VendorsScreen: React.FC = () => {
 
               {/* Website URL */}
               <div>
-                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                  Website URL
-                </label>
+                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">Website URL</label>
                 <input
                   type="url"
                   placeholder="https://example.com"
@@ -713,24 +756,34 @@ export const VendorsScreen: React.FC = () => {
 
               {/* Recipients tag input */}
               <div className="flex flex-col gap-1.5">
-                <label className="block text-xs font-bold text-[#0d212c]">
-                  Recipients
-                </label>
+                <label className="block text-xs font-bold text-[#0d212c]">Recipients</label>
                 <input
                   type="text"
                   placeholder="Type email and press Enter"
                   value={editRecipientInput}
-                  onChange={(e) => { setEditRecipientInput(e.target.value); setEditRecipientError(null) }}
+                  onChange={(e) => {
+                    setEditRecipientInput(e.target.value)
+                    setEditRecipientError(null)
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ',') {
                       e.preventDefault()
                       const trimmed = editRecipientInput.trim().replace(/,/g, '')
                       if (!trimmed) return
                       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-                      if (!emailRegex.test(trimmed)) { setEditRecipientError('Please enter a valid email address.'); return }
+                      if (!emailRegex.test(trimmed)) {
+                        setEditRecipientError('Please enter a valid email address.')
+                        return
+                      }
                       const existingRecipients = editingVendor.recipients || []
-                      if (existingRecipients.includes(trimmed)) { setEditRecipientError('This email has already been added.'); return }
-                      setEditingVendor({ ...editingVendor, recipients: [...existingRecipients, trimmed] })
+                      if (existingRecipients.includes(trimmed)) {
+                        setEditRecipientError('This email has already been added.')
+                        return
+                      }
+                      setEditingVendor({
+                        ...editingVendor,
+                        recipients: [...existingRecipients, trimmed],
+                      })
                       setEditRecipientInput('')
                       setEditRecipientError(null)
                     }
@@ -739,15 +792,25 @@ export const VendorsScreen: React.FC = () => {
                     editRecipientError ? 'border-red-500' : 'border-[#e2e8f0]'
                   }`}
                 />
-                {editRecipientError && <span className="text-xs text-red-600">{editRecipientError}</span>}
+                {editRecipientError && (
+                  <span className="text-xs text-red-600">{editRecipientError}</span>
+                )}
                 {(editingVendor.recipients || []).length > 0 && (
                   <div className="flex items-center gap-2 flex-wrap pt-1">
                     {(editingVendor.recipients || []).map((rec) => (
-                      <span key={rec} className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]">
+                      <span
+                        key={rec}
+                        className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]"
+                      >
                         {rec}
                         <button
                           type="button"
-                          onClick={() => setEditingVendor({ ...editingVendor, recipients: (editingVendor.recipients || []).filter(r => r !== rec) })}
+                          onClick={() =>
+                            setEditingVendor({
+                              ...editingVendor,
+                              recipients: (editingVendor.recipients || []).filter((r) => r !== rec),
+                            })
+                          }
                           className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0"
                         >
                           <X className="w-3 h-3" />
@@ -761,7 +824,11 @@ export const VendorsScreen: React.FC = () => {
               <div className="flex justify-end gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => { setEditingVendor(null); setEditRecipientInput(''); setEditRecipientError(null) }}
+                  onClick={() => {
+                    setEditingVendor(null)
+                    setEditRecipientInput('')
+                    setEditRecipientError(null)
+                  }}
                   className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#0d212c] hover:bg-slate-50 cursor-pointer bg-transparent"
                 >
                   Cancel
@@ -782,11 +849,11 @@ export const VendorsScreen: React.FC = () => {
       {deletingVendor && (
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-[#e2e8f0] text-center flex flex-col items-center">
-            <h3 className="text-lg font-bold text-[#0d212c] mb-2">
-              Confirm deletion
-            </h3>
+            <h3 className="text-lg font-bold text-[#0d212c] mb-2">Confirm deletion</h3>
             <p className="text-xs text-[#64748b] mb-6">
-              Are you sure you want to delete <span className="font-bold text-[#0d212c]">{deletingVendor.name}</span>? This action cannot be undone.
+              Are you sure you want to delete{' '}
+              <span className="font-bold text-[#0d212c]">{deletingVendor.name}</span>? This action
+              cannot be undone.
             </p>
             <div className="flex justify-center gap-3 w-full">
               <button
@@ -831,138 +898,196 @@ export const VendorsScreen: React.FC = () => {
             {onboardingMode === 'find' ? (
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-1.5 mb-1">
-                    <label className="block text-xs font-bold text-[#0d212c]">
-                      Vendor legal name <span className="text-red-500 font-bold">*</span>
-                    </label>
-                    <div className="relative group cursor-pointer">
-                      <Info className="w-3.5 h-3.5 text-[#64748b]" />
-                      <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-6 z-50 w-64 bg-[#0d212c] text-white text-xs p-2.5 rounded-xl shadow-xl border border-white/10 text-center">
-                        Search will start when you press Enter.
+                  <div className="flex flex-col gap-1 relative">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <label className="block text-xs font-bold text-[#0d212c]">
+                        Vendor legal name <span className="text-red-500 font-bold">*</span>
+                      </label>
+                      <div className="relative group cursor-pointer">
+                        <Info className="w-3.5 h-3.5 text-[#64748b]" />
+                        <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-6 z-50 w-64 bg-[#0d212c] text-white text-xs p-2.5 rounded-xl shadow-xl border border-white/10 text-center">
+                          Search will start when you press Enter.
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Input with Enter key trigger & circular progress spinner on right */}
-                  <div className="relative flex items-center w-full">
-                    <input
-                      type="text"
-                      placeholder="Type vendor name & press Enter..."
-                      value={findSearchQuery}
-                      onChange={(e) => setFindSearchQuery(e.target.value)}
-                      onKeyDown={handleFindVendorSearchKeyDown}
-                      className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                    />
-                    {isSearchingVendor && (
-                      <Loader2 className="animate-spin w-4 h-4 text-[#36c0c9] absolute right-3 pointer-events-none" />
+                    {/* Input with Enter key trigger & circular progress spinner on right */}
+                    <div className="relative flex items-center w-full">
+                      <input
+                        type="text"
+                        placeholder="Type vendor name & press Enter..."
+                        value={findSearchQuery}
+                        onChange={(e) => setFindSearchQuery(e.target.value)}
+                        onKeyDown={handleFindVendorSearchKeyDown}
+                        className="w-full pl-3.5 pr-10 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                      />
+                      {isSearchingVendor && (
+                        <Loader2 className="animate-spin w-4 h-4 text-[#36c0c9] absolute right-3 pointer-events-none" />
+                      )}
+                    </div>
+
+                    {/* Floating Custom Dropdown List (does not increase modal height) */}
+                    {hasSearched && (
+                      <div className="absolute top-full left-0 right-0 z-50 mt-1.5 flex flex-col gap-1.5 bg-white p-3 rounded-2xl border border-[#e2e8f0] shadow-2xl max-h-56 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
+                        <span className="text-[10px] font-extrabold uppercase text-[#64748b] tracking-wider mb-1">
+                          SELECT MATCHING VENDOR RESULT (
+                          {searchVendorResults.filter(
+                            (r) =>
+                              !findSearchQuery.trim() ||
+                              r.name.toLowerCase().includes(findSearchQuery.toLowerCase()) ||
+                              r.domain.toLowerCase().includes(findSearchQuery.toLowerCase())
+                          ).length || 1}{' '}
+                          FOUND)
+                        </span>
+                        {(searchVendorResults.filter(
+                          (r) =>
+                            !findSearchQuery.trim() ||
+                            r.name.toLowerCase().includes(findSearchQuery.toLowerCase()) ||
+                            r.domain.toLowerCase().includes(findSearchQuery.toLowerCase())
+                        ).length > 0
+                          ? searchVendorResults.filter(
+                              (r) =>
+                                !findSearchQuery.trim() ||
+                                r.name.toLowerCase().includes(findSearchQuery.toLowerCase()) ||
+                                r.domain.toLowerCase().includes(findSearchQuery.toLowerCase())
+                            )
+                          : [
+                              {
+                                id: `sr-dynamic-${findSearchQuery}`,
+                                name: findSearchQuery.trim(),
+                                domain: `${findSearchQuery
+                                  .trim()
+                                  .toLowerCase()
+                                  .replace(/[^a-z0-9]/g, '')}.com`,
+                                confidence: 'High confidence' as const,
+                                confidenceType: 'success' as const,
+                              },
+                              ...searchVendorResults.slice(0, 2),
+                            ]
+                        ).map((res) => {
+                          const isSelected =
+                            selectedSearchResult?.id === res.id || findSearchQuery === res.name
+                          return (
+                            <div
+                              key={res.id}
+                              onClick={() => {
+                                setSelectedSearchResult(res)
+                                setFindSearchQuery(res.name) // Adds vendor name to input field
+                                setHasSearched(false) // Closes the search results list
+                                if (res.domain) {
+                                  setFindWebsite(`https://${res.domain}`)
+                                }
+                              }}
+                              className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-3 ${
+                                isSelected
+                                  ? 'bg-[#f1f5f9] border-transparent'
+                                  : 'bg-white border-[#e2e8f0] hover:bg-[#f8fafc]'
+                              }`}
+                            >
+                              <div className="flex flex-col min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-bold text-xs text-[#0d212c] truncate">
+                                    {res.name}
+                                  </span>
+                                  {isSelected && (
+                                    <Check className="w-3.5 h-3.5 text-[#64748b] shrink-0" />
+                                  )}
+                                </div>
+                                <span className="text-[11px] text-[#64748b] truncate">
+                                  {res.domain}
+                                </span>
+                              </div>
+
+                              <StatusChip
+                                label={res.confidence}
+                                status={res.confidenceType}
+                                dot={false}
+                              />
+                            </div>
+                          )
+                        })}
+                      </div>
                     )}
                   </div>
-                </div>
 
-                {/* Requirement 1: Clicking any vendor result fills the input field (findSearchQuery) */}
-                {hasSearched && (
-                  <div className="flex flex-col gap-1.5 bg-[#f8fafc] p-3 rounded-2xl border border-[#e2e8f0] max-h-52 overflow-y-auto">
-                    <span className="text-[10px] font-extrabold uppercase text-[#64748b] tracking-wider mb-1">
-                      SELECT MATCHING VENDOR RESULT ({searchVendorResults.length} FOUND)
-                    </span>
-                    {searchVendorResults.map((res) => {
-                      const isSelected = selectedSearchResult?.id === res.id || findSearchQuery === res.name
-                      return (
-                        <div
-                          key={res.id}
-                          onClick={() => {
-                            setSelectedSearchResult(res)
-                            setFindSearchQuery(res.name) // Requirement 1: Fills the legal name input field
-                          }}
-                          className={`p-3 rounded-xl border transition cursor-pointer flex items-center justify-between gap-3 ${
-                            isSelected
-                              ? 'bg-[#ddf7f9]/40 border-[#36c0c9]'
-                              : 'bg-white border-[#e2e8f0] hover:border-[#cbd5e1]'
-                          }`}
-                        >
-                          <div className="flex flex-col min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-bold text-xs text-[#0d212c] truncate">{res.name}</span>
-                              {isSelected && <Check className="w-3.5 h-3.5 text-[#36c0c9] shrink-0" />}
-                            </div>
-                            <span className="text-[11px] text-[#64748b] truncate">{res.domain}</span>
-                          </div>
+                  {/* Manual input fields: Country + Website URL on same row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                    <div>
+                      <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                        Country
+                      </label>
+                      <select
+                        value={findCountry}
+                        onChange={(e) => setFindCountry(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] bg-white"
+                      >
+                        {worldCountryOptions.map((c) => (
+                          <option key={c.name} value={c.name}>
+                            {c.flag} {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                          <StatusChip
-                            label={res.confidence}
-                            status={res.confidenceType}
-                            dot={false}
-                          />
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-
-                {/* Manual input fields: Country + Website URL on same row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                  <div>
-                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                      Country
-                    </label>
-                    <select
-                      value={findCountry}
-                      onChange={(e) => setFindCountry(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] bg-white"
-                    >
-                      {worldCountryOptions.map((c) => (
-                        <option key={c.name} value={c.name}>
-                          {c.flag} {c.name}
-                        </option>
-                      ))}
-                    </select>
+                    <div>
+                      <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                        Website URL
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="https://"
+                        value={findWebsite}
+                        onChange={(e) => setFindWebsite(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                      />
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                      Website URL
+                  {/* Recipients tag-input (find flow) */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="block text-xs font-bold text-[#0d212c] mb-0.5">
+                      Recipients
                     </label>
                     <input
-                      type="text"
-                      placeholder="https://"
-                      value={findWebsite}
-                      onChange={(e) => setFindWebsite(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                      type="email"
+                      placeholder="Enter email and press Enter..."
+                      value={findRecipientInput}
+                      onChange={(e) => {
+                        setFindRecipientInput(e.target.value)
+                        if (findRecipientError) setFindRecipientError(null)
+                      }}
+                      onKeyDown={handleKeyDownFindRecipient}
+                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
+                        findRecipientError
+                          ? 'border-red-500'
+                          : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
+                      }`}
                     />
+                    {findRecipientError && (
+                      <span className="text-xs text-red-600">{findRecipientError}</span>
+                    )}
+                    {findRecipients.length > 0 && (
+                      <div className="flex items-center gap-2 flex-wrap pt-1">
+                        {findRecipients.map((rec) => (
+                          <span
+                            key={rec}
+                            className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]"
+                          >
+                            {rec}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setFindRecipients(findRecipients.filter((r) => r !== rec))
+                              }
+                              className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-
-                {/* Recipients tag-input (find flow) */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="block text-xs font-bold text-[#0d212c] mb-0.5">
-                    Recipients
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Enter email and press Enter..."
-                    value={findRecipientInput}
-                    onChange={(e) => { setFindRecipientInput(e.target.value); if (findRecipientError) setFindRecipientError(null) }}
-                    onKeyDown={handleKeyDownFindRecipient}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
-                      findRecipientError ? 'border-red-500' : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
-                    }`}
-                  />
-                  {findRecipientError && <span className="text-xs text-red-600">{findRecipientError}</span>}
-                  {findRecipients.length > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap pt-1">
-                      {findRecipients.map((rec) => (
-                        <span key={rec} className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]">
-                          {rec}
-                          <button type="button" onClick={() => setFindRecipients(findRecipients.filter(r => r !== rec))} className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0">
-                            <X className="w-3 h-3" />
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 </div>
 
                 {/* "Can't find vendor?" — centered, no separator */}
@@ -972,8 +1097,10 @@ export const VendorsScreen: React.FC = () => {
                     onClick={() => setOnboardingMode('manual')}
                     className="text-xs cursor-pointer transition bg-transparent border-0 self-center p-0 flex items-center gap-1"
                   >
-                    <span className="text-[#64748b]">Can't find vendor?</span>
-                    <span className="text-[#36c0c9] font-bold hover:underline">Add vendor manually</span>
+                    <span className="text-[#64748b]">Can&apos;t find vendor?</span>
+                    <span className="text-[#36c0c9] font-bold hover:underline">
+                      Add vendor manually
+                    </span>
                   </button>
 
                   <div className="flex justify-end gap-3 pt-2">
@@ -999,97 +1126,113 @@ export const VendorsScreen: React.FC = () => {
               /* Manual Vendor Flow — stacked layout so height matches Find Vendor */
               <form onSubmit={handleAddVendorManually} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-4">
-                {/* Display name */}
-                <div>
-                  <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                    Display name <span className="text-red-500 font-bold">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter display name"
-                    value={manualDisplayName}
-                    onChange={(e) => setManualDisplayName(e.target.value)}
-                    required
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                  />
-                </div>
-
-                {/* Legal name */}
-                <div>
-                  <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                    Legal name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Defaults to display name"
-                    value={manualLegalName}
-                    onChange={(e) => setManualLegalName(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                  />
-                </div>
-
-                {/* Country + Website on same row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Display name */}
                   <div>
                     <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                      Country
-                    </label>
-                    <select
-                      value={manualCountry}
-                      onChange={(e) => setManualCountry(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] bg-white"
-                    >
-                      {worldCountryOptions.map((c) => (
-                        <option key={c.name} value={c.name}>
-                          {c.flag} {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                      Website
+                      Display name <span className="text-red-500 font-bold">*</span>
                     </label>
                     <input
                       type="text"
-                      placeholder="https://"
-                      value={manualWebsite}
-                      onChange={(e) => setManualWebsite(e.target.value)}
+                      placeholder="Enter display name"
+                      value={manualDisplayName}
+                      onChange={(e) => setManualDisplayName(e.target.value)}
+                      required
                       className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
                     />
                   </div>
-                </div>
 
-                {/* Recipients tag-input (manual flow) */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="block text-xs font-bold text-[#0d212c] mb-0.5">
-                    Recipients
-                  </label>
-                  <input
-                    type="email"
-                    placeholder="Enter email and press Enter..."
-                    value={manualRecipientInput}
-                    onChange={(e) => { setManualRecipientInput(e.target.value); if (manualRecipientError) setManualRecipientError(null) }}
-                    onKeyDown={handleKeyDownManualRecipient}
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
-                      manualRecipientError ? 'border-red-500' : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
-                    }`}
-                  />
-                  {manualRecipientError && <span className="text-xs text-red-600">{manualRecipientError}</span>}
-                  {manualRecipients.length > 0 && (
-                    <div className="flex items-center gap-2 flex-wrap pt-1">
-                      {manualRecipients.map((rec) => (
-                        <span key={rec} className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]">
-                          {rec}
-                          <button type="button" onClick={() => setManualRecipients(manualRecipients.filter(r => r !== rec))} className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0">
-                            <X className="w-3 h-3" />
-                          </button>
-                        </span>
-                      ))}
+                  {/* Legal name */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                      Legal name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Defaults to display name"
+                      value={manualLegalName}
+                      onChange={(e) => setManualLegalName(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                    />
+                  </div>
+
+                  {/* Country + Website on same row */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                        Country
+                      </label>
+                      <select
+                        value={manualCountry}
+                        onChange={(e) => setManualCountry(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] bg-white"
+                      >
+                        {worldCountryOptions.map((c) => (
+                          <option key={c.name} value={c.name}>
+                            {c.flag} {c.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                  )}
-                </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                        Website
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="https://"
+                        value={manualWebsite}
+                        onChange={(e) => setManualWebsite(e.target.value)}
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Recipients tag-input (manual flow) */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="block text-xs font-bold text-[#0d212c] mb-0.5">
+                      Recipients
+                    </label>
+                    <input
+                      type="email"
+                      placeholder="Enter email and press Enter..."
+                      value={manualRecipientInput}
+                      onChange={(e) => {
+                        setManualRecipientInput(e.target.value)
+                        if (manualRecipientError) setManualRecipientError(null)
+                      }}
+                      onKeyDown={handleKeyDownManualRecipient}
+                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
+                        manualRecipientError
+                          ? 'border-red-500'
+                          : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
+                      }`}
+                    />
+                    {manualRecipientError && (
+                      <span className="text-xs text-red-600">{manualRecipientError}</span>
+                    )}
+                    {manualRecipients.length > 0 && (
+                      <div className="flex items-center gap-2 flex-wrap pt-1">
+                        {manualRecipients.map((rec) => (
+                          <span
+                            key={rec}
+                            className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]"
+                          >
+                            {rec}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setManualRecipients(manualRecipients.filter((r) => r !== rec))
+                              }
+                              className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="pt-2 flex items-center justify-between">

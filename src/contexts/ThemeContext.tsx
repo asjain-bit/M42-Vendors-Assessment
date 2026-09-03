@@ -19,60 +19,49 @@ export function ThemeProvider({
   children: React.ReactNode
   defaultTheme?: Theme
 }) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme)
-  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('light')
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    try {
-      if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.getItem === 'function') {
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (
+      typeof window !== 'undefined' &&
+      window.localStorage &&
+      typeof window.localStorage.getItem === 'function'
+    ) {
+      try {
         const saved = window.localStorage.getItem('theme') as Theme | null
         if (saved && ['light', 'dark', 'system'].includes(saved)) {
-          setThemeState(saved)
+          return saved
         }
+      } catch {
+        // safe fallback
       }
-    } catch {
-      // safe fallback
     }
-    setMounted(true)
-  }, [])
+    return defaultTheme
+  })
+  const getResolvedTheme = (t: Theme): 'light' | 'dark' => {
+    if (t === 'system') {
+      if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      }
+      return 'light'
+    }
+    return t
+  }
+
+  const resolvedTheme = getResolvedTheme(theme)
 
   useEffect(() => {
-    if (!mounted) return
-
-    const applyTheme = () => {
-      let resolved: 'light' | 'dark' = 'light'
-      if (theme === 'system') {
-        if (typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-          resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-        } else {
-          resolved = 'light'
-        }
-      } else {
-        resolved = theme
-      }
-      setResolvedTheme(resolved)
-      if (typeof document !== 'undefined' && document.documentElement) {
-        document.documentElement.setAttribute('data-theme', resolved)
-      }
+    if (typeof document !== 'undefined' && document.documentElement) {
+      document.documentElement.setAttribute('data-theme', resolvedTheme)
     }
-
-    applyTheme()
-
-    if (theme === 'system' && typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
-      const media = window.matchMedia('(prefers-color-scheme: dark)')
-      const listener = () => applyTheme()
-      if (media.addEventListener) {
-        media.addEventListener('change', listener)
-        return () => media.removeEventListener('change', listener)
-      }
-    }
-  }, [theme, mounted])
+  }, [resolvedTheme])
 
   const setTheme = (newTheme: Theme) => {
     setThemeState(newTheme)
     try {
-      if (typeof window !== 'undefined' && window.localStorage && typeof window.localStorage.setItem === 'function') {
+      if (
+        typeof window !== 'undefined' &&
+        window.localStorage &&
+        typeof window.localStorage.setItem === 'function'
+      ) {
         window.localStorage.setItem('theme', newTheme)
       }
     } catch {

@@ -30,7 +30,9 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
   onBack,
 }) => {
   const [status, setStatus] = useState<string>(questionnaire.status || 'Ready')
-  const [isEditing, setIsEditing] = useState<boolean>(questionnaire.initialEditMode ?? (questionnaire.status === 'Draft'))
+  const [isEditing, setIsEditing] = useState<boolean>(
+    questionnaire.initialEditMode ?? questionnaire.status === 'Draft'
+  )
   const [deletingQuestionId, setDeletingQuestionId] = useState<number | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
@@ -48,43 +50,53 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
   const [questions, setQuestions] = useState<QuestionItem[]>([
     {
       id: 1,
-      question: 'Describe the primary clinical or operational use cases supported by your solution.',
-      responseCue: 'Specify whether workflows are clinical, decision-support, operational, or administrative. State whether outputs influence patient care directly or indirectly.',
+      question:
+        'Describe the primary clinical or operational use cases supported by your solution.',
+      responseCue:
+        'Specify whether workflows are clinical, decision-support, operational, or administrative. State whether outputs influence patient care directly or indirectly.',
       researchNeeded: true,
       attachmentRequired: true,
     },
     {
       id: 2,
-      question: 'Has your organization performed a patient safety or clinical risk assessment for this product?',
-      responseCue: 'Provide documentation or summary of hazard analysis, risk register, or failure-mode analysis related to patient harm.',
+      question:
+        'Has your organization performed a patient safety or clinical risk assessment for this product?',
+      responseCue:
+        'Provide documentation or summary of hazard analysis, risk register, or failure-mode analysis related to patient harm.',
       researchNeeded: false,
       attachmentRequired: true,
     },
     {
       id: 3,
-      question: 'Describe how customer data is encrypted in transit and at rest across cloud tenants.',
-      responseCue: 'Specify encryption algorithms (e.g. AES-256, TLS 1.3), key rotation policies, and HSM backing.',
+      question:
+        'Describe how customer data is encrypted in transit and at rest across cloud tenants.',
+      responseCue:
+        'Specify encryption algorithms (e.g. AES-256, TLS 1.3), key rotation policies, and HSM backing.',
       researchNeeded: true,
       attachmentRequired: true,
     },
     {
       id: 4,
       question: 'Provide proof of SOC 2 Type II or ISO/IEC 27001 certification compliance.',
-      responseCue: 'Attach executive summary or auditor attestation statement covering the last 12 months.',
+      responseCue:
+        'Attach executive summary or auditor attestation statement covering the last 12 months.',
       researchNeeded: false,
       attachmentRequired: true,
     },
     {
       id: 5,
       question: 'Can customer data be strictly isolated within United Arab Emirates cloud regions?',
-      responseCue: 'Detail tenant deployment architecture, backup locations, and compliance with UAE Health Data Law.',
+      responseCue:
+        'Detail tenant deployment architecture, backup locations, and compliance with UAE Health Data Law.',
       researchNeeded: true,
       attachmentRequired: false,
     },
     {
       id: 6,
-      question: 'Outline your incident response SLA for reporting data breaches to affected healthcare entities.',
-      responseCue: 'Provide notification timeline (e.g., within 24 hours), triage workflows, and root cause analysis format.',
+      question:
+        'Outline your incident response SLA for reporting data breaches to affected healthcare entities.',
+      responseCue:
+        'Provide notification timeline (e.g., within 24 hours), triage workflows, and root cause analysis format.',
       researchNeeded: true,
       attachmentRequired: true,
     },
@@ -93,9 +105,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
   // Handle Question field edits
   const handleQuestionChange = (id: number, field: keyof QuestionItem, value: string | boolean) => {
     if (!isEditing) return
-    setQuestions(
-      questions.map((q) => (q.id === id ? { ...q, [field]: value } : q))
-    )
+    setQuestions(questions.map((q) => (q.id === id ? { ...q, [field]: value } : q)))
   }
 
   // Delete Question after confirmation popup
@@ -112,10 +122,16 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
     e.preventDefault()
     if (!newQuestionText.trim()) return
 
+    const maxId = questions.reduce(
+      (max, q) => (typeof q.id === 'number' && q.id > max ? q.id : max),
+      0
+    )
     const newQuestionObj: QuestionItem = {
-      id: Date.now(),
+      id: maxId + 1,
       question: newQuestionText.trim(),
-      responseCue: newResponseCue.trim() || 'Provide explicit operational proof and supporting compliance evidence.',
+      responseCue:
+        newResponseCue.trim() ||
+        'Provide explicit operational proof and supporting compliance evidence.',
       researchNeeded: newResearchNeeded,
       attachmentRequired: newAttachmentRequired,
     }
@@ -187,7 +203,10 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
 
       {/* Breadcrumb Header */}
       <div className="w-full px-6 lg:px-10 pt-4 pb-2 text-xs font-semibold flex items-center gap-1.5 text-[#64748b]">
-        <button onClick={onBack} className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1">
+        <button
+          onClick={onBack}
+          className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1"
+        >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Questionnaires</span>
         </button>
@@ -207,9 +226,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
             </h1>
             <span
               className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                status === 'Draft'
-                  ? 'bg-amber-100 text-amber-800'
-                  : 'bg-[#e6f4ea] text-[#137333]'
+                status === 'Draft' ? 'bg-amber-100 text-amber-800' : 'bg-[#e6f4ea] text-[#137333]'
               }`}
             >
               {status === 'Draft' ? 'Draft' : 'Ready'}
@@ -270,8 +287,8 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
               draggedIndex === idx
                 ? 'border-[#cbd5e1] shadow-md opacity-70 bg-slate-50'
                 : isEditing
-                ? 'border-[#e2e8f0] hover:border-[#cbd5e1] shadow-xs'
-                : 'border-[#e2e8f0]'
+                  ? 'border-[#e2e8f0] hover:border-[#cbd5e1] shadow-xs'
+                  : 'border-[#e2e8f0]'
             }`}
           >
             {/* Question Card Top Bar */}
@@ -364,9 +381,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#e2e8f0] animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-3 mb-4">
-              <h3 className="text-base font-extrabold text-[#0d212c]">
-                Add new question
-              </h3>
+              <h3 className="text-base font-extrabold text-[#0d212c]">Add new question</h3>
               <button
                 onClick={() => setShowAddQuestionModal(false)}
                 className="p-1 rounded-lg text-slate-400 hover:text-[#0d212c] transition cursor-pointer"
@@ -441,9 +456,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
       {deletingQuestionId !== null && (
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-[#e2e8f0]">
-            <h3 className="text-lg font-bold text-[#0d212c] mb-2">
-              Confirm deletion
-            </h3>
+            <h3 className="text-lg font-bold text-[#0d212c] mb-2">Confirm deletion</h3>
             <p className="text-xs text-[#64748b] mb-6">
               Are you sure you want to delete this question? This action cannot be undone.
             </p>

@@ -2,7 +2,16 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { Mic, MicOff, MonitorUp, MessageSquare, DoorOpen, PauseCircle, PlayCircle, CheckCircle2 } from 'lucide-react'
+import {
+  Mic,
+  MicOff,
+  MonitorUp,
+  MessageSquare,
+  DoorOpen,
+  PauseCircle,
+  PlayCircle,
+  CheckCircle2,
+} from 'lucide-react'
 import { VendorDispatchData } from './ConfigureVendorCallScreen'
 
 type CallRoomState = 'join' | 'waiting' | 'left' | 'finalised'
@@ -29,7 +38,7 @@ const sampleTranscript: TranscriptEntry[] = [
   {
     speaker: 'Vendor',
     time: '11:32 AM',
-    text: "Yes, we confirm and consent to the recording.",
+    text: 'Yes, we confirm and consent to the recording.',
   },
   {
     speaker: 'Sam',
@@ -39,24 +48,28 @@ const sampleTranscript: TranscriptEntry[] = [
   {
     speaker: 'Sam',
     time: '11:33 AM',
-    text: "Does your organisation maintain a formal data classification policy that categorises data based on sensitivity level — for example, public, internal, confidential, or restricted?",
+    text: 'Does your organisation maintain a formal data classification policy that categorises data based on sensitivity level — for example, public, internal, confidential, or restricted?',
   },
   {
     speaker: 'Vendor',
     time: '11:35 AM',
-    text: "Yes, we have a formal data classification policy. All data is categorised into four tiers: Public, Internal Use, Confidential, and Restricted. The policy is reviewed annually and enforced through our DLP tooling.",
+    text: 'Yes, we have a formal data classification policy. All data is categorised into four tiers: Public, Internal Use, Confidential, and Restricted. The policy is reviewed annually and enforced through our DLP tooling.',
   },
   {
     speaker: 'Sam',
     time: '11:36 AM',
-    text: "Can you describe how your organisation ensures data subject rights requests — such as access, erasure, or portability — are handled within the regulatory timeframes set by applicable data protection laws?",
+    text: 'Can you describe how your organisation ensures data subject rights requests — such as access, erasure, or portability — are handled within the regulatory timeframes set by applicable data protection laws?',
   },
 ]
 
 const currentQuestion =
   'Can you describe how your organisation ensures data subject rights requests — such as access, erasure, or portability — are handled within the regulatory timeframes set by applicable data protection laws?'
 
-export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, onExitToVendors }) => {
+export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
+  vendor,
+  onBack,
+  onExitToVendors,
+}) => {
   const [roomState, setRoomState] = useState<CallRoomState>('join')
   const [yourName, setYourName] = useState('')
   const [isMuted, setIsMuted] = useState(false)
@@ -86,7 +99,9 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
   }, [assessmentStarted])
 
   const formatElapsed = (s: number) => {
-    const m = Math.floor(s / 60).toString().padStart(2, '0')
+    const m = Math.floor(s / 60)
+      .toString()
+      .padStart(2, '0')
     const ss = (s % 60).toString().padStart(2, '0')
     return `${m}:${ss}`
   }
@@ -102,8 +117,16 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
   }, [roomState])
 
   const now = new Date()
-  const formattedDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })
-  const formattedTime = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })
+  const formattedDate = now.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+  const formattedTime = now.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true,
+  })
   const waveBars = [2, 4, 7, 10, 7, 4, 2]
 
   // Admin initials (current user = admin = M42)
@@ -135,10 +158,20 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
 
         <div className="relative w-full max-w-[420px]">
           <div className="mb-8">
-            <Image src="/dark-logo.png" alt="M42" width={72} height={28} className="object-contain" />
+            <Image
+              src="/dark-logo.png"
+              alt="M42"
+              width={72}
+              height={28}
+              className="object-contain"
+            />
             <div className="mt-4 flex flex-col gap-0.5">
-              <span className="text-[10px] font-extrabold tracking-[0.18em] text-[#64748b] uppercase">Assessment Call</span>
-              <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">{vendor.name}</h1>
+              <span className="text-[10px] font-extrabold tracking-[0.18em] text-[#64748b] uppercase">
+                Assessment Call
+              </span>
+              <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">
+                {vendor.name}
+              </h1>
               <p className="text-xs text-[#64748b] font-medium">{vendor.sublabel}</p>
             </div>
           </div>
@@ -160,13 +193,16 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
                 placeholder="e.g. Priya Shah"
                 value={yourName}
                 onChange={(e) => setYourName(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter' && yourName.trim()) setRoomState('waiting') }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && yourName.trim()) setRoomState('waiting')
+                }}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9] transition"
               />
             </div>
 
             <p className="text-[11px] text-[#64748b] leading-relaxed">
-              This call is recorded and transcribed for assessment purposes. By joining you consent to recording.
+              This call is recorded and transcribed for assessment purposes. By joining you consent
+              to recording.
             </p>
 
             <button
@@ -200,25 +236,36 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
 
         <div className="relative bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-8 max-w-md w-full flex flex-col gap-5">
           <div className="flex flex-col items-center text-center gap-3">
-            <Image src="/dark-logo.png" alt="M42" width={72} height={28} className="object-contain" />
+            <Image
+              src="/dark-logo.png"
+              alt="M42"
+              width={72}
+              height={28}
+              className="object-contain"
+            />
             <div className="w-12 h-12 rounded-full bg-[#ddf7f9] flex items-center justify-center">
               <CheckCircle2 className="w-6 h-6 text-[#0d7280]" />
             </div>
             <div className="flex flex-col gap-1">
               <h2 className="text-xl font-extrabold text-[#0d212c]">Assessment finalised</h2>
               <p className="text-xs text-[#64748b] leading-relaxed">
-                The call has ended for all participants. The transcript and audit log have been saved.
+                The call has ended for all participants. The transcript and audit log have been
+                saved.
               </p>
             </div>
           </div>
 
           {/* Transcript preview */}
           <div className="bg-[#f8fafc] rounded-2xl border border-[#e2e8f0] p-4 flex flex-col gap-3 max-h-[260px] overflow-y-auto">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#64748b]">Call Transcript</span>
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#64748b]">
+              Call Transcript
+            </span>
             {sampleTranscript.map((entry, idx) => (
               <div key={idx} className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-1.5">
-                  <span className={`text-[10px] font-extrabold ${entry.speaker === 'Sam' ? 'text-[#0d7280]' : 'text-[#0d212c]'}`}>
+                  <span
+                    className={`text-[10px] font-extrabold ${entry.speaker === 'Sam' ? 'text-[#0d7280]' : 'text-[#0d212c]'}`}
+                  >
                     {entry.speaker}
                   </span>
                   <span className="text-[9px] text-[#94a3b8]">{entry.time}</span>
@@ -271,14 +318,14 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
           </div>
 
           <div className="w-full flex flex-col gap-2.5 mt-2">
-            {/* Rejoin call — primary light color, solid 100% fill, no border/stroke */}
+            {/* Rejoin call — primary dark color (#0d212c) with white text */}
             <button
               id="callroom-rejoin-btn"
               onClick={() => {
                 setShowLeaveConfirm(false)
                 setRoomState('waiting')
               }}
-              className="w-full bg-[#ddf7f9] hover:bg-[#c2f1f5] text-[#0d7280] border-0 font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-xs"
+              className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white border-0 font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-xs"
             >
               Rejoin call
             </button>
@@ -305,11 +352,13 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
   // ─── IN-CALL ROOM ─────────────────────────────────────────────────────────────
   return (
     <div className="fixed inset-0 z-[9999] bg-[#f8fafc] flex flex-col overflow-hidden">
-
       {/* Leave Confirmation Popup */}
       {showLeaveConfirm && (
         <div className="absolute inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-[#0d212c]/20 backdrop-blur-[2px]" onClick={() => setShowLeaveConfirm(false)} />
+          <div
+            className="absolute inset-0 bg-[#0d212c]/20 backdrop-blur-[2px]"
+            onClick={() => setShowLeaveConfirm(false)}
+          />
           <div className="relative bg-white rounded-2xl border border-[#e2e8f0] shadow-2xl p-6 w-[300px] flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex flex-col gap-1">
               <h3 className="text-sm font-extrabold text-[#0d212c]">Leave the call?</h3>
@@ -341,17 +390,24 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
       {/* End & Finalise Confirmation Popup */}
       {showFinaliseConfirm && (
         <div className="absolute inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-[#0d212c]/20 backdrop-blur-[2px]" onClick={() => setShowFinaliseConfirm(false)} />
+          <div
+            className="absolute inset-0 bg-[#0d212c]/20 backdrop-blur-[2px]"
+            onClick={() => setShowFinaliseConfirm(false)}
+          />
           <div className="relative bg-white rounded-2xl border border-[#e2e8f0] shadow-2xl p-6 w-[340px] flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex flex-col gap-1">
               <h3 className="text-sm font-extrabold text-[#0d212c]">End & Finalise Assessment?</h3>
               <p className="text-xs text-[#64748b] leading-relaxed">
-                This will end the call and mark the assessment as complete. The audit log and transcript will be saved. This action cannot be undone.
+                This will end the call and mark the assessment as complete. The audit log and
+                transcript will be saved. This action cannot be undone.
               </p>
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => { setShowFinaliseConfirm(false); setRoomState('finalised') }}
+                onClick={() => {
+                  setShowFinaliseConfirm(false)
+                  setRoomState('finalised')
+                }}
                 className="flex-1 bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
               >
                 End & Finalise
@@ -373,8 +429,12 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
           <Image src="/dark-logo.png" alt="M42" width={56} height={22} className="object-contain" />
           <div className="w-px h-5 bg-[#e2e8f0]" />
           <div className="flex flex-col leading-tight">
-            <span className="text-xs font-bold text-[#0d212c] truncate max-w-[220px]">{vendor.name}</span>
-            <span className="text-[10px] text-[#64748b] truncate max-w-[220px]">{vendor.sublabel}</span>
+            <span className="text-xs font-bold text-[#0d212c] truncate max-w-[220px]">
+              {vendor.name}
+            </span>
+            <span className="text-[10px] text-[#64748b] truncate max-w-[220px]">
+              {vendor.sublabel}
+            </span>
           </div>
         </div>
 
@@ -393,42 +453,50 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
 
       {/* ── MAIN BODY ────────────────────────────────────────────────────────────── */}
       <div className="flex-1 flex min-h-0">
-
         {/* ── STAGE ──────────────────────────────────────────────────────────────── */}
         <div className="flex-1 flex flex-col min-h-0 relative bg-[#f8fafc]">
-
           {/* Background blob */}
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute top-1/3 left-1/3 w-80 h-80 rounded-full bg-[#ddf7f9]/20 blur-3xl" />
           </div>
 
-
-
           {/* ── CENTER STAGE ─────────────────────────────────────────────────────── */}
           <div className="flex-1 flex flex-col items-center justify-center gap-5 px-8 py-4 relative z-0">
-
             {/* AI Assessor Avatar */}
             <div className="flex flex-col items-center gap-3">
               <div className="relative">
-                <div className={`absolute inset-0 rounded-full border-2 border-[#36c0c9]/25 transition-all duration-700 ${pulseActive ? 'scale-[1.18] opacity-100' : 'scale-100 opacity-0'}`} />
-                <div className={`absolute inset-0 rounded-full border border-[#36c0c9]/15 transition-all duration-700 delay-200 ${pulseActive ? 'scale-[1.35] opacity-100' : 'scale-105 opacity-0'}`} />
+                <div
+                  className={`absolute inset-0 rounded-full border-2 border-[#36c0c9]/25 transition-all duration-700 ${pulseActive ? 'scale-[1.18] opacity-100' : 'scale-100 opacity-0'}`}
+                />
+                <div
+                  className={`absolute inset-0 rounded-full border border-[#36c0c9]/15 transition-all duration-700 delay-200 ${pulseActive ? 'scale-[1.35] opacity-100' : 'scale-105 opacity-0'}`}
+                />
                 <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#ddf7f9] to-[#b2eff4] border-2 border-[#36c0c9]/40 flex flex-col items-center justify-center gap-1.5 relative z-10 shadow-md">
                   <div className="flex items-end gap-[2.5px] h-5">
                     {waveBars.map((baseH, i) => (
                       <div
                         key={i}
                         className="w-[3px] rounded-full bg-[#36c0c9] transition-all duration-300"
-                        style={{ height: `${(baseH + ((wavePhase + i) % 5) * 1.5) * (agentOnHold ? 0.6 : 1.5)}px`, transitionDelay: `${i * 60}ms` }}
+                        style={{
+                          height: `${(baseH + ((wavePhase + i) % 5) * 1.5) * (agentOnHold ? 0.6 : 1.5)}px`,
+                          transitionDelay: `${i * 60}ms`,
+                        }}
                       />
                     ))}
                   </div>
-                  <span className="text-[8px] font-extrabold text-[#0ea5e9] tracking-widest uppercase">AI Assessor</span>
+                  <span className="text-[8px] font-extrabold text-[#0ea5e9] tracking-widest uppercase">
+                    AI Assessor
+                  </span>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-0.5">
                 <span className="text-sm font-extrabold text-[#0d212c]">Sam</span>
                 <span className="text-xs text-[#64748b]">
-                  {agentOnHold ? 'Sam is on hold' : assessmentStarted ? 'Sam is listening' : 'Sam is here, waiting for M42 to start the assessment'}
+                  {agentOnHold
+                    ? 'Sam is on hold'
+                    : assessmentStarted
+                      ? 'Sam is listening'
+                      : 'Sam is here, waiting for M42 to start the assessment'}
                 </span>
               </div>
             </div>
@@ -448,13 +516,14 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
 
           {/* ── PARTICIPANT TILES — bottom-right, Teams style ────────────────────── */}
           <div className="absolute bottom-4 right-4 flex items-end gap-2 z-10">
-
             {/* Vendor tile */}
             <div className="w-28 h-20 rounded-xl bg-[#1e293b] border border-white/10 shadow-lg flex flex-col items-center justify-center gap-1 relative overflow-hidden">
               <div className="w-9 h-9 rounded-full bg-[#334155] flex items-center justify-center text-white font-bold text-base shadow">
                 {vendorShortName ? vendorShortName[0].toUpperCase() : 'V'}
               </div>
-              <span className="text-[9px] font-bold text-white/70 truncate max-w-[100px] px-1 text-center">{vendorShortName}</span>
+              <span className="text-[9px] font-bold text-white/70 truncate max-w-[100px] px-1 text-center">
+                {vendorShortName}
+              </span>
               <div className="absolute bottom-1 left-1 flex items-center gap-0.5 bg-black/30 rounded-md px-1 py-0.5">
                 <Mic className="w-2 h-2 text-white/70" />
                 <span className="text-[8px] text-white/70">Vendor</span>
@@ -470,8 +539,14 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
                 {yourName.trim() || 'Admin'} <span className="text-[#36c0c9]">(you)</span>
               </span>
               {/* Mic badge */}
-              <div className={`absolute bottom-1 left-1 flex items-center gap-0.5 rounded-md px-1 py-0.5 ${isMuted ? 'bg-red-500/80' : 'bg-black/30'}`}>
-                {isMuted ? <MicOff className="w-2 h-2 text-white" /> : <Mic className="w-2 h-2 text-white/70" />}
+              <div
+                className={`absolute bottom-1 left-1 flex items-center gap-0.5 rounded-md px-1 py-0.5 ${isMuted ? 'bg-red-500/80' : 'bg-black/30'}`}
+              >
+                {isMuted ? (
+                  <MicOff className="w-2 h-2 text-white" />
+                ) : (
+                  <Mic className="w-2 h-2 text-white/70" />
+                )}
                 <span className="text-[8px] text-white/70">M42</span>
               </div>
             </div>
@@ -482,10 +557,19 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
         {assessmentStarted && showTranscript && (
           <div className="w-[300px] border-l border-[#e2e8f0] bg-white flex flex-col shrink-0 min-h-0">
             <div className="flex items-center justify-between px-4 py-3 border-b border-[#e2e8f0] shrink-0">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d212c]">Live Transcript</span>
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0d212c]">
+                Live Transcript
+              </span>
               <div className="flex items-center gap-2">
-                <button className="text-[10px] font-semibold text-[#64748b] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0">Copy</button>
-                <button onClick={() => setShowTranscript(false)} className="text-[10px] font-semibold text-[#64748b] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0">Hide</button>
+                <button className="text-[10px] font-semibold text-[#64748b] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0">
+                  Copy
+                </button>
+                <button
+                  onClick={() => setShowTranscript(false)}
+                  className="text-[10px] font-semibold text-[#64748b] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+                >
+                  Hide
+                </button>
               </div>
             </div>
 
@@ -493,7 +577,9 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
               {sampleTranscript.map((entry, i) => (
                 <div key={i} className="flex flex-col gap-0.5">
                   <div className="flex items-center gap-1.5">
-                    <span className={`text-[10px] font-extrabold ${entry.speaker === 'Sam' ? 'text-[#36c0c9]' : 'text-[#0d212c]'}`}>
+                    <span
+                      className={`text-[10px] font-extrabold ${entry.speaker === 'Sam' ? 'text-[#36c0c9]' : 'text-[#0d212c]'}`}
+                    >
                       {entry.speaker === 'Sam' ? 'Sam (AI)' : yourName.trim() || 'Vendor'}
                     </span>
                     <span className="text-[9px] text-[#94a3b8]">{entry.time}</span>
@@ -510,7 +596,11 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
                 </div>
                 <div className="flex items-center gap-1 mt-0.5">
                   {[0, 1, 2].map((i) => (
-                    <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#36c0c9] animate-bounce" style={{ animationDelay: `${i * 150}ms` }} />
+                    <div
+                      key={i}
+                      className="w-1.5 h-1.5 rounded-full bg-[#36c0c9] animate-bounce"
+                      style={{ animationDelay: `${i * 150}ms` }}
+                    />
                   ))}
                 </div>
               </div>
@@ -521,7 +611,6 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
 
       {/* ── BOTTOM TOOLBAR ───────────────────────────────────────────────────────── */}
       <div className="bg-white border-t border-[#e2e8f0] flex items-center justify-center gap-3 shrink-0 shadow-sm px-6 py-3">
-
         {/* Mute — always active */}
         <div className="flex flex-col items-center gap-0.5">
           <button
@@ -532,7 +621,9 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
           >
             {isMuted ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
           </button>
-          <span className="text-[9px] text-[#94a3b8] font-medium">{isMuted ? 'Unmute' : 'Mute'}</span>
+          <span className="text-[9px] text-[#94a3b8] font-medium">
+            {isMuted ? 'Unmute' : 'Mute'}
+          </span>
         </div>
 
         {/* Upload — disabled until assessment starts */}
@@ -582,7 +673,11 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
               title={agentOnHold ? 'Resume Sam' : 'Hold Agent'}
               className={`w-10 h-10 rounded-full flex items-center justify-center border-0 shadow-sm transition ${!assessmentStarted ? 'bg-[#f1f5f9] text-[#cbd5e1] cursor-not-allowed opacity-50' : agentOnHold ? 'bg-[#ddf7f9] text-[#36c0c9] hover:bg-[#b2eff4] cursor-pointer' : 'bg-[#f1f5f9] text-[#334155] hover:bg-[#e2e8f0] cursor-pointer'}`}
             >
-              {agentOnHold ? <PlayCircle className="w-4 h-4" /> : <PauseCircle className="w-4 h-4" />}
+              {agentOnHold ? (
+                <PlayCircle className="w-4 h-4" />
+              ) : (
+                <PauseCircle className="w-4 h-4" />
+              )}
             </button>
 
             {/* Hold active — persistent white tooltip above button */}
@@ -607,7 +702,9 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
               </div>
             )}
           </div>
-          <span className="text-[9px] text-[#94a3b8] font-medium">{agentOnHold ? 'Resume Sam' : 'Hold Agent'}</span>
+          <span className="text-[9px] text-[#94a3b8] font-medium">
+            {agentOnHold ? 'Resume Sam' : 'Hold Agent'}
+          </span>
         </div>
 
         {/* Divider */}
@@ -620,7 +717,11 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({ vendor, onBack, 
               id="callroom-finalise-btn"
               onClick={() => assessmentStarted && setShowFinaliseConfirm(true)}
               disabled={!assessmentStarted}
-              title={assessmentStarted ? 'End and finalise assessment' : 'Available after assessment starts'}
+              title={
+                assessmentStarted
+                  ? 'End and finalise assessment'
+                  : 'Available after assessment starts'
+              }
               className={`h-10 px-4 rounded-full flex items-center justify-center gap-1.5 transition border-0 font-bold text-xs shadow-sm ${
                 assessmentStarted
                   ? 'bg-[#ddf7f9] hover:bg-[#b2eff4] text-[#0d7280] border border-[#36c0c9]/30 cursor-pointer'

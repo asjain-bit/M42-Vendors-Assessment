@@ -1,11 +1,12 @@
 'use client'
 
 import React, { useState } from 'react'
-import { GripVertical, Trash2, ArrowLeft, Check, Pencil, Plus, X } from 'lucide-react'
+import { ArrowUp, ArrowDown, Trash2, ArrowLeft } from 'lucide-react'
 import { Checkbox } from '@/components/atoms/Checkbox'
 
 export interface QuestionItem {
   id: number
+  section: string
   question: string
   responseCue: string
   researchNeeded: boolean
@@ -15,9 +16,8 @@ export interface QuestionItem {
 export interface QuestionnaireDetailData {
   id: string
   title: string
-  status: 'Ready' | 'Draft' | 'Processing'
+  status: string
   questionsCount: number
-  initialEditMode?: boolean
 }
 
 interface QuestionnaireDetailScreenProps {
@@ -29,25 +29,10 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
   questionnaire,
   onBack,
 }) => {
-  const [status, setStatus] = useState<string>(questionnaire.status || 'Ready')
-  const [isEditing, setIsEditing] = useState<boolean>(questionnaire.initialEditMode ?? (questionnaire.status === 'Draft'))
-  const [deletingQuestionId, setDeletingQuestionId] = useState<number | null>(null)
-  const [toastMessage, setToastMessage] = useState<string | null>(null)
-
-  // Drag and drop state for Google Forms style reordering
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
-
-  // Requirement 4: State for Add New Question Modal
-  const [showAddQuestionModal, setShowAddQuestionModal] = useState(false)
-  const [newQuestionText, setNewQuestionText] = useState('')
-  const [newResponseCue, setNewResponseCue] = useState('')
-  const [newResearchNeeded, setNewResearchNeeded] = useState(false)
-  const [newAttachmentRequired, setNewAttachmentRequired] = useState(false)
-
-  // Questions list
   const [questions, setQuestions] = useState<QuestionItem[]>([
     {
       id: 1,
+      section: 'SECTION 1: PATIENT SAFETY & CLINICAL RISK',
       question: 'Describe the primary clinical or operational use cases supported by your solution.',
       responseCue: 'Specify whether workflows are clinical, decision-support, operational, or administrative. State whether outputs influence patient care directly or indirectly.',
       researchNeeded: true,
@@ -55,6 +40,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
     },
     {
       id: 2,
+      section: 'SECTION 1: PATIENT SAFETY & CLINICAL RISK',
       question: 'Has your organization performed a patient safety or clinical risk assessment for this product?',
       responseCue: 'Provide documentation or summary of hazard analysis, risk register, or failure-mode analysis related to patient harm.',
       researchNeeded: false,
@@ -62,6 +48,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
     },
     {
       id: 3,
+      section: 'SECTION 2: INFORMATION SECURITY & ENCRYPTION',
       question: 'Describe how customer data is encrypted in transit and at rest across cloud tenants.',
       responseCue: 'Specify encryption algorithms (e.g. AES-256, TLS 1.3), key rotation policies, and HSM backing.',
       researchNeeded: true,
@@ -69,6 +56,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
     },
     {
       id: 4,
+      section: 'SECTION 2: INFORMATION SECURITY & ENCRYPTION',
       question: 'Provide proof of SOC 2 Type II or ISO/IEC 27001 certification compliance.',
       responseCue: 'Attach executive summary or auditor attestation statement covering the last 12 months.',
       researchNeeded: false,
@@ -76,6 +64,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
     },
     {
       id: 5,
+      section: 'SECTION 3: DATA PRIVACY & RESIDENCY',
       question: 'Can customer data be strictly isolated within United Arab Emirates cloud regions?',
       responseCue: 'Detail tenant deployment architecture, backup locations, and compliance with UAE Health Data Law.',
       researchNeeded: true,
@@ -83,6 +72,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
     },
     {
       id: 6,
+      section: 'SECTION 3: DATA PRIVACY & RESIDENCY',
       question: 'Outline your incident response SLA for reporting data breaches to affected healthcare entities.',
       responseCue: 'Provide notification timeline (e.g., within 24 hours), triage workflows, and root cause analysis format.',
       researchNeeded: true,
@@ -92,99 +82,30 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
 
   // Handle Question field edits
   const handleQuestionChange = (id: number, field: keyof QuestionItem, value: string | boolean) => {
-    if (!isEditing) return
     setQuestions(
       questions.map((q) => (q.id === id ? { ...q, [field]: value } : q))
     )
   }
 
-  // Delete Question after confirmation popup
-  const confirmDeleteQuestion = () => {
-    if (deletingQuestionId !== null) {
-      setQuestions(questions.filter((q) => q.id !== deletingQuestionId))
-      setDeletingQuestionId(null)
-      showToast('Question deleted successfully.')
-    }
+  // Delete Question
+  const handleDeleteQuestion = (id: number) => {
+    setQuestions(questions.filter((q) => q.id !== id))
   }
 
-  // Requirement 4: Add New Question Handler
-  const handleAddQuestion = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!newQuestionText.trim()) return
+  // Move Question Up / Down
+  const handleMoveQuestion = (index: number, direction: 'up' | 'down') => {
+    const newQuestions = [...questions]
+    const targetIndex = direction === 'up' ? index - 1 : index + 1
+    if (targetIndex < 0 || targetIndex >= newQuestions.length) return
 
-    const newQuestionObj: QuestionItem = {
-      id: Date.now(),
-      question: newQuestionText.trim(),
-      responseCue: newResponseCue.trim() || 'Provide explicit operational proof and supporting compliance evidence.',
-      researchNeeded: newResearchNeeded,
-      attachmentRequired: newAttachmentRequired,
-    }
-
-    setQuestions([...questions, newQuestionObj])
-    setNewQuestionText('')
-    setNewResponseCue('')
-    setNewResearchNeeded(false)
-    setNewAttachmentRequired(false)
-    setShowAddQuestionModal(false)
-    showToast('New question added successfully!')
-  }
-
-  // Google Forms style drag and drop reordering
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    if (!isEditing) return
-    setDraggedIndex(index)
-    e.dataTransfer.effectAllowed = 'move'
-  }
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault()
-    if (draggedIndex === null || draggedIndex === index || !isEditing) return
-
-    const updatedQuestions = [...questions]
-    const itemToMove = updatedQuestions[draggedIndex]
-    updatedQuestions.splice(draggedIndex, 1)
-    updatedQuestions.splice(index, 0, itemToMove)
-
-    setDraggedIndex(index)
-    setQuestions(updatedQuestions)
-  }
-
-  const handleDragEnd = () => {
-    setDraggedIndex(null)
-  }
-
-  const handleSaveOrEdit = () => {
-    if (isEditing) {
-      setIsEditing(false)
-      showToast('Questionnaire changes saved successfully.')
-    } else {
-      setIsEditing(true)
-    }
-  }
-
-  const handlePublish = () => {
-    setStatus('Ready')
-    setIsEditing(false)
-    showToast('Questionnaire published successfully!')
-  }
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg)
-    setTimeout(() => {
-      setToastMessage(null)
-    }, 3000)
+    const temp = newQuestions[index]
+    newQuestions[index] = newQuestions[targetIndex]
+    newQuestions[targetIndex] = temp
+    setQuestions(newQuestions)
   }
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#0d212c] pb-16 font-sans w-full">
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-4 right-4 z-50 bg-[#0d212c] text-white px-4 py-3 rounded-xl shadow-xl border border-[#36c0c9]/50 flex items-center gap-3 animate-in slide-in-from-top duration-300">
-          <Check className="w-4 h-4 text-[#36c0c9]" />
-          <span className="text-sm font-medium">{toastMessage}</span>
-        </div>
-      )}
-
       {/* Breadcrumb Header */}
       <div className="w-full px-6 lg:px-10 pt-4 pb-2 text-xs font-semibold flex items-center gap-1.5 text-[#64748b]">
         <button onClick={onBack} className="hover:text-[#36c0c9] cursor-pointer flex items-center gap-1">
@@ -205,104 +126,62 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
             <h1 className="text-xl lg:text-2xl font-extrabold tracking-tight text-[#0d212c]">
               {questionnaire.title}
             </h1>
-            <span
-              className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                status === 'Draft'
-                  ? 'bg-amber-100 text-amber-800'
-                  : 'bg-[#e6f4ea] text-[#137333]'
-              }`}
-            >
-              {status === 'Draft' ? 'Draft' : 'Ready'}
+            <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#e6f4ea] text-[#137333]">
+              ready
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-4 shrink-0">
-          {/* Requirement 4: Option to add new question in Edit Mode */}
-          {isEditing && (
-            <button
-              onClick={() => setShowAddQuestionModal(true)}
-              className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-xs border-0"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add question</span>
-            </button>
-          )}
-
-          {status === 'Draft' ? (
-            <button
-              onClick={handlePublish}
-              className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold px-6 py-2 rounded-xl text-xs shadow-xs cursor-pointer transition border-0"
-            >
-              Publish questionnaire
-            </button>
-          ) : isEditing ? (
-            <button
-              onClick={handleSaveOrEdit}
-              className="bg-[#36c0c9] hover:bg-[#2eb0b9] text-white font-bold px-6 py-2 rounded-xl text-xs cursor-pointer shadow-xs border-0 transition"
-            >
-              Save
-            </button>
-          ) : (
-            /* Requirement 2: Tertiary text-only edit questionnaire button with edit icon in light primary cyan */
-            <button
-              onClick={handleSaveOrEdit}
-              className="text-[#36c0c9] hover:text-[#2cb0b9] font-bold text-xs flex items-center gap-1.5 transition cursor-pointer bg-transparent border-0 p-0"
-            >
-              <Pencil className="w-4 h-4 text-[#36c0c9]" />
-              <span>Edit questionnaire</span>
-            </button>
-          )}
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs font-bold px-3 py-1 rounded-full bg-[#e2e8f0] text-[#0d212c]">
+            Published
+          </span>
         </div>
       </div>
 
-      {/* Questions List */}
-      <div className="w-full px-6 lg:px-10 mt-6 flex flex-col gap-5">
+      {/* All Questions List */}
+      <div className="w-full px-6 lg:px-10 mt-6 flex flex-col gap-6">
         {questions.map((q, idx) => (
-          /* Requirement 3: Subtle grey border for question card in edit mode (no cyan highlight) */
           <div
             key={q.id}
-            draggable={isEditing}
-            onDragStart={(e) => handleDragStart(e, idx)}
-            onDragOver={(e) => handleDragOver(e, idx)}
-            onDragEnd={handleDragEnd}
-            className={`bg-white p-6 rounded-2xl border transition flex flex-col gap-4 ${
-              draggedIndex === idx
-                ? 'border-[#cbd5e1] shadow-md opacity-70 bg-slate-50'
-                : isEditing
-                ? 'border-[#e2e8f0] hover:border-[#cbd5e1] shadow-xs'
-                : 'border-[#e2e8f0]'
-            }`}
+            className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-4 hover:border-[#36c0c9]/40 transition"
           >
-            {/* Question Card Top Bar */}
-            <div className="flex items-center justify-between gap-4 border-b border-[#e2e8f0]/80 pb-3">
-              <div className="flex items-center gap-3 min-w-0">
-                {isEditing && (
-                  <div
-                    className="p-1.5 rounded-lg text-[#64748b] hover:text-[#0d212c] hover:bg-slate-100 cursor-grab active:cursor-grabbing transition shrink-0"
-                    title="Hold and drag to reposition question"
-                  >
-                    <GripVertical className="w-4 h-4 text-[#64748b]" />
-                  </div>
-                )}
-                <span className="text-sm font-extrabold text-[#0d212c] tracking-tight">
-                  Question {idx + 1}
-                </span>
-              </div>
+            {/* Question Header: #Index - Section Title | Controls */}
+            <div className="flex items-center justify-between gap-4 border-b border-[#e2e8f0]/60 pb-3">
+              <span className="text-xs font-extrabold text-[#64748b] tracking-wider uppercase">
+                #{idx + 1} - {q.section}
+              </span>
 
-              {isEditing && (
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setDeletingQuestionId(q.id)}
-                  className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 transition cursor-pointer"
+                  disabled={idx === 0}
+                  onClick={() => handleMoveQuestion(idx, 'up')}
+                  className="p-1 text-[#64748b] hover:text-[#0d212c] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                  title="Move question up"
+                >
+                  <ArrowUp className="w-4 h-4" />
+                </button>
+                <button
+                  disabled={idx === questions.length - 1}
+                  onClick={() => handleMoveQuestion(idx, 'down')}
+                  className="p-1 text-[#64748b] hover:text-[#0d212c] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                  title="Move question down"
+                >
+                  <ArrowDown className="w-4 h-4" />
+                </button>
+                {/* Delete button: Red icon color */}
+                <button
+                  onClick={() => handleDeleteQuestion(q.id)}
+                  className="p-1 text-red-600 hover:text-red-700 transition cursor-pointer ml-1"
                   title="Delete question"
                   aria-label="Delete question"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
-              )}
+              </div>
             </div>
 
-            {/* Requirement 1: QUESTION Input Field (View-only mode has no focus/click stroke interaction) */}
+            {/* QUESTION Input Field */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] font-extrabold text-[#64748b] uppercase tracking-wider">
                 QUESTION
@@ -310,160 +189,40 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
               <input
                 type="text"
                 value={q.question}
-                readOnly={!isEditing}
-                tabIndex={!isEditing ? -1 : 0}
                 onChange={(e) => handleQuestionChange(q.id, 'question', e.target.value)}
-                className={`w-full px-4 py-2.5 rounded-xl border text-xs font-medium text-[#0d212c] transition ${
-                  isEditing
-                    ? 'border-[#cbd5e1] focus:border-[#cbd5e1] focus:outline-none bg-white'
-                    : 'border-[#e2e8f0] bg-slate-50/50 cursor-default outline-none select-none pointer-events-none'
-                }`}
+                className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] focus:border-[#36c0c9] focus:ring-1 focus:ring-[#36c0c9] text-xs font-medium text-[#0d212c] bg-white outline-none"
               />
             </div>
 
-            {/* Requirement 1: RESPONSE CUE Textarea (View-only mode has no focus/click stroke interaction) */}
+            {/* RESPONSE CUE Textarea */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[11px] font-extrabold text-[#64748b] uppercase tracking-wider">
                 RESPONSE CUE
               </label>
               <textarea
                 value={q.responseCue}
-                readOnly={!isEditing}
-                tabIndex={!isEditing ? -1 : 0}
                 onChange={(e) => handleQuestionChange(q.id, 'responseCue', e.target.value)}
                 rows={2}
-                className={`w-full px-4 py-2.5 rounded-xl border text-xs font-medium text-[#0d212c] resize-y transition ${
-                  isEditing
-                    ? 'border-[#cbd5e1] focus:border-[#cbd5e1] focus:outline-none bg-white'
-                    : 'border-[#e2e8f0] bg-slate-50/50 cursor-default outline-none select-none pointer-events-none'
-                }`}
+                className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] focus:border-[#36c0c9] focus:ring-1 focus:ring-[#36c0c9] text-xs font-medium text-[#0d212c] bg-white outline-none resize-y"
               />
             </div>
 
             {/* Checkboxes: Research needed | Attachment required */}
-            <div className="flex items-center gap-6 pt-2">
+            <div className="flex items-center gap-6 pt-1">
               <Checkbox
                 label="Research needed"
                 checked={q.researchNeeded}
-                disabled={!isEditing}
                 onChange={(e) => handleQuestionChange(q.id, 'researchNeeded', e.target.checked)}
               />
               <Checkbox
                 label="Attachment required"
                 checked={q.attachmentRequired}
-                disabled={!isEditing}
                 onChange={(e) => handleQuestionChange(q.id, 'attachmentRequired', e.target.checked)}
               />
             </div>
           </div>
         ))}
       </div>
-
-      {/* Requirement 4: Add New Question Modal Popup */}
-      {showAddQuestionModal && (
-        <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-[#e2e8f0] animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-3 mb-4">
-              <h3 className="text-base font-extrabold text-[#0d212c]">
-                Add new question
-              </h3>
-              <button
-                onClick={() => setShowAddQuestionModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-[#0d212c] transition cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleAddQuestion} className="flex flex-col gap-4">
-              <div>
-                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                  Question text <span className="text-red-500 font-bold">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Describe your identity & access management policies..."
-                  value={newQuestionText}
-                  onChange={(e) => setNewQuestionText(e.target.value)}
-                  required
-                  className="w-full px-4 py-2.5 rounded-xl border border-[#cbd5e1] text-xs font-medium text-[#0d212c] outline-none bg-white"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                  Response cue
-                </label>
-                <textarea
-                  placeholder="Instructions or cues for the vendor to answer effectively..."
-                  value={newResponseCue}
-                  onChange={(e) => setNewResponseCue(e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-2.5 rounded-xl border border-[#cbd5e1] text-xs font-medium text-[#0d212c] outline-none bg-white resize-y"
-                />
-              </div>
-
-              <div className="flex items-center gap-6 py-2">
-                <Checkbox
-                  label="Research needed"
-                  checked={newResearchNeeded}
-                  onChange={(e) => setNewResearchNeeded(e.target.checked)}
-                />
-                <Checkbox
-                  label="Attachment required"
-                  checked={newAttachmentRequired}
-                  onChange={(e) => setNewAttachmentRequired(e.target.checked)}
-                />
-              </div>
-
-              <div className="flex justify-end gap-3 pt-3 border-t border-[#e2e8f0]">
-                <button
-                  type="button"
-                  onClick={() => setShowAddQuestionModal(false)}
-                  className="px-4 py-2 rounded-xl border border-[#e2e8f0] text-xs font-semibold text-[#0d212c] hover:bg-slate-50 cursor-pointer"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!newQuestionText.trim()}
-                  className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold py-2 px-6 rounded-xl text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition border-0"
-                >
-                  Save question
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Confirmation Popup for Deleting Individual Question */}
-      {deletingQuestionId !== null && (
-        <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-[#e2e8f0]">
-            <h3 className="text-lg font-bold text-[#0d212c] mb-2">
-              Confirm deletion
-            </h3>
-            <p className="text-xs text-[#64748b] mb-6">
-              Are you sure you want to delete this question? This action cannot be undone.
-            </p>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setDeletingQuestionId(null)}
-                className="px-3.5 py-2 rounded-lg border border-[#e2e8f0] text-xs font-semibold text-[#0d212c] hover:bg-slate-50 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeleteQuestion}
-                className="px-3.5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer"
-              >
-                Delete question
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

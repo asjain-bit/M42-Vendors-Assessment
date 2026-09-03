@@ -1,7 +1,7 @@
 /**
  * KPICard — Molecule
  * Key performance metric card displaying label, value, Badge atom, and trend indicator.
- * Light mode card with standard typography.
+ * Used in: SettingsPanel, AppShell
  */
 
 import React from 'react'
@@ -21,30 +21,30 @@ export const KPICard: React.FC<KPICardProps> = ({
   return (
     <div
       className={[
-        'p-5 rounded-2xl border border-[#e2e8f0] bg-white text-[#0d212c] shadow-xs flex flex-col gap-2 transition-all hover:border-[#cbd5e1]',
+        'p-5 rounded-xl border border-border-default bg-bg-surface-1 text-text-primary shadow-xs flex flex-col gap-2 transition-all hover:border-border-strong',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-[#64748b] tracking-wide">
+        <span className="text-xs font-medium text-text-tertiary uppercase tracking-wider">
           {title}
         </span>
         {badgeText && <Badge variant={badgeVariant}>{badgeText}</Badge>}
       </div>
 
       <div className="flex items-baseline justify-between mt-1">
-        <span className="text-2xl font-extrabold text-[#0d212c] font-sans">{value}</span>
+        <span className="text-2xl font-bold font-serif">{value}</span>
         {change && (
           <span
             className={[
-              'text-xs font-semibold inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full',
+              'text-xs font-medium inline-flex items-center gap-0.5',
               trend === 'up'
-                ? 'bg-[#e6f4ea] text-[#137333]'
+                ? 'text-status-success-text'
                 : trend === 'down'
-                ? 'bg-red-50 text-red-600'
-                : 'bg-slate-100 text-[#64748b]',
+                ? 'text-status-error-text'
+                : 'text-text-tertiary',
             ].join(' ')}
           >
             {trend === 'up' && <Icon name="check" size={12} />}

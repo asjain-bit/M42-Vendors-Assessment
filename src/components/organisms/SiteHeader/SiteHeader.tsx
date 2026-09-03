@@ -15,7 +15,7 @@ export interface SiteHeaderProps {
 
 export const SiteHeader: React.FC<SiteHeaderProps> = ({
   title = 'Vendor assessment',
-  subtitle,
+  subtitle = 'Overview of active vendor due diligence, risk scores, and evidence submissions.',
   className = '',
 }) => {
   return (
@@ -31,11 +31,9 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
         <h1 className="font-extrabold text-xl lg:text-2xl tracking-tight text-[#0d212c]">
           {title}
         </h1>
-        {subtitle ? (
-          <p className="text-xs text-[#64748b] mt-0.5 leading-normal">
-            {subtitle}
-          </p>
-        ) : null}
+        <p className="text-xs text-[#64748b] mt-0.5 leading-normal">
+          {subtitle}
+        </p>
       </div>
     </header>
   )

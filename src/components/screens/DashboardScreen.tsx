@@ -212,13 +212,6 @@ export const DashboardScreen: React.FC = () => {
         <span className="text-[#36c0c9] font-bold">Dashboard</span>
       </div>
 
-      {/* Top Action Header Bar */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex flex-col gap-0.5">
-          <h2 className="text-xl font-extrabold text-[#0d212c]">Dashboard</h2>
-        </div>
-      </div>
-
       {/* KPI Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* KPI Card 1: Total Vendors */}
@@ -321,40 +314,42 @@ export const DashboardScreen: React.FC = () => {
         </div>
       </div>
 
-      {/* Filter chips & Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-          {filterOptions.map((chip) => {
-            const isSelected = selectedStatusFilter === chip.key
-            return (
-              <button
-                key={chip.key}
-                onClick={() => handleFilterClick(chip.key)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
-                  isSelected
-                    ? 'bg-[#36c0c9] text-white font-bold shadow-xs'
-                    : 'bg-white text-[#64748b] border border-[#e2e8f0] hover:bg-[#f8fafc]'
-                }`}
-              >
-                <span>{chip.label}</span>
-                <span
-                  className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
-                    isSelected ? 'bg-white/25 text-white' : 'bg-[#f1f5f9] text-[#64748b]'
-                  }`}
-                >
-                  {chip.count}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-
-        <div className="w-full md:w-72 shrink-0">
+      {/* Assessments Title & Search Bar Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+        <h2 className="text-xl font-extrabold text-[#0d212c]">Assessments</h2>
+        <div className="w-full sm:w-80 shrink-0">
           <SearchBar
             placeholder="Search vendor name, questionnaire..."
             onSearch={handleSearchChange}
           />
         </div>
+      </div>
+
+      {/* Filter Chips (below Title & Search Bar row) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {filterOptions.map((chip) => {
+          const isSelected = selectedStatusFilter === chip.key
+          return (
+            <button
+              key={chip.key}
+              onClick={() => handleFilterClick(chip.key)}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
+                isSelected
+                  ? 'bg-[#36c0c9] text-white font-bold shadow-xs'
+                  : 'bg-white text-[#64748b] border border-[#e2e8f0] hover:bg-[#f8fafc]'
+              }`}
+            >
+              <span>{chip.label}</span>
+              <span
+                className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                  isSelected ? 'bg-white/25 text-white' : 'bg-[#f1f5f9] text-[#64748b]'
+                }`}
+              >
+                {chip.count}
+              </span>
+            </button>
+          )
+        })}
       </div>
 
       {/* Vendor Assessments Directory Table */}

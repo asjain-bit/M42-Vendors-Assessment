@@ -397,8 +397,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
           <CheckCircle2 className="w-4 h-4 text-[#16a34a]" />
           <span>{toastMessage}</span>
         </div>
-      )}
-
+      )}{' '}
       {/* Breadcrumb Menu (Moved outside of Header Card) */}
       <div className="w-full px-6 lg:px-10 pt-4 pb-1 text-xs font-medium flex items-center gap-1.5 text-[#64748b]">
         <button onClick={onBack} className="hover:text-[#0d7280] cursor-pointer">
@@ -409,15 +408,8 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
           Dashboard
         </button>
         <span>/</span>
-        <span>{assessment.vendor.split('|')[0]?.trim() || assessment.vendor}</span>
-        <span>/</span>
-        <span className="text-[#36c0c9] font-bold">
-          {assessment.vendor.includes('|')
-            ? assessment.vendor.split('|')[1]?.trim()
-            : assessment.vendor}
-        </span>
+        <span className="text-[#36c0c9] font-bold">Assessment details</span>
       </div>
-
       {/* Header Container Card — Very light shade of light primary color with minimal stroke */}
       <div className="w-full px-6 lg:px-10 pt-3">
         <div className="bg-[#ddf7f9]/20 rounded-3xl border border-[#36c0c9]/30 p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -485,15 +477,14 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
           </div>
         </div>
       </div>
-
       {/* Main Content Area */}
       <div className="w-full px-6 lg:px-10 mt-6 flex flex-col gap-6">
-        {/* Navigation Tabs Bar — Previous Tab Design with Light Primary Color */}
+        {/* Navigation Tabs Bar — Reference Image Style */}
         <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-0">
           <div className="flex items-center gap-6">
             <button
               onClick={() => setActiveTab('assessment')}
-              className={`pb-3 text-sm font-extrabold flex items-center gap-2 transition cursor-pointer border-b-2 ${
+              className={`pb-3 text-sm font-bold flex items-center gap-2 transition cursor-pointer border-b-2 ${
                 activeTab === 'assessment'
                   ? 'border-[#36c0c9] text-[#36c0c9]'
                   : 'border-transparent text-[#64748b] hover:text-[#0d212c]'
@@ -506,7 +497,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
             </button>
             <button
               onClick={() => setActiveTab('audit_trail')}
-              className={`pb-3 text-sm font-extrabold flex items-center gap-2 transition cursor-pointer border-b-2 ${
+              className={`pb-3 text-sm font-bold flex items-center gap-2 transition cursor-pointer border-b-2 ${
                 activeTab === 'audit_trail'
                   ? 'border-[#36c0c9] text-[#36c0c9]'
                   : 'border-transparent text-[#64748b] hover:text-[#0d212c]'

@@ -9,7 +9,8 @@ import { Sidebar } from '@/components/organisms/Sidebar'
 import { SiteHeader } from '@/components/organisms/SiteHeader'
 
 export default function HomePage() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  // Default to true so the user is logged in by default and lands on the Dashboard page immediately
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
   const [activeTab, setActiveTab] = useState<'dashboard' | 'questionnaires' | 'vendors'>('dashboard')
   const [userEmail, setUserEmail] = useState('john.doe@m42.ae')
 
@@ -35,19 +36,19 @@ export default function HomePage() {
     switch (activeTab) {
       case 'questionnaires':
         return {
-          title: 'Questionnaire library',
-          subtitle: 'Create, structure, and dispatch vendor risk questionnaires.',
+          title: 'Questionnaires',
+          subtitle: '', // Subheading removed per user request
         }
       case 'vendors':
         return {
-          title: 'Vendor management',
-          subtitle: 'Registered suppliers, risk profiles, and active compliance dispatching.',
+          title: 'Vendors', // Renamed per Requirement 1
+          subtitle: '', // Subheading removed per user request
         }
       case 'dashboard':
       default:
         return {
           title: 'Dashboard',
-          subtitle: 'Overview of active vendor due diligence, risk scores, and evidence submissions.',
+          subtitle: '', // Subheading removed per user request
         }
     }
   }

@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
+import { ChevronLeft, ChevronRight, Users, RefreshCw, Folder } from 'lucide-react'
 import { StatusChip } from '@/components/atoms/StatusChip'
 import { SearchBar } from '@/components/molecules/SearchBar'
 import { AssessmentDetailScreen, AssessmentDetailData } from './AssessmentDetailScreen'
@@ -10,17 +11,22 @@ interface AssessmentRow {
   vendor: string
   questionnaire: string
   round: string
-  status: 'awaiting_evidence' | 'completed' | 'scheduled'
-  score: 'Low' | 'Medium' | 'High' | '-'
+  status: 'awaiting_evidence' | 'completed' | 'scheduled' | 'finalised' | 'ready'
+  score: string
   createdDate: string
 }
 
 export const DashboardScreen: React.FC = () => {
   const [selectedAssessment, setSelectedAssessment] = useState<AssessmentDetailData | null>(null)
-  const [activeFilter, setActiveFilter] = useState<'all' | 'awaiting_evidence' | 'completed' | 'scheduled'>('all')
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
 
-  const allAssessments: AssessmentRow[] = [
+  // Requirement 1: Show 6 rows per page in dashboard table
+  const [currentPage, setCurrentPage] = useState(1)
+  const ITEMS_PER_PAGE = 6
+
+  // Varied rounds data and created date with time & AM/PM
+  const [assessments, setAssessments] = useState<AssessmentRow[]>([
     {
       id: 'ast-1',
       vendor: 'Presight AI | See the Future Today',
@@ -28,124 +34,164 @@ export const DashboardScreen: React.FC = () => {
       round: 'Round 1',
       status: 'awaiting_evidence',
       score: 'Medium',
-      createdDate: '25 Aug 2026, 18:42',
+      createdDate: '1 Sept 2026, 10:30 AM',
     },
     {
       id: 'ast-2',
-      vendor: 'Presight AI',
-      questionnaire: 'Data Protection & Privacy',
-      round: 'round 3',
-      status: 'completed',
-      score: 'High',
-      createdDate: '29 Aug 2026, 17:15',
-    },
-    {
-      id: 'ast-3',
-      vendor: 'Presight AI',
-      questionnaire: 'Information Security & Compliance',
-      round: '2',
-      status: 'completed',
-      score: 'High',
-      createdDate: '27 Aug 2026, 12:30',
-    },
-    {
-      id: 'ast-4',
-      vendor: 'Presight AI',
-      questionnaire: 'SOC 2 Security Assessment',
-      round: 'round 2',
-      status: 'completed',
-      score: 'High',
-      createdDate: '27 Aug 2026, 10:45',
-    },
-    {
-      id: 'ast-5',
-      vendor: 'Presight AI | See the Future Today',
-      questionnaire: 'ISO 27001 Checklist',
-      round: 'round 3',
-      status: 'completed',
-      score: 'High',
-      createdDate: '25 Aug 2026, 13:20',
-    },
-    {
-      id: 'ast-6',
-      vendor: 'Presight AI | See the Future Today',
-      questionnaire: 'HIPAA & Healthcare Data Compliance',
-      round: 'round 1',
-      status: 'completed',
-      score: 'Medium',
-      createdDate: '24 Aug 2026, 17:10',
-    },
-    {
-      id: 'ast-7',
-      vendor: 'Presight AI | See the Future Today',
-      questionnaire: 'Software Supply Chain Security',
-      round: 'round 3',
-      status: 'completed',
-      score: 'Low',
-      createdDate: '24 Aug 2026, 16:05',
-    },
-    {
-      id: 'ast-8',
-      vendor: 'Presight AI | See the Future Today',
-      questionnaire: 'Technical Questionnaire',
-      round: 'Live Re-test',
-      status: 'scheduled',
-      score: '-',
-      createdDate: '18 Aug 2026, 22:10',
-    },
-    {
-      id: 'ast-9',
-      vendor: 'Presight AI | See the Future Today',
-      questionnaire: 'Data Protection & Privacy',
-      round: 'ctx',
-      status: 'scheduled',
-      score: '-',
-      createdDate: '18 Aug 2026, 20:45',
-    },
-    {
-      id: 'ast-10',
-      vendor: 'Presight AI | See the Future Today',
-      questionnaire: 'Technical Questionnaire',
-      round: 'Live Onboarding',
-      status: 'scheduled',
-      score: '-',
-      createdDate: '18 Aug 2026, 20:30',
-    },
-    {
-      id: 'ast-11',
       vendor: 'Directus Inc.',
-      questionnaire: 'SOC 2 Security Assessment',
-      round: 'Round 1',
-      status: 'completed',
-      score: 'High',
-      createdDate: '15 Aug 2026, 09:15',
-    },
-    {
-      id: 'ast-12',
-      vendor: 'Pango Group',
-      questionnaire: 'ISO 27001 Checklist',
+      questionnaire: 'Data Protection & Privacy',
       round: 'Round 2',
       status: 'completed',
       score: 'High',
-      createdDate: '12 Aug 2026, 14:00',
+      createdDate: '28 Aug 2026, 02:15 PM',
     },
+    {
+      id: 'ast-3',
+      vendor: 'Pango Group LLC',
+      questionnaire: 'Information Security & Compliance',
+      round: 'Initial Review',
+      status: 'completed',
+      score: 'High',
+      createdDate: '24 Aug 2026, 11:45 AM',
+    },
+    {
+      id: 'ast-4',
+      vendor: 'Apex Systems Advisory',
+      questionnaire: 'Technical Questionnaire',
+      round: 'Stage 2 Audit',
+      status: 'scheduled',
+      score: '-',
+      createdDate: '20 Aug 2026, 04:20 PM',
+    },
+    {
+      id: 'ast-5',
+      vendor: 'Delphi AI Technologies',
+      questionnaire: 'SOC 2 Type II Vendor Risk Assessment',
+      round: 'Round 1 - Technical',
+      status: 'finalised',
+      score: 'High',
+      createdDate: '15 Aug 2026, 09:10 AM',
+    },
+    {
+      id: 'ast-6',
+      vendor: 'BioHealth Analytics',
+      questionnaire: 'HIPAA & Healthcare Data Compliance',
+      round: 'Follow-up Audit',
+      status: 'awaiting_evidence',
+      score: 'Low',
+      createdDate: '12 Aug 2026, 03:45 PM',
+    },
+    {
+      id: 'ast-7',
+      vendor: 'CloudScale AI Systems',
+      questionnaire: 'Third-Party Software Supply Chain Security',
+      round: 'Round 3',
+      status: 'completed',
+      score: 'High',
+      createdDate: '10 Aug 2026, 01:25 PM',
+    },
+    {
+      id: 'ast-8',
+      vendor: 'CyberGuard Solutions',
+      questionnaire: 'ISO 27001 ISMS Security Checklist',
+      round: 'Annual Re-evaluation',
+      status: 'completed',
+      score: 'High',
+      createdDate: '08 Aug 2026, 11:10 AM',
+    },
+    {
+      id: 'ast-9',
+      vendor: 'HealthCloud Telemetry',
+      questionnaire: 'Cloud Infrastructure Audit Questionnaire',
+      round: 'Stage 1 Discovery',
+      status: 'finalised',
+      score: 'High',
+      createdDate: '05 Aug 2026, 05:50 PM',
+    },
+    {
+      id: 'ast-10',
+      vendor: 'PharmaTech Analytics',
+      questionnaire: 'Clinical AI Safety & Ethics Questionnaire',
+      round: 'Pre-onboarding',
+      status: 'completed',
+      score: 'Medium',
+      createdDate: '01 Aug 2026, 09:30 AM',
+    },
+    {
+      id: 'ast-11',
+      vendor: 'MedSec Audit Co',
+      questionnaire: 'UAE DOH Health Data Residency Compliance',
+      round: 'Round 2 - Compliance',
+      status: 'awaiting_evidence',
+      score: 'Low',
+      createdDate: '28 Jul 2026, 04:15 PM',
+    },
+    {
+      id: 'ast-12',
+      vendor: 'Global Diagnostics IT',
+      questionnaire: 'Business Continuity & Disaster Recovery Audit',
+      round: 'Final Review',
+      status: 'finalised',
+      score: 'High',
+      createdDate: '25 Jul 2026, 02:00 PM',
+    },
+  ])
+
+  // KPI Card data calculations
+  const totalVendors = 12
+  const completedAssessments = assessments.filter((a) => a.status === 'completed').length
+  const finalizedAssessments = assessments.filter((a) => a.status === 'finalised').length
+
+  // Filter chips click options
+  const filterOptions = [
+    { key: 'all', label: 'All assessments', count: assessments.length },
+    { key: 'awaiting_evidence', label: 'Awaiting evidence', count: assessments.filter(a => a.status === 'awaiting_evidence').length },
+    { key: 'completed', label: 'Completed', count: completedAssessments },
+    { key: 'finalised', label: 'Finalised', count: finalizedAssessments },
+    { key: 'scheduled', label: 'Scheduled', count: assessments.filter(a => a.status === 'scheduled').length },
   ]
 
-  const filteredAssessments = allAssessments.filter((row) => {
-    const matchesFilter = activeFilter === 'all' || row.status === activeFilter
-    const matchesSearch =
-      row.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      row.questionnaire.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      row.round.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesFilter && matchesSearch
-  })
+  const handleFilterClick = (key: string) => {
+    setSelectedStatusFilter(key)
+    setCurrentPage(1)
+  }
 
-  // If row clicked, open AssessmentDetailScreen
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term)
+    setCurrentPage(1)
+  }
+
+  // Filtered dataset
+  const filteredAssessments = useMemo(() => {
+    return assessments.filter((item) => {
+      const matchesStatus =
+        selectedStatusFilter === 'all' || item.status === selectedStatusFilter
+      const matchesSearch =
+        item.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.questionnaire.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.round.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchesStatus && matchesSearch
+    })
+  }, [assessments, selectedStatusFilter, searchTerm])
+
+  // Pagination math (6 items per page)
+  const totalPages = Math.ceil(filteredAssessments.length / ITEMS_PER_PAGE) || 1
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const paginatedAssessments = filteredAssessments.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+
+  const handleUpdateStatus = (id: string, newStatus: 'ready' | 'finalised' | 'completed') => {
+    setAssessments(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a))
+    if (selectedAssessment && selectedAssessment.id === id) {
+      setSelectedAssessment(prev => prev ? { ...prev, status: newStatus } : null)
+    }
+  }
+
   if (selectedAssessment) {
     return (
       <AssessmentDetailScreen
         assessment={selectedAssessment}
         onBack={() => setSelectedAssessment(null)}
+        onStatusChange={(newStatus) => handleUpdateStatus(selectedAssessment.id, newStatus)}
       />
     )
   }
@@ -159,95 +205,152 @@ export const DashboardScreen: React.FC = () => {
         <span className="text-[#36c0c9] font-bold">Dashboard</span>
       </div>
 
-      {/* KPI Cards Grid (Very very subtle hover stroke per user instructions) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
-          <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Total assessments</span>
-          <span className="text-3xl font-extrabold text-[#0d212c] mt-2">{allAssessments.length}</span>
-        </div>
-
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
-          <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Awaiting evidence</span>
-          <span className="text-3xl font-extrabold text-amber-600 mt-2">
-            {allAssessments.filter((a) => a.status === 'awaiting_evidence').length}
-          </span>
-        </div>
-
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
-          <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Completed</span>
-          <span className="text-3xl font-extrabold text-[#137333] mt-2">
-            {allAssessments.filter((a) => a.status === 'completed').length}
-          </span>
-        </div>
-
-        <div className="p-5 bg-white rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between hover:border-[#cbd5e1]/40 hover:shadow-xs transition min-h-[96px]">
-          <span className="text-xs font-bold text-[#64748b] uppercase tracking-wider">Scheduled</span>
-          <span className="text-3xl font-extrabold text-[#1a73e8] mt-2">
-            {allAssessments.filter((a) => a.status === 'scheduled').length}
-          </span>
+      {/* Top Action Header Bar */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col gap-0.5">
+          <h2 className="text-xl font-extrabold text-[#0d212c]">Dashboard</h2>
         </div>
       </div>
 
-      {/* Filter Chips & Search Control Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        {/* Filter Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-          <button
-            onClick={() => setActiveFilter('all')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
-              activeFilter === 'all'
-                ? 'bg-[#36c0c9] text-white shadow-xs'
-                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
-            }`}
-          >
-            All assessments ({allAssessments.length})
-          </button>
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* KPI Card 1: Total Vendors */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <Users className="w-5 h-5 text-[#0d212c] shrink-0" />
+              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">Total Vendors</h3>
+            </div>
+            <div className="text-2xl font-extrabold text-[#36c0c9] shrink-0">12</div>
+          </div>
 
-          <button
-            onClick={() => setActiveFilter('awaiting_evidence')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
-              activeFilter === 'awaiting_evidence'
-                ? 'bg-[#36c0c9] text-white shadow-xs'
-                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
-            }`}
-          >
-            Awaiting evidence ({allAssessments.filter((a) => a.status === 'awaiting_evidence').length})
-          </button>
-
-          <button
-            onClick={() => setActiveFilter('completed')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
-              activeFilter === 'completed'
-                ? 'bg-[#36c0c9] text-white shadow-xs'
-                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
-            }`}
-          >
-            Completed ({allAssessments.filter((a) => a.status === 'completed').length})
-          </button>
-
-          <button
-            onClick={() => setActiveFilter('scheduled')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition cursor-pointer select-none border-0 outline-none ${
-              activeFilter === 'scheduled'
-                ? 'bg-[#36c0c9] text-white shadow-xs'
-                : 'text-[#64748b] bg-transparent hover:text-[#0d212c] hover:bg-[#e2e8f0]'
-            }`}
-          >
-            Scheduled ({allAssessments.filter((a) => a.status === 'scheduled').length})
-          </button>
+          <div className="grid grid-cols-3 divide-x divide-[#e2e8f0] pt-3 border-t border-[#e2e8f0]">
+            <div className="flex flex-col gap-0.5 pr-2">
+              <span className="text-lg font-bold text-[#0d212c]">
+                7 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">High confidence</span>
+            </div>
+            <div className="flex flex-col gap-0.5 px-3">
+              <span className="text-lg font-bold text-[#0d212c]">
+                2 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">Medium confidence</span>
+            </div>
+            <div className="flex flex-col gap-0.5 pl-3">
+              <span className="text-lg font-bold text-[#0d212c]">
+                3 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">Low confidence</span>
+            </div>
+          </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="w-full sm:w-72 shrink-0">
+        {/* KPI Card 2: Average Rounds per Vendor */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <RefreshCw className="w-5 h-5 text-[#0d212c] shrink-0" />
+              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">Average Rounds per Vendor</h3>
+            </div>
+            <div className="text-2xl font-extrabold text-[#36c0c9] shrink-0">2</div>
+          </div>
+
+          <div className="grid grid-cols-3 divide-x divide-[#e2e8f0] pt-3 border-t border-[#e2e8f0]">
+            <div className="flex flex-col gap-0.5 pr-2">
+              <span className="text-lg font-bold text-[#0d212c]">
+                8 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">1 Round</span>
+            </div>
+            <div className="flex flex-col gap-0.5 px-3">
+              <span className="text-lg font-bold text-[#0d212c]">
+                3 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">2 Rounds</span>
+            </div>
+            <div className="flex flex-col gap-0.5 pl-3">
+              <span className="text-lg font-bold text-[#0d212c]">
+                1 <span className="text-[11px] text-[#64748b] font-medium">vendor</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">3+ Rounds</span>
+            </div>
+          </div>
+        </div>
+
+        {/* KPI Card 3: Evidence backlog by age */}
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between gap-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <Folder className="w-5 h-5 text-[#0d212c] shrink-0" />
+              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">Evidence backlog by age</h3>
+            </div>
+            <div className="text-2xl font-extrabold text-[#36c0c9] shrink-0">75</div>
+          </div>
+
+          <div className="grid grid-cols-3 divide-x divide-[#e2e8f0] pt-3 border-t border-[#e2e8f0]">
+            <div className="flex flex-col gap-0.5 pr-2">
+              <span className="text-lg font-bold text-[#0d212c]">
+                33 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">0–14 days</span>
+            </div>
+            <div className="flex flex-col gap-0.5 px-3">
+              <span className="text-lg font-bold text-[#0d212c]">
+                8 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">15–30 days</span>
+            </div>
+            <div className="flex flex-col gap-0.5 pl-3">
+              <span className="text-lg font-bold text-[#0d212c]">
+                34 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
+              </span>
+              <span className="text-[11px] text-[#64748b] font-medium">Over 30 days</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Filter chips & Search Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pt-2">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+          {filterOptions.map((chip) => {
+            const isSelected = selectedStatusFilter === chip.key
+            return (
+              <button
+                key={chip.key}
+                onClick={() => handleFilterClick(chip.key)}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
+                  isSelected
+                    ? 'bg-[#36c0c9] text-white font-bold shadow-xs'
+                    : 'bg-white text-[#64748b] border border-[#e2e8f0] hover:bg-[#f8fafc]'
+                }`}
+              >
+                <span>{chip.label}</span>
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                    isSelected
+                      ? 'bg-white/25 text-white'
+                      : 'bg-[#f1f5f9] text-[#64748b]'
+                  }`}
+                >
+                  {chip.count}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
+        <div className="w-full md:w-72 shrink-0">
           <SearchBar
-            placeholder="Search vendor or questionnaire..."
-            onSearch={(q) => setSearchTerm(q)}
+            placeholder="Search vendor name, questionnaire..."
+            onSearch={handleSearchChange}
           />
         </div>
       </div>
 
-      {/* Data Table */}
-      <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-xs overflow-hidden w-full transition-all duration-300">
+      {/* Vendor Assessments Directory Table */}
+      <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-xs overflow-hidden w-full flex flex-col">
         <div className="overflow-x-auto w-full">
           <table className="w-full text-left text-sm border-collapse">
             <thead>
@@ -261,14 +364,14 @@ export const DashboardScreen: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0]/60">
-              {filteredAssessments.length === 0 ? (
+              {paginatedAssessments.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-[#64748b] text-sm">
                     No assessments matching search criteria.
                   </td>
                 </tr>
               ) : (
-                filteredAssessments.map((row) => (
+                paginatedAssessments.map((row) => (
                   <tr
                     key={row.id}
                     onClick={() =>
@@ -285,7 +388,7 @@ export const DashboardScreen: React.FC = () => {
                     <td className="py-3.5 px-4 text-[#0d212c]">
                       {row.questionnaire}
                     </td>
-                    <td className="py-3.5 px-4 text-[#64748b] text-xs">
+                    <td className="py-3.5 px-4 text-[#64748b] text-xs font-medium">
                       {row.round}
                     </td>
                     <td className="py-3.5 px-4">
@@ -293,15 +396,23 @@ export const DashboardScreen: React.FC = () => {
                         label={
                           row.status === 'awaiting_evidence'
                             ? 'Awaiting evidence'
+                            : row.status === 'ready'
+                            ? 'Ready'
                             : row.status === 'scheduled'
                             ? 'Scheduled'
+                            : row.status === 'finalised'
+                            ? 'Finalised'
                             : 'Completed'
                         }
                         status={
                           row.status === 'awaiting_evidence'
                             ? 'warning'
+                            : row.status === 'ready'
+                            ? 'info'
                             : row.status === 'scheduled'
                             ? 'info'
+                            : row.status === 'finalised'
+                            ? 'finalised'
                             : 'success'
                         }
                         dot={false}
@@ -309,7 +420,7 @@ export const DashboardScreen: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4">
                       {row.score === '-' ? (
-                        <span className="text-[#64748b] font-semibold text-xs pl-2.5">-</span>
+                        <span className="text-[#64748b] font-[#64748b] text-xs pl-2.5">-</span>
                       ) : (
                         <StatusChip
                           label={row.score}
@@ -324,7 +435,7 @@ export const DashboardScreen: React.FC = () => {
                         />
                       )}
                     </td>
-                    <td className="py-3.5 px-4 text-[#64748b] text-xs">
+                    <td className="py-3.5 px-4 text-[#64748b] text-xs font-medium">
                       {row.createdDate}
                     </td>
                   </tr>
@@ -333,6 +444,54 @@ export const DashboardScreen: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {/* 6 Items per page Pagination Footer (Requirement 1) */}
+        {filteredAssessments.length > 0 && (
+          <div className="flex items-[#64748b] justify-between px-4 py-3 border-t border-[#e2e8f0] bg-[#f8fafc]">
+            <div className="text-xs text-[#64748b] font-medium">
+              Showing page <span className="font-semibold text-[#0d212c]">{currentPage}</span> of{' '}
+              <span className="font-semibold text-[#0d212c]">{totalPages}</span>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-1.5 rounded-lg border border-[#cbd5e1] text-xs font-semibold text-[#0d212c] bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition cursor-pointer flex items-center justify-center"
+                title="Previous page"
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              <div className="flex items-center gap-1 px-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`w-7 h-7 rounded-lg text-xs font-bold transition cursor-pointer ${
+                      currentPage === pageNum
+                        ? 'bg-[#36c0c9] text-white'
+                        : 'text-[#64748b] hover:bg-slate-200/60'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-1.5 rounded-lg border border-[#cbd5e1] text-xs font-semibold text-[#0d212c] bg-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-50 transition cursor-pointer flex items-center justify-center"
+                title="Next page"
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

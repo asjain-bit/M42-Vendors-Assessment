@@ -598,9 +598,9 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
       </div>
 
       {/* Main Content Layout Grid */}
-      <div className="w-full px-6 lg:px-10 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="w-full px-6 lg:px-10 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* Left Column: STEP CONTENT (8 cols) */}
-        <div className="lg:col-span-8 flex flex-col gap-6">
+        <div className="lg:col-span-8 flex flex-col gap-6 h-full">
           {currentStep === 1 && (
             <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
               <div className="flex items-center gap-3">
@@ -1172,8 +1172,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
         </div>
 
         {/* Right Column: CALL SUMMARY BOX */}
-        <div className="lg:col-span-4 flex flex-col gap-6">
-          <div className="bg-white p-5 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-4 text-xs">
+        <div className="lg:col-span-4 flex flex-col gap-6 h-full">
+          <div className="bg-white p-5 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between gap-4 text-xs h-full">
             <span className="font-bold text-[#0d212c]">Call summary</span>
 
             <div className="flex items-center gap-3 p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0]">

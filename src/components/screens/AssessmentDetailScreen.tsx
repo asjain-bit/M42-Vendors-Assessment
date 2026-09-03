@@ -411,7 +411,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
         <span>/</span>
         <span>{assessment.vendor.split('|')[0]?.trim() || assessment.vendor}</span>
         <span>/</span>
-        <span className="text-[#0d7280] font-bold">
+        <span className="text-[#36c0c9] font-bold">
           {assessment.vendor.includes('|')
             ? assessment.vendor.split('|')[1]?.trim()
             : assessment.vendor}
@@ -463,22 +463,24 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                 <span>Round 1</span>
               </span>
               <span className="text-[#36c0c9]/30 font-bold">|</span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#ddf7f9] text-[#0f766e] text-xs font-bold border border-[#36c0c9]/30 shadow-2xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-[#0d7280]" />
-                <span>
-                  Overall confidence:{' '}
-                  <strong className="text-[#0d212c] font-extrabold">
-                    {assessment.score === 'High' ||
-                    assessment.score === 'High confidence' ||
-                    currentStatus === 'completed' ||
-                    currentStatus === 'finalised'
-                      ? 'High'
-                      : assessment.score === 'Low' || assessment.score === 'Low confidence'
-                        ? 'Low'
-                        : 'Medium'}
-                  </strong>
-                </span>
-              </span>
+              {(() => {
+                const scoreLower = (assessment.score || '').toLowerCase()
+                const isHighScore =
+                  scoreLower.includes('high') ||
+                  currentStatus === 'completed' ||
+                  currentStatus === 'finalised'
+                const isLowScore = scoreLower.includes('low')
+                const confidenceLevel = isHighScore ? 'High' : isLowScore ? 'Low' : 'Medium'
+                const chipStatus = isHighScore ? 'success' : isLowScore ? 'error' : 'warning'
+
+                return (
+                  <StatusChip
+                    label={`Overall confidence: ${confidenceLevel}`}
+                    status={chipStatus}
+                    dot={false}
+                  />
+                )
+              })()}
             </div>
           </div>
         </div>
@@ -486,29 +488,33 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
 
       {/* Main Content Area */}
       <div className="w-full px-6 lg:px-10 mt-6 flex flex-col gap-6">
-        {/* Navigation Tabs Bar — Image 2 Style */}
+        {/* Navigation Tabs Bar — Previous Tab Design with Light Primary Color */}
         <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-0">
           <div className="flex items-center gap-6">
             <button
               onClick={() => setActiveTab('assessment')}
               className={`pb-3 text-sm font-extrabold flex items-center gap-2 transition cursor-pointer border-b-2 ${
                 activeTab === 'assessment'
-                  ? 'border-[#0d7280] text-[#0d7280]'
+                  ? 'border-[#36c0c9] text-[#36c0c9]'
                   : 'border-transparent text-[#64748b] hover:text-[#0d212c]'
               }`}
             >
-              <FileText className="w-4 h-4 text-[#0d7280]" />
+              <FileText
+                className={`w-4 h-4 ${activeTab === 'assessment' ? 'text-[#36c0c9]' : 'text-[#64748b]'}`}
+              />
               <span>Assessment</span>
             </button>
             <button
               onClick={() => setActiveTab('audit_trail')}
               className={`pb-3 text-sm font-extrabold flex items-center gap-2 transition cursor-pointer border-b-2 ${
                 activeTab === 'audit_trail'
-                  ? 'border-[#0d7280] text-[#0d7280]'
+                  ? 'border-[#36c0c9] text-[#36c0c9]'
                   : 'border-transparent text-[#64748b] hover:text-[#0d212c]'
               }`}
             >
-              <Clock className="w-4 h-4 text-[#64748b]" />
+              <Clock
+                className={`w-4 h-4 ${activeTab === 'audit_trail' ? 'text-[#36c0c9]' : 'text-[#64748b]'}`}
+              />
               <span>Audit trail</span>
             </button>
           </div>

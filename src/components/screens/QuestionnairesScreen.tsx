@@ -285,13 +285,22 @@ export const QuestionnairesScreen: React.FC = () => {
                   }
                   className="hover:bg-[#f8fafc] transition cursor-pointer group"
                 >
-                  <td className="py-3.5 px-4 font-semibold text-[#0d212c] group-hover:text-[#36c0c9]">
+                  <td
+                    className="py-3.5 px-4 font-semibold text-xs text-[#0d212c] group-hover:text-[#36c0c9] truncate"
+                    title={item.title}
+                  >
                     {item.title}
                   </td>
-                  <td className="py-3.5 px-4 text-[#64748b] text-xs max-w-sm truncate">
+                  <td
+                    className="py-3.5 px-4 text-[#64748b] text-xs max-w-sm truncate"
+                    title={item.description}
+                  >
                     {item.description}
                   </td>
-                  <td className="py-3.5 px-4 text-[#0d212c] font-semibold text-xs">
+                  <td
+                    className="py-3.5 px-4 text-[#0d212c] font-semibold text-xs"
+                    title={`${item.questionsCount} questions`}
+                  >
                     {item.questionsCount}
                   </td>
                   <td className="py-3.5 px-4">

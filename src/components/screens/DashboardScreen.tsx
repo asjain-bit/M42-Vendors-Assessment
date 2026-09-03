@@ -145,10 +145,18 @@ export const DashboardScreen: React.FC = () => {
   // Filter chips click options
   const filterOptions = [
     { key: 'all', label: 'All assessments', count: assessments.length },
-    { key: 'awaiting_evidence', label: 'Awaiting evidence', count: assessments.filter(a => a.status === 'awaiting_evidence').length },
+    {
+      key: 'awaiting_evidence',
+      label: 'Awaiting evidence',
+      count: assessments.filter((a) => a.status === 'awaiting_evidence').length,
+    },
     { key: 'completed', label: 'Completed', count: completedAssessments },
     { key: 'finalised', label: 'Finalised', count: finalizedAssessments },
-    { key: 'scheduled', label: 'Scheduled', count: assessments.filter(a => a.status === 'scheduled').length },
+    {
+      key: 'scheduled',
+      label: 'Scheduled',
+      count: assessments.filter((a) => a.status === 'scheduled').length,
+    },
   ]
 
   const handleFilterClick = (key: string) => {
@@ -164,8 +172,7 @@ export const DashboardScreen: React.FC = () => {
   // Filtered dataset
   const filteredAssessments = useMemo(() => {
     return assessments.filter((item) => {
-      const matchesStatus =
-        selectedStatusFilter === 'all' || item.status === selectedStatusFilter
+      const matchesStatus = selectedStatusFilter === 'all' || item.status === selectedStatusFilter
       const matchesSearch =
         item.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
         item.questionnaire.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -180,9 +187,9 @@ export const DashboardScreen: React.FC = () => {
   const paginatedAssessments = filteredAssessments.slice(startIndex, startIndex + ITEMS_PER_PAGE)
 
   const handleUpdateStatus = (id: string, newStatus: 'ready' | 'finalised' | 'completed') => {
-    setAssessments(prev => prev.map(a => a.id === id ? { ...a, status: newStatus } : a))
+    setAssessments((prev) => prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a)))
     if (selectedAssessment && selectedAssessment.id === id) {
-      setSelectedAssessment(prev => prev ? { ...prev, status: newStatus } : null)
+      setSelectedAssessment((prev) => (prev ? { ...prev, status: newStatus } : null))
     }
   }
 
@@ -219,7 +226,9 @@ export const DashboardScreen: React.FC = () => {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
               <Users className="w-5 h-5 text-[#0d212c] shrink-0" />
-              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">Total Vendors</h3>
+              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">
+                Total Vendors
+              </h3>
             </div>
             <div className="text-2xl font-extrabold text-[#36c0c9] shrink-0">12</div>
           </div>
@@ -250,7 +259,9 @@ export const DashboardScreen: React.FC = () => {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
               <RefreshCw className="w-5 h-5 text-[#0d212c] shrink-0" />
-              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">Average Rounds per Vendor</h3>
+              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">
+                Average Rounds per Vendor
+              </h3>
             </div>
             <div className="text-2xl font-extrabold text-[#36c0c9] shrink-0">2</div>
           </div>
@@ -281,7 +292,9 @@ export const DashboardScreen: React.FC = () => {
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
               <Folder className="w-5 h-5 text-[#0d212c] shrink-0" />
-              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">Evidence backlog by age</h3>
+              <h3 className="font-bold text-xs sm:text-sm text-[#0d212c] truncate">
+                Evidence backlog by age
+              </h3>
             </div>
             <div className="text-2xl font-extrabold text-[#36c0c9] shrink-0">75</div>
           </div>
@@ -326,9 +339,7 @@ export const DashboardScreen: React.FC = () => {
                 <span>{chip.label}</span>
                 <span
                   className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
-                    isSelected
-                      ? 'bg-white/25 text-white'
-                      : 'bg-[#f1f5f9] text-[#64748b]'
+                    isSelected ? 'bg-white/25 text-white' : 'bg-[#f1f5f9] text-[#64748b]'
                   }`}
                 >
                   {chip.count}
@@ -374,18 +385,28 @@ export const DashboardScreen: React.FC = () => {
                     onClick={() =>
                       setSelectedAssessment({
                         ...row,
-                        score: row.score === 'High' ? '94.0' : row.score === 'Medium' ? '72.0' : '0.0',
+                        score:
+                          row.score === 'High' ? '94.0' : row.score === 'Medium' ? '72.0' : '0.0',
                       })
                     }
                     className="hover:bg-[#f8fafc] transition cursor-pointer group"
                   >
-                    <td className="py-3.5 px-4 font-semibold text-[#0d212c] group-hover:text-[#36c0c9]">
+                    <td
+                      className="py-3.5 px-4 font-semibold text-xs text-[#0d212c] group-hover:text-[#36c0c9] truncate"
+                      title={row.vendor}
+                    >
                       {row.vendor}
                     </td>
-                    <td className="py-3.5 px-4 text-[#0d212c]">
+                    <td
+                      className="py-3.5 px-4 text-xs text-[#0d212c] truncate"
+                      title={row.questionnaire}
+                    >
                       {row.questionnaire}
                     </td>
-                    <td className="py-3.5 px-4 text-[#64748b] text-xs font-medium">
+                    <td
+                      className="py-3.5 px-4 text-[#64748b] text-xs font-medium"
+                      title={row.round}
+                    >
                       {row.round}
                     </td>
                     <td className="py-3.5 px-4">
@@ -394,23 +415,23 @@ export const DashboardScreen: React.FC = () => {
                           row.status === 'awaiting_evidence'
                             ? 'Awaiting evidence'
                             : row.status === 'ready'
-                            ? 'Ready'
-                            : row.status === 'scheduled'
-                            ? 'Scheduled'
-                            : row.status === 'finalised'
-                            ? 'Finalised'
-                            : 'Completed'
+                              ? 'Ready'
+                              : row.status === 'scheduled'
+                                ? 'Scheduled'
+                                : row.status === 'finalised'
+                                  ? 'Finalised'
+                                  : 'Completed'
                         }
                         status={
                           row.status === 'awaiting_evidence'
                             ? 'warning'
                             : row.status === 'ready'
-                            ? 'info'
-                            : row.status === 'scheduled'
-                            ? 'info'
-                            : row.status === 'finalised'
-                            ? 'finalised'
-                            : 'success'
+                              ? 'info'
+                              : row.status === 'scheduled'
+                                ? 'info'
+                                : row.status === 'finalised'
+                                  ? 'finalised'
+                                  : 'success'
                         }
                         dot={false}
                       />
@@ -425,8 +446,8 @@ export const DashboardScreen: React.FC = () => {
                             row.score === 'High'
                               ? 'success'
                               : row.score === 'Medium'
-                              ? 'warning'
-                              : 'error'
+                                ? 'warning'
+                                : 'error'
                           }
                           dot={false}
                         />

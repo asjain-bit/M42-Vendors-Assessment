@@ -556,11 +556,19 @@ export const VendorsScreen: React.FC = () => {
                     className="hover:bg-[#f8fafc] transition cursor-pointer group"
                   >
                     <td className="py-4 px-5">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-[#0d212c] text-sm group-hover:text-[#36c0c9] transition">
+                      <div className="flex flex-col min-w-0 gap-[2px]">
+                        <span
+                          className="font-bold text-[#0d212c] text-xs group-hover:text-[#36c0c9] transition truncate"
+                          title={vendor.name}
+                        >
                           {vendor.name}
                         </span>
-                        <span className="text-xs text-[#64748b]">{vendor.legalName}</span>
+                        <span
+                          className="text-[11px] font-medium text-[#64748b] truncate mt-[2px]"
+                          title={vendor.legalName}
+                        >
+                          {vendor.legalName}
+                        </span>
                       </div>
                     </td>
 
@@ -570,7 +578,8 @@ export const VendorsScreen: React.FC = () => {
                           href={`https://${vendor.domain}`}
                           target="_blank"
                           rel="noreferrer"
-                          className="text-[#0d212c] font-medium underline hover:text-[#36c0c9] transition"
+                          className="text-[#0d212c] font-medium underline hover:text-[#36c0c9] transition truncate block max-w-[160px]"
+                          title={vendor.domain}
                         >
                           {vendor.domain}
                         </a>
@@ -579,8 +588,16 @@ export const VendorsScreen: React.FC = () => {
                       )}
                     </td>
 
-                    <td className="py-4 px-5 text-xs font-medium text-[#64748b]">{vendor.email}</td>
-                    <td className="py-4 px-5 text-xs text-[#0d212c] font-medium">
+                    <td
+                      className="py-4 px-5 text-xs font-medium text-[#64748b] truncate max-w-[200px]"
+                      title={vendor.email}
+                    >
+                      {vendor.email}
+                    </td>
+                    <td
+                      className="py-4 px-5 text-xs text-[#0d212c] font-medium truncate"
+                      title={`${vendor.country}`}
+                    >
                       {vendor.flag} {vendor.country}
                     </td>
 

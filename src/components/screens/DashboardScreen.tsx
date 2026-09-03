@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { ChevronLeft, ChevronRight, Users, RefreshCw, Folder } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Users, RefreshCw, Folder, Info } from 'lucide-react'
 import { StatusChip } from '@/components/atoms/StatusChip'
 import { SearchBar } from '@/components/molecules/SearchBar'
 import { AssessmentDetailScreen, AssessmentDetailData } from './AssessmentDetailScreen'
@@ -226,23 +226,22 @@ export const DashboardScreen: React.FC = () => {
 
           <div className="grid grid-cols-3 divide-x divide-[#e2e8f0] pt-3 border-t border-[#e2e8f0]">
             <div className="flex flex-col gap-0.5 pr-2">
-              <span className="text-lg font-bold text-[#0d212c]">
-                7 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">7</span>
               <span className="text-[11px] text-[#64748b] font-medium">High confidence</span>
             </div>
             <div className="flex flex-col gap-0.5 px-3">
-              <span className="text-lg font-bold text-[#0d212c]">
-                2 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">2</span>
               <span className="text-[11px] text-[#64748b] font-medium">Medium confidence</span>
             </div>
             <div className="flex flex-col gap-0.5 pl-3">
-              <span className="text-lg font-bold text-[#0d212c]">
-                3 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">3</span>
               <span className="text-[11px] text-[#64748b] font-medium">Low confidence</span>
             </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 pt-1 text-[11px] text-[#64748b]">
+            <Info className="w-3.5 h-3.5 text-[#36c0c9] shrink-0" />
+            <span>Breakdown by Overall Assessment Score</span>
           </div>
         </div>
 
@@ -258,23 +257,22 @@ export const DashboardScreen: React.FC = () => {
 
           <div className="grid grid-cols-3 divide-x divide-[#e2e8f0] pt-3 border-t border-[#e2e8f0]">
             <div className="flex flex-col gap-0.5 pr-2">
-              <span className="text-lg font-bold text-[#0d212c]">
-                8 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">8</span>
               <span className="text-[11px] text-[#64748b] font-medium">1 Round</span>
             </div>
             <div className="flex flex-col gap-0.5 px-3">
-              <span className="text-lg font-bold text-[#0d212c]">
-                3 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">3</span>
               <span className="text-[11px] text-[#64748b] font-medium">2 Rounds</span>
             </div>
             <div className="flex flex-col gap-0.5 pl-3">
-              <span className="text-lg font-bold text-[#0d212c]">
-                1 <span className="text-[11px] text-[#64748b] font-medium">vendor</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">1</span>
               <span className="text-[11px] text-[#64748b] font-medium">3+ Rounds</span>
             </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 pt-1 text-[11px] text-[#64748b]">
+            <Info className="w-3.5 h-3.5 text-[#36c0c9] shrink-0" />
+            <span>Breakdown by Assessment Rounds</span>
           </div>
         </div>
 
@@ -290,23 +288,22 @@ export const DashboardScreen: React.FC = () => {
 
           <div className="grid grid-cols-3 divide-x divide-[#e2e8f0] pt-3 border-t border-[#e2e8f0]">
             <div className="flex flex-col gap-0.5 pr-2">
-              <span className="text-lg font-bold text-[#0d212c]">
-                33 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">33</span>
               <span className="text-[11px] text-[#64748b] font-medium">0–14 days</span>
             </div>
             <div className="flex flex-col gap-0.5 px-3">
-              <span className="text-lg font-bold text-[#0d212c]">
-                8 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">8</span>
               <span className="text-[11px] text-[#64748b] font-medium">15–30 days</span>
             </div>
             <div className="flex flex-col gap-0.5 pl-3">
-              <span className="text-lg font-bold text-[#0d212c]">
-                34 <span className="text-[11px] text-[#64748b] font-medium">vendors</span>
-              </span>
+              <span className="text-lg font-bold text-[#0d212c]">34</span>
               <span className="text-[11px] text-[#64748b] font-medium">Over 30 days</span>
             </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 pt-1 text-[11px] text-[#64748b]">
+            <Info className="w-3.5 h-3.5 text-[#36c0c9] shrink-0" />
+            <span>Breakdown by Ageing Bucket for Awaiting Evidence status</span>
           </div>
         </div>
       </div>

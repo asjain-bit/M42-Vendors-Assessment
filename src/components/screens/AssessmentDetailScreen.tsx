@@ -407,8 +407,21 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
           </button>
         </div>
 
-        {/* Requirement 2: Audit Trail Tab Timeline View */}
+        {/* Audit Trail Tab View */}
         {activeTab === 'audit_trail' ? (
+          currentStatus === 'scheduled' ? (
+            <div className="bg-white p-8 sm:p-12 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col items-center justify-center text-center gap-3 min-h-[260px]">
+              <div className="w-12 h-12 rounded-2xl bg-[#ddf7f9] flex items-center justify-center text-[#36c0c9]">
+                <Clock className="w-6 h-6" />
+              </div>
+              <div className="flex flex-col gap-1 max-w-md">
+                <h4 className="font-extrabold text-sm text-[#0d212c]">Audit log scheduled</h4>
+                <p className="text-xs text-[#64748b] leading-relaxed">
+                  The audit trail and call transcript will be generated automatically after the assessment meeting is completed.
+                </p>
+              </div>
+            </div>
+          ) : (
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div>
@@ -427,9 +440,9 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                 {auditEvents.map((event) => {
                   const EventIcon = event.icon
                   return (
-                    <div key={event.id} className="relative flex flex-col gap-1.5 group">
-                      {/* Timeline Node Icon Circle */}
-                      <div className="absolute -left-[35px] top-0.5 w-7 h-7 rounded-full bg-[#f8fafc] border-2 border-[#36c0c9] flex items-center justify-center text-[#36c0c9] shadow-2xs group-hover:bg-[#36c0c9] group-hover:text-white transition">
+                    <div key={event.id} className="relative flex flex-col gap-1.5">
+                      {/* Timeline Node Icon Circle (no hover state) */}
+                      <div className="absolute -left-[35px] top-0.5 w-7 h-7 rounded-full bg-[#f8fafc] border-2 border-[#36c0c9] flex items-center justify-center text-[#36c0c9] shadow-2xs">
                         <EventIcon className="w-3.5 h-3.5" />
                       </div>
 
@@ -470,6 +483,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
               </div>
             </div>
           </div>
+          )
         ) : (
           <>
             {/* Section 1: Assessment lifecycle (Requirement 1: Outer container stroke & fill REMOVED, card height set to exact h-[145px], text top-aligned) */}

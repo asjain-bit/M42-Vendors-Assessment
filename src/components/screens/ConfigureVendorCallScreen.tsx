@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { Check, ChevronDown, Clock, ShieldCheck, ArrowRight, ArrowLeft, Volume2, Play, Pause, Copy, SlidersHorizontal, ChevronUp, X, CircleDot } from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
+import { CallRoomScreen } from './CallRoomScreen'
 
 export interface VendorDispatchData {
   id: string
@@ -28,6 +29,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1)
   const [isDispatched, setIsDispatched] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
+  const [showCallRoom, setShowCallRoom] = useState(false)
 
   // Step 1 states (empty by default)
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState('')
@@ -93,8 +95,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
   const callJoinLink = 'https://tech-due-diligence.delphiprojects.app/call/E0exXCogAvq0Owdr3qbYhU0vt1CQdBuIFIJN18D6wZM'
 
-  // Step 1 Validation: Questionnaire & Round Label are mandatory
-  const isStep1Valid = selectedQuestionnaire.trim() !== '' && roundLabel.trim() !== ''
+  // Step 1 Validation: Questionnaire, Round Label, and at least 1 Recipient are mandatory
+  const isStep1Valid = selectedQuestionnaire.trim() !== '' && roundLabel.trim() !== '' && recipients.length > 0
 
   // Email validation on Enter key press
   const handleKeyDownRecipient = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -149,6 +151,17 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
   // Format meeting time range string for Call Summary (Requirement 8)
   const formattedTimeRange = `${startTime} - ${endTime} GST`
+
+  // SCREEN 3: Call Room View
+  if (showCallRoom) {
+    return (
+      <CallRoomScreen
+        vendor={vendor}
+        onBack={() => setShowCallRoom(false)}
+        onExitToVendors={onBack}
+      />
+    )
+  }
 
   // SCREEN 2: Assessment Dispatched View
   if (isDispatched) {
@@ -213,7 +226,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
 
               <div className="mt-2">
                 <button
-                  onClick={onComplete}
+                  id="open-call-room-btn"
+                  onClick={() => setShowCallRoom(true)}
                   className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3.5 px-6 rounded-xl transition cursor-pointer shadow-xs border-0"
                 >
                   Open call room
@@ -521,7 +535,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
               {/* RECIPIENTS */}
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-wider">
-                  RECIPIENTS
+                  RECIPIENTS <span className="text-red-500">*</span>
                 </label>
                 
                 <input
@@ -802,7 +816,7 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                     </div>
 
                     <p className="text-[11px] text-[#64748b] leading-relaxed">
-                      <strong>Note:</strong> Please select the start and end time of the meeting based on the number of questions, as the meeting will run for at least the minimum timeframe of the estimated time range.
+                      <strong>Note:</strong> The assessment begins when the user selects “Start Assessment” within the meeting. At this point, the system records the start time and begins tracking the elapsed duration. Completion is expected to take 135–205 minutes (approximately 2 hours 15 minutes to 3 hours 25 minutes) and the total time is measured between the recorded start time and end time, including any pauses.
                     </p>
 
                     {isTimeInvalid && (

@@ -14,6 +14,7 @@ import {
   Loader2,
   Check,
 } from 'lucide-react'
+
 import { StatusChip } from '@/components/atoms/StatusChip'
 import { ConfigureVendorCallScreen, VendorDispatchData } from './ConfigureVendorCallScreen'
 
@@ -60,14 +61,22 @@ export const VendorsScreen: React.FC = () => {
   // Find vendor manual fields (NO auto-population)
   const [findCountry, setFindCountry] = useState('United Arab Emirates')
   const [findWebsite, setFindWebsite] = useState('')
-  const [findEmail, setFindEmail] = useState('')
+
+  // Find vendor recipients tag-input state
+  const [findRecipientInput, setFindRecipientInput] = useState('')
+  const [findRecipients, setFindRecipients] = useState<string[]>([])
+  const [findRecipientError, setFindRecipientError] = useState<string | null>(null)
 
   // Manual vendor tab inputs
   const [manualDisplayName, setManualDisplayName] = useState('')
   const [manualLegalName, setManualLegalName] = useState('')
-  const [manualVendorEmail, setManualVendorEmail] = useState('')
   const [manualCountry, setManualCountry] = useState('United Arab Emirates')
   const [manualWebsite, setManualWebsite] = useState('')
+
+  // Manual vendor recipients tag-input state
+  const [manualRecipientInput, setManualRecipientInput] = useState('')
+  const [manualRecipients, setManualRecipients] = useState<string[]>([])
+  const [manualRecipientError, setManualRecipientError] = useState<string | null>(null)
 
   // Edit Vendor modal state
   const [editingVendor, setEditingVendor] = useState<VendorRow | null>(null)
@@ -271,6 +280,35 @@ export const VendorsScreen: React.FC = () => {
     }
   }
 
+  // Email validation helper for recipient tag inputs
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  const handleKeyDownFindRecipient = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault()
+      const trimmed = findRecipientInput.trim().replace(/,/g, '')
+      if (!trimmed) return
+      if (!emailRegex.test(trimmed)) { setFindRecipientError('Please enter a valid email address.'); return }
+      if (findRecipients.includes(trimmed)) { setFindRecipientError('Already added.'); return }
+      setFindRecipients([...findRecipients, trimmed])
+      setFindRecipientInput('')
+      setFindRecipientError(null)
+    }
+  }
+
+  const handleKeyDownManualRecipient = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault()
+      const trimmed = manualRecipientInput.trim().replace(/,/g, '')
+      if (!trimmed) return
+      if (!emailRegex.test(trimmed)) { setManualRecipientError('Please enter a valid email address.'); return }
+      if (manualRecipients.includes(trimmed)) { setManualRecipientError('Already added.'); return }
+      setManualRecipients([...manualRecipients, trimmed])
+      setManualRecipientInput('')
+      setManualRecipientError(null)
+    }
+  }
+
   // Handle Add Vendor from Find Flow (NO auto-population)
   const handleAddVendorFromFind = () => {
     const vendorTitle = findSearchQuery.trim() || (selectedSearchResult ? selectedSearchResult.name : '')
@@ -283,7 +321,7 @@ export const VendorsScreen: React.FC = () => {
       id: `v-${Date.now()}`,
       name: vendorTitle,
       legalName: vendorTitle,
-      email: findEmail.trim() || `compliance@${domainStr}`,
+      email: findRecipients[0] || `compliance@${domainStr}`,
       domain: domainStr,
       country: findCountry,
       flag: countryObj ? countryObj.flag : '🌐',
@@ -294,7 +332,8 @@ export const VendorsScreen: React.FC = () => {
     setVendors([newVendor, ...vendors])
     setFindSearchQuery('')
     setFindWebsite('')
-    setFindEmail('')
+    setFindRecipients([])
+    setFindRecipientInput('')
     setHasSearched(false)
     setSelectedSearchResult(null)
     setShowAddVendorModal(false)
@@ -310,7 +349,7 @@ export const VendorsScreen: React.FC = () => {
       id: `v-${Date.now()}`,
       name: manualDisplayName.trim(),
       legalName: manualLegalName.trim() || manualDisplayName.trim(),
-      email: manualVendorEmail.trim() || `contact@${manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com'}`,
+      email: manualRecipients[0] || `contact@${manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com'}`,
       domain: manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com',
       country: manualCountry,
       flag: countryObj ? countryObj.flag : '🌐',
@@ -321,7 +360,8 @@ export const VendorsScreen: React.FC = () => {
     setVendors([newVendor, ...vendors])
     setManualDisplayName('')
     setManualLegalName('')
-    setManualVendorEmail('')
+    setManualRecipients([])
+    setManualRecipientInput('')
     setManualWebsite('')
     setShowAddVendorModal(false)
     showToast(`Added ${newVendor.name} manually.`)
@@ -445,14 +485,13 @@ export const VendorsScreen: React.FC = () => {
                 <th className="py-3.5 px-5">Domain</th>
                 <th className="py-3.5 px-5">Email</th>
                 <th className="py-3.5 px-5">Country</th>
-                <th className="py-3.5 px-5">Status</th>
                 <th className="py-3.5 px-5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0]/60">
               {paginatedVendors.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-[#64748b] text-sm">
+                  <td colSpan={5} className="py-8 text-center text-[#64748b] text-sm">
                     No vendors matching search criteria.
                   </td>
                 </tr>
@@ -491,9 +530,6 @@ export const VendorsScreen: React.FC = () => {
                     </td>
                     <td className="py-4 px-5 text-xs text-[#0d212c] font-medium">
                       {vendor.flag} {vendor.country}
-                    </td>
-                    <td className="py-4 px-5">
-                      <StatusChip label={vendor.status} status="success" dot={false} />
                     </td>
 
                     <td className="py-4 px-5 text-right relative">
@@ -738,7 +774,8 @@ export const VendorsScreen: React.FC = () => {
 
             {onboardingMode === 'find' ? (
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5 mb-1">
                     <label className="block text-xs font-bold text-[#0d212c]">
                       Vendor legal name <span className="text-red-500 font-bold">*</span>
@@ -807,7 +844,7 @@ export const VendorsScreen: React.FC = () => {
                   </div>
                 )}
 
-                {/* Manual input fields */}
+                {/* Manual input fields: Country + Website URL on same row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
                   <div>
                     <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
@@ -840,25 +877,44 @@ export const VendorsScreen: React.FC = () => {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                    Vendor email
+                {/* Recipients tag-input (find flow) */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="block text-xs font-bold text-[#0d212c] mb-0.5">
+                    Recipients
                   </label>
                   <input
                     type="email"
-                    placeholder="compliance@company.com"
-                    value={findEmail}
-                    onChange={(e) => setFindEmail(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                    placeholder="Enter email and press Enter..."
+                    value={findRecipientInput}
+                    onChange={(e) => { setFindRecipientInput(e.target.value); if (findRecipientError) setFindRecipientError(null) }}
+                    onKeyDown={handleKeyDownFindRecipient}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
+                      findRecipientError ? 'border-red-500' : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
+                    }`}
                   />
+                  {findRecipientError && <span className="text-xs text-red-600">{findRecipientError}</span>}
+                  {findRecipients.length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap pt-1">
+                      {findRecipients.map((rec) => (
+                        <span key={rec} className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]">
+                          {rec}
+                          <button type="button" onClick={() => setFindRecipients(findRecipients.filter(r => r !== rec))} className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {/* Requirement 2: "Can't find vendor?" uses text color, "Add vendor manually" uses primary light cyan */}
-                <div className="pt-2 flex flex-col gap-3 border-t border-[#e2e8f0]">
+                </div>
+
+                {/* "Can't find vendor?" — centered, no separator */}
+                <div className="flex flex-col gap-3">
                   <button
                     type="button"
                     onClick={() => setOnboardingMode('manual')}
-                    className="text-xs text-left cursor-pointer transition bg-transparent border-0 self-start p-0 flex items-center gap-1"
+                    className="text-xs cursor-pointer transition bg-transparent border-0 self-center p-0 flex items-center gap-1"
                   >
                     <span className="text-[#64748b]">Can't find vendor?</span>
                     <span className="text-[#36c0c9] font-bold hover:underline">Add vendor manually</span>
@@ -884,54 +940,39 @@ export const VendorsScreen: React.FC = () => {
                 </div>
               </div>
             ) : (
-              /* Manual Vendor Flow */
+              /* Manual Vendor Flow — stacked layout so height matches Find Vendor */
               <form onSubmit={handleAddVendorManually} className="flex flex-col gap-4">
-                <p className="text-xs text-[#64748b]">
-                  For vendors without a public footprint. Only the display name is required.
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                      Display name <span className="text-red-500 font-bold">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Enter display name"
-                      value={manualDisplayName}
-                      onChange={(e) => setManualDisplayName(e.target.value)}
-                      required
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                      Legal name
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Defaults to display name"
-                      value={manualLegalName}
-                      onChange={(e) => setManualLegalName(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                      Vendor email
-                    </label>
-                    <input
-                      type="email"
-                      placeholder="vendor@company.com"
-                      value={manualVendorEmail}
-                      onChange={(e) => setManualVendorEmail(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                    />
-                  </div>
+                <div className="flex flex-col gap-4">
+                {/* Display name */}
+                <div>
+                  <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                    Display name <span className="text-red-500 font-bold">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter display name"
+                    value={manualDisplayName}
+                    onChange={(e) => setManualDisplayName(e.target.value)}
+                    required
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                  />
                 </div>
 
+                {/* Legal name */}
+                <div>
+                  <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                    Legal name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Defaults to display name"
+                    value={manualLegalName}
+                    onChange={(e) => setManualLegalName(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                  />
+                </div>
+
+                {/* Country + Website on same row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
@@ -964,7 +1005,38 @@ export const VendorsScreen: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="pt-2 flex items-center justify-between border-t border-[#e2e8f0]">
+                {/* Recipients tag-input (manual flow) */}
+                <div className="flex flex-col gap-1.5">
+                  <label className="block text-xs font-bold text-[#0d212c] mb-0.5">
+                    Recipients
+                  </label>
+                  <input
+                    type="email"
+                    placeholder="Enter email and press Enter..."
+                    value={manualRecipientInput}
+                    onChange={(e) => { setManualRecipientInput(e.target.value); if (manualRecipientError) setManualRecipientError(null) }}
+                    onKeyDown={handleKeyDownManualRecipient}
+                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
+                      manualRecipientError ? 'border-red-500' : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
+                    }`}
+                  />
+                  {manualRecipientError && <span className="text-xs text-red-600">{manualRecipientError}</span>}
+                  {manualRecipients.length > 0 && (
+                    <div className="flex items-center gap-2 flex-wrap pt-1">
+                      {manualRecipients.map((rec) => (
+                        <span key={rec} className="inline-flex items-center gap-1.5 bg-[#f1f5f9] text-[#0d212c] text-xs font-semibold px-3 py-1.5 rounded-xl border border-[#cbd5e1]">
+                          {rec}
+                          <button type="button" onClick={() => setManualRecipients(manualRecipients.filter(r => r !== rec))} className="p-0.5 hover:bg-slate-200 rounded-full text-slate-500 hover:text-red-600 transition cursor-pointer border-0">
+                            <X className="w-3 h-3" />
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                </div>
+
+                <div className="pt-2 flex items-center justify-between">
                   <button
                     type="button"
                     onClick={() => setOnboardingMode('find')}

@@ -235,33 +235,57 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
         </div>
 
         <div className="flex items-center gap-4 shrink-0">
-          {/* Requirement 4: Option to add new question in Edit Mode */}
-          {isEditing && (
-            <button
-              onClick={() => setShowAddQuestionModal(true)}
-              className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-4 py-2 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-xs border-0"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add question</span>
-            </button>
-          )}
-
           {status === 'Draft' ? (
-            <button
-              onClick={handlePublish}
-              className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold px-6 py-2 rounded-xl text-xs shadow-xs cursor-pointer transition border-0"
-            >
-              Publish questionnaire
-            </button>
+            isEditing ? (
+              <>
+                <button
+                  onClick={() => setShowAddQuestionModal(true)}
+                  className="px-4 py-2 rounded-xl border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-slate-50 text-[#0d212c] bg-white font-bold text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer transition"
+                >
+                  <Plus className="w-4 h-4 text-[#0d212c]" />
+                  <span>Add question</span>
+                </button>
+                <button
+                  onClick={handlePublish}
+                  className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold px-6 py-2 rounded-xl text-xs shadow-xs cursor-pointer transition border-0"
+                >
+                  Publish questionnaire
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-[#36c0c9] hover:text-[#2cb0b9] font-bold text-xs flex items-center gap-1.5 transition cursor-pointer bg-transparent border-0 p-0"
+                >
+                  <Pencil className="w-4 h-4 text-[#36c0c9]" />
+                  <span>Edit questionnaire</span>
+                </button>
+                <button
+                  onClick={handlePublish}
+                  className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold px-6 py-2 rounded-xl text-xs shadow-xs cursor-pointer transition border-0"
+                >
+                  Publish questionnaire
+                </button>
+              </>
+            )
           ) : isEditing ? (
-            <button
-              onClick={handleSaveOrEdit}
-              className="bg-[#36c0c9] hover:bg-[#2eb0b9] text-white font-bold px-6 py-2 rounded-xl text-xs cursor-pointer shadow-xs border-0 transition"
-            >
-              Save
-            </button>
+            <>
+              <button
+                onClick={() => setShowAddQuestionModal(true)}
+                className="px-4 py-2 rounded-xl border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-slate-50 text-[#0d212c] bg-white font-bold text-xs flex items-center gap-1.5 shadow-2xs cursor-pointer transition"
+              >
+                <Plus className="w-4 h-4 text-[#0d212c]" />
+                <span>Add question</span>
+              </button>
+              <button
+                onClick={handleSaveOrEdit}
+                className="bg-[#36c0c9] hover:bg-[#2eb0b9] text-white font-bold px-6 py-2 rounded-xl text-xs cursor-pointer shadow-xs border-0 transition"
+              >
+                Save
+              </button>
+            </>
           ) : (
-            /* Requirement 2: Tertiary text-only edit questionnaire button with edit icon in light primary cyan */
             <button
               onClick={handleSaveOrEdit}
               className="text-[#36c0c9] hover:text-[#2cb0b9] font-bold text-xs flex items-center gap-1.5 transition cursor-pointer bg-transparent border-0 p-0"

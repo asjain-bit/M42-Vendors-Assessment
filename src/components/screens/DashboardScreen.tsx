@@ -362,7 +362,7 @@ export const DashboardScreen: React.FC = () => {
                 <th className="py-3.5 px-4">Questionnaire</th>
                 <th className="py-3.5 px-4">Round</th>
                 <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4">Overall score</th>
+                <th className="py-3.5 px-4">Confidence Level</th>
                 <th className="py-3.5 px-4">Created date</th>
               </tr>
             </thead>

@@ -151,29 +151,23 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   if (roomState === 'join') {
     return (
       <div className="fixed inset-0 z-[9999] bg-[#f8fafc] flex flex-col items-center justify-center p-6 overflow-hidden">
+        {/* M42 Logo positioned on top left side */}
+        <div className="absolute top-8 left-8 sm:top-10 sm:left-12 z-20">
+          <Image src="/dark-logo.png" alt="M42" width={84} height={32} className="object-contain" />
+        </div>
+
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-[#ddf7f9]/25 blur-3xl" />
           <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-[#e0f2fe]/20 blur-3xl" />
         </div>
 
         <div className="relative w-full max-w-[420px]">
-          <div className="mb-8">
-            <Image
-              src="/dark-logo.png"
-              alt="M42"
-              width={72}
-              height={28}
-              className="object-contain"
-            />
-            <div className="mt-4 flex flex-col gap-0.5">
-              <span className="text-[10px] font-extrabold tracking-[0.18em] text-[#64748b] uppercase">
-                Assessment Call
-              </span>
-              <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">
-                {vendor.name}
-              </h1>
-              <p className="text-xs text-[#64748b] font-medium">{vendor.sublabel}</p>
-            </div>
+          <div className="mb-6 text-center flex flex-col items-center gap-1">
+            <span className="text-[10px] font-extrabold tracking-[0.18em] text-[#64748b] uppercase">
+              Assessment Call
+            </span>
+            <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">{vendor.name}</h1>
+            <p className="text-xs text-[#64748b] font-medium">{vendor.sublabel}</p>
           </div>
 
           <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-7 flex flex-col gap-5">

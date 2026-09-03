@@ -58,6 +58,7 @@ interface AuditTrailEvent {
   actor: string
   details: string
   icon: React.ElementType
+  confidence?: 'High confidence' | 'Medium confidence' | 'Low confidence'
 }
 
 export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
@@ -69,86 +70,64 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
   const [showAnswerKey, setShowAnswerKey] = useState(false)
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
   const [playbackSpeed, setPlaybackSpeed] = useState('1')
-
-  const [currentStatus, setCurrentStatus] = useState<AssessmentDetailData['status']>(
-    assessment.status
-  )
   const [copiedUrl, setCopiedUrl] = useState(false)
-  const [toastMessage, setToastMessage] = useState<string | null>(null)
+  const [currentStatus, setCurrentStatus] = useState<
+    'awaiting_evidence' | 'completed' | 'scheduled' | 'finalised' | 'ready'
+  >(assessment.status)
 
+  const [toastMessage, setToastMessage] = useState<string | null>(null)
   const [questionFiles, setQuestionFiles] = useState<Record<number, AttachedFile[]>>({
-    1: [{ name: 'SOC2_Type2_Report_2026.pdf', size: '1.4 MB', type: 'PDF', date: '25 Aug 2026' }],
     3: [
       {
         name: 'ISO_27001_Readiness_Report_2026.pdf',
-        size: '2.8 MB',
+        size: '1.4 MB',
         type: 'PDF',
-        date: '24 Aug 2026',
-      },
-    ],
-    5: [
-      {
-        name: 'Penetration_Test_Executive_Summary.pdf',
-        size: '850 KB',
-        type: 'PDF',
-        date: '20 Aug 2026',
+        date: '25 Aug 2026',
       },
     ],
   })
 
+  // Sample Meeting URL for Dispatch Call
   const meetingUrl = 'https://meet.m42.ae/call/vendor-audit-9823'
+
+  // Dynamic status list based on questionnaire progress
   const lifecycleSteps = [
-    {
-      title: 'Call dispatched',
-      actor: 'Admin',
-      time: '1 Sept 2026, 01:15 PM',
-      icon: Send,
-      status: 'DONE',
-    },
+    { title: 'Call dispatched', actor: 'Admin User', time: '1 Sept, 10:30 AM', status: 'DONE' },
     {
       title: 'Meeting Scheduled',
-      actor: 'System',
-      time: '1 Sept 2026, 01:14 PM',
-      icon: Calendar,
-      hasMeetingUrl: true,
+      actor: 'System Scheduler',
+      time: '1 Sept, 01:14 PM',
       status: 'DONE',
+      hasMeetingUrl: true,
     },
     {
       title: 'Participants joined',
-      actor: 'Vendor',
-      time: '1 Sept 2026, 01:15 PM',
-      icon: Users,
+      actor: 'Presight AI',
+      time: '1 Sept, 01:15 PM',
       status: 'DONE',
     },
     {
       title: 'Assessment call',
-      actor: 'AI Agent',
-      time: '1 Sept 2026, 01:15 PM',
-      icon: PhoneCall,
+      actor: 'Voice Agent Sam',
+      time: '1 Sept, 01:19 PM',
       status: 'DONE',
     },
-    {
-      title: 'Call ended',
-      actor: 'System',
-      time: '3 Sep 2026, 11:21 AM',
-      icon: PhoneCall,
-      status: 'DONE',
-    },
+    { title: 'Call ended', actor: 'Voice Agent Sam', time: '1 Sept, 01:19 PM', status: 'DONE' },
     {
       title: 'Transcript composed',
-      actor: 'System',
-      time: 'Queued',
-      icon: FileText,
+      actor: 'NLP Pipeline',
+      time: '1 Sept, 01:20 PM',
       status: 'DONE',
     },
-    { title: 'Scoring', actor: 'AI Agent', time: 'Queued', icon: FileCheck, status: 'DONE' },
-    { title: 'Report ready', actor: 'System', time: 'Queued', icon: FileCheck, status: 'DONE' },
+    { title: 'Scoring', actor: 'Evaluation Subagent', time: '1 Sept, 01:22 PM', status: 'DONE' },
+    { title: 'Report ready', actor: 'Audit Engine', time: '1 Sept, 01:25 PM', status: 'DONE' },
     {
       title: 'Finalized',
-      actor: 'Admin',
+      actor: 'Admin User',
       time:
-        currentStatus === 'completed' || currentStatus === 'finalised' ? 'Completed' : 'Awaiting',
-      icon: currentStatus === 'completed' || currentStatus === 'finalised' ? CheckCircle2 : Clock,
+        currentStatus === 'completed' || currentStatus === 'finalised'
+          ? '1 Sept, 02:05 PM'
+          : 'Pending',
       status: currentStatus === 'completed' || currentStatus === 'finalised' ? 'DONE' : 'AWAITING',
     },
   ]
@@ -164,6 +143,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       details:
         'Reviewed evidence submissions, verified ADX public registry proof, and marked assessment status as Ready.',
       icon: ShieldCheck,
+      confidence: 'High confidence',
     },
     {
       id: 'aud-7',
@@ -173,6 +153,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       actor: 'Presight AI Security Team',
       details: 'Uploaded ISO_27001_Readiness_Report_2026.pdf (1.4 MB) as evidence for Question 3.',
       icon: FileCheck,
+      confidence: 'High confidence',
     },
     {
       id: 'aud-6',
@@ -183,6 +164,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       details:
         'Matched ADX ticker PRESIGHT against official Abu Dhabi Securities Exchange public registry (4/4 sources verified).',
       icon: Bot,
+      confidence: 'High confidence',
     },
     {
       id: 'aud-5',
@@ -193,6 +175,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       details:
         'Recorded 3:47 audio interview session and generated text transcript with 7/7 questions evaluated.',
       icon: PhoneCall,
+      confidence: 'High confidence',
     },
     {
       id: 'aud-4',
@@ -202,6 +185,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       actor: 'Presight AI Representative & AI Agent Sam',
       details: 'Participants joined audio call room session #9823.',
       icon: Users,
+      confidence: 'Medium confidence',
     },
     {
       id: 'aud-3',
@@ -212,6 +196,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       details:
         'Created meeting URL (https://meet.m42.ae/call/vendor-audit-9823) with secure 256-bit access token.',
       icon: Calendar,
+      confidence: 'High confidence',
     },
     {
       id: 'aud-2',
@@ -221,6 +206,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       actor: 'M42 Dispatcher',
       details: 'Dispatched automated call invitation email to recipient@presight.ai.',
       icon: Mail,
+      confidence: 'High confidence',
     },
     {
       id: 'aud-1',
@@ -231,6 +217,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       details:
         'Created Round 1 assessment for Presight AI using Technical Questionnaire compliance template.',
       icon: Send,
+      confidence: 'High confidence',
     },
   ]
 
@@ -479,9 +466,9 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       </div>
       {/* Main Content Area */}
       <div className="w-full px-6 lg:px-10 mt-6 flex flex-col gap-6">
-        {/* Navigation Tabs Bar — Reference Image Style */}
-        <div className="flex items-center justify-between border-b border-[#e2e8f0] pb-0">
-          <div className="flex items-center gap-8">
+        {/* Navigation Tabs Bar — Grey horizontal line spans ONLY both tabs */}
+        <div className="flex items-center justify-between pb-0">
+          <div className="flex items-center gap-8 border-b border-[#e2e8f0]">
             <button
               onClick={() => setActiveTab('assessment')}
               className={`pb-3.5 text-sm font-bold flex items-center gap-2.5 transition cursor-pointer border-b-2 -mb-px ${
@@ -565,7 +552,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                     const EventIcon = event.icon
                     return (
                       <div key={event.id} className="relative flex flex-col gap-1.5">
-                        {/* Timeline Node Icon Circle (no hover state) */}
+                        {/* Timeline Node Icon Circle (Stroke based icon) */}
                         <div className="absolute -left-[35px] top-0.5 w-7 h-7 rounded-full bg-[#f8fafc] border-2 border-[#36c0c9] flex items-center justify-center text-[#36c0c9] shadow-2xs">
                           <EventIcon className="w-3.5 h-3.5" />
                         </div>
@@ -592,6 +579,23 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                             {event.timestamp}
                           </span>
                         </div>
+
+                        {/* Confidence chip placed BELOW the title (ONLY for Admin, AI Agent, Vendor - NOT System) */}
+                        {event.category !== 'System' && event.confidence && (
+                          <div className="flex items-center mt-0.5">
+                            <StatusChip
+                              label={event.confidence}
+                              status={
+                                event.confidence.startsWith('High')
+                                  ? 'success'
+                                  : event.confidence.startsWith('Low')
+                                    ? 'error'
+                                    : 'warning'
+                              }
+                              dot={false}
+                            />
+                          </div>
+                        )}
 
                         <p className="text-xs text-[#0d212c] leading-relaxed mt-0.5">
                           {event.details}

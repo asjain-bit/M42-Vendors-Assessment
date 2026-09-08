@@ -19,6 +19,7 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
+import { CountryFlag } from '@/components/atoms/CountryFlag'
 import { CallRoomScreen } from './CallRoomScreen'
 
 export interface VendorDispatchData {
@@ -1194,8 +1195,11 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="font-bold text-[#0d212c] truncate">{vendor.name}</span>
-                <span className="text-[11px] text-[#64748b] truncate">
-                  {vendor.flag} {vendor.country} • {vendor.domain}
+                <span className="text-[11px] text-[#64748b] truncate flex items-center gap-1.5 mt-0.5">
+                  <CountryFlag country={vendor.country} />
+                  <span>{vendor.country}</span>
+                  <span>•</span>
+                  <span>{vendor.domain}</span>
                 </span>
               </div>
             </div>

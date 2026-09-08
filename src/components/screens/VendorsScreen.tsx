@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 
 import { StatusChip } from '@/components/atoms/StatusChip'
+import { CountryFlag } from '@/components/atoms/CountryFlag'
 import { ConfigureVendorCallScreen, VendorDispatchData } from './ConfigureVendorCallScreen'
 
 interface VendorRow {
@@ -151,6 +152,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇦🇪',
       status: 'Active',
       score: '94.0',
+      recipients: ['compliance@presight.ai', 'security@presight.ai', 'audit@presight.ai'],
     },
     {
       id: 'v-2',
@@ -162,6 +164,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇺🇸',
       status: 'Active',
       score: '88.5',
+      recipients: ['security@directus.io', 'admin@directus.io'],
     },
     {
       id: 'v-3',
@@ -173,6 +176,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇺🇸',
       status: 'Active',
       score: '91.2',
+      recipients: [],
     },
     {
       id: 'v-4',
@@ -184,6 +188,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇬🇧',
       status: 'Active',
       score: '76.0',
+      recipients: ['contact@apexsystems.com', 'legal@apexsystems.com', 'info@apexsystems.com'],
     },
     {
       id: 'v-5',
@@ -195,6 +200,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇩🇪',
       status: 'Active',
       score: '95.8',
+      recipients: ['audit@delphiai.com', 'tech@delphiai.com'],
     },
     {
       id: 'v-6',
@@ -206,6 +212,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇩🇪',
       status: 'Active',
       score: '64.0',
+      recipients: [],
     },
     {
       id: 'v-7',
@@ -217,6 +224,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇳🇱',
       status: 'Active',
       score: '92.0',
+      recipients: ['ops@cloudscale.nl', 'sec@cloudscale.nl'],
     },
     {
       id: 'v-8',
@@ -228,6 +236,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇫🇷',
       status: 'Active',
       score: '90.4',
+      recipients: ['trust@cyberguard.fr', 'privacy@cyberguard.fr'],
     },
     {
       id: 'v-9',
@@ -239,6 +248,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇸🇬',
       status: 'Active',
       score: '87.1',
+      recipients: ['support@healthcloud.sg', 'compliance@healthcloud.sg'],
     },
     {
       id: 'v-10',
@@ -250,6 +260,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇸🇦',
       status: 'Active',
       score: '82.3',
+      recipients: ['regulatory@pharmatech.sa', 'info@pharmatech.sa'],
     },
     {
       id: 'v-11',
@@ -261,6 +272,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇦🇪',
       status: 'Active',
       score: '69.5',
+      recipients: ['audits@medsec.ae', 'contact@medsec.ae'],
     },
     {
       id: 'v-12',
@@ -272,6 +284,7 @@ export const VendorsScreen: React.FC = () => {
       flag: '🇺🇸',
       status: 'Active',
       score: '93.7',
+      recipients: ['info@globaldiag.com', 'sec@globaldiag.com'],
     },
   ])
 
@@ -283,6 +296,7 @@ export const VendorsScreen: React.FC = () => {
         v.name.toLowerCase().includes(query) ||
         v.legalName.toLowerCase().includes(query) ||
         v.email.toLowerCase().includes(query) ||
+        (v.recipients && v.recipients.some((r) => r.toLowerCase().includes(query))) ||
         v.domain.toLowerCase().includes(query) ||
         v.country.toLowerCase().includes(query)
       )
@@ -537,7 +551,7 @@ export const VendorsScreen: React.FC = () => {
               <tr className="bg-[#f8fafc] border-b border-[#e2e8f0] text-[#64748b] text-xs font-bold">
                 <th className="py-3.5 px-5">Vendor Name</th>
                 <th className="py-3.5 px-5">Domain</th>
-                <th className="py-3.5 px-5">Email</th>
+                <th className="py-3.5 px-5">Recipients</th>
                 <th className="py-3.5 px-5">Country</th>
                 <th className="py-3.5 px-5 text-right">Actions</th>
               </tr>
@@ -588,17 +602,31 @@ export const VendorsScreen: React.FC = () => {
                       )}
                     </td>
 
-                    <td
-                      className="py-4 px-5 text-xs font-medium text-[#64748b] truncate max-w-[200px]"
-                      title={vendor.email}
-                    >
-                      {vendor.email}
+                    <td className="py-4 px-5 text-xs">
+                      {!vendor.recipients || vendor.recipients.length === 0 ? (
+                        <span className="text-[#64748b] font-medium">-</span>
+                      ) : (
+                        <div className="flex flex-wrap items-center gap-1.5 min-w-[320px] max-w-[380px]">
+                          {vendor.recipients.map((recEmail, idx) => (
+                            <span
+                              key={idx}
+                              className="inline-block bg-[#f1f5f9] text-[#0d212c] font-medium px-2 py-0.5 rounded-md text-[11px] border border-[#e2e8f0] truncate max-w-[180px]"
+                              title={recEmail}
+                            >
+                              {recEmail}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </td>
                     <td
                       className="py-4 px-5 text-xs text-[#0d212c] font-medium truncate"
                       title={`${vendor.country}`}
                     >
-                      {vendor.flag} {vendor.country}
+                      <div className="inline-flex items-center gap-2">
+                        <CountryFlag country={vendor.country} />
+                        <span>{vendor.country}</span>
+                      </div>
                     </td>
 
                     <td className="py-4 px-5 text-right relative">
@@ -740,24 +768,27 @@ export const VendorsScreen: React.FC = () => {
               {/* Country */}
               <div>
                 <label className="block text-xs font-bold text-[#0d212c] mb-1.5">Country</label>
-                <select
-                  value={editingVendor.country}
-                  onChange={(e) => {
-                    const cObj = worldCountryOptions.find((c) => c.name === e.target.value)
-                    setEditingVendor({
-                      ...editingVendor,
-                      country: e.target.value,
-                      flag: cObj ? cObj.flag : '🌐',
-                    })
-                  }}
-                  className="w-full px-3.5 py-2 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] bg-white"
-                >
-                  {worldCountryOptions.map((c) => (
-                    <option key={c.name} value={c.name}>
-                      {c.flag} {c.name}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] bg-white focus-within:border-[#cbd5e1]">
+                  <CountryFlag country={editingVendor.country} />
+                  <select
+                    value={editingVendor.country}
+                    onChange={(e) => {
+                      const cObj = worldCountryOptions.find((c) => c.name === e.target.value)
+                      setEditingVendor({
+                        ...editingVendor,
+                        country: e.target.value,
+                        flag: cObj ? cObj.flag : '🌐',
+                      })
+                    }}
+                    className="w-full text-xs text-[#0d212c] bg-transparent outline-none cursor-pointer py-1"
+                  >
+                    {worldCountryOptions.map((c) => (
+                      <option key={c.name} value={c.name}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Website URL */}
@@ -1039,17 +1070,20 @@ export const VendorsScreen: React.FC = () => {
                       <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
                         Country
                       </label>
-                      <select
-                        value={findCountry}
-                        onChange={(e) => setFindCountry(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] bg-white"
-                      >
-                        {worldCountryOptions.map((c) => (
-                          <option key={c.name} value={c.name}>
-                            {c.flag} {c.name}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] bg-white focus-within:border-[#cbd5e1]">
+                        <CountryFlag country={findCountry} />
+                        <select
+                          value={findCountry}
+                          onChange={(e) => setFindCountry(e.target.value)}
+                          className="w-full text-xs text-[#0d212c] bg-transparent outline-none cursor-pointer py-1"
+                        >
+                          {worldCountryOptions.map((c) => (
+                            <option key={c.name} value={c.name}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
                     <div>
@@ -1184,17 +1218,20 @@ export const VendorsScreen: React.FC = () => {
                       <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
                         Country
                       </label>
-                      <select
-                        value={manualCountry}
-                        onChange={(e) => setManualCountry(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] bg-white"
-                      >
-                        {worldCountryOptions.map((c) => (
-                          <option key={c.name} value={c.name}>
-                            {c.flag} {c.name}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] bg-white focus-within:border-[#cbd5e1]">
+                        <CountryFlag country={manualCountry} />
+                        <select
+                          value={manualCountry}
+                          onChange={(e) => setManualCountry(e.target.value)}
+                          className="w-full text-xs text-[#0d212c] bg-transparent outline-none cursor-pointer py-1"
+                        >
+                          {worldCountryOptions.map((c) => (
+                            <option key={c.name} value={c.name}>
+                              {c.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
                     <div>

@@ -9,6 +9,7 @@
 import React, { useState } from 'react'
 import { Check, ChevronDown, Clock, ShieldCheck, ArrowRight, Volume2 } from 'lucide-react'
 import { Button } from '@/components/atoms/Button'
+import { CountryFlag } from '@/components/atoms/CountryFlag'
 
 export interface VendorDispatchData {
   id: string
@@ -33,9 +34,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1)
 
   // Step 1 states
-  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState(
-    'Technical Questionnaire'
-  )
+  const [selectedQuestionnaire, setSelectedQuestionnaire] = useState('Technical Questionnaire')
   const [roundLabel, setRoundLabel] = useState('Round 1')
 
   // Step 2 states (Configure Sam)
@@ -52,9 +51,24 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
   ]
 
   const voiceOptions = [
-    { id: 'Marin', label: 'Marin', recommended: true, desc: 'Warm and steady. Keeps vendor teams at ease through long sessions.' },
-    { id: 'Ash', label: 'Ash', recommended: false, desc: 'Crisp and direct. Suits fast-moving technical walkthroughs.' },
-    { id: 'Coral', label: 'Coral', recommended: false, desc: 'Bright and encouraging. A good fit for first onboarding sessions.' },
+    {
+      id: 'Marin',
+      label: 'Marin',
+      recommended: true,
+      desc: 'Warm and steady. Keeps vendor teams at ease through long sessions.',
+    },
+    {
+      id: 'Ash',
+      label: 'Ash',
+      recommended: false,
+      desc: 'Crisp and direct. Suits fast-moving technical walkthroughs.',
+    },
+    {
+      id: 'Coral',
+      label: 'Coral',
+      recommended: false,
+      desc: 'Bright and encouraging. A good fit for first onboarding sessions.',
+    },
   ]
 
   const extraVoices = ['Alloy', 'Ballad', 'Cedar', 'Echo', 'Sage', 'Shimmer', 'Verse']
@@ -68,9 +82,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
             <span className="text-xs font-semibold text-[#64748b]">
               Vendors / {vendor.name} / New call
             </span>
-            <h1 className="text-xl font-extrabold text-[#0d212c]">
-              Configure vendor call
-            </h1>
+            <h1 className="text-xl font-extrabold text-[#0d212c]">Configure vendor call</h1>
           </div>
           <button
             onClick={onClose}
@@ -102,19 +114,15 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                       currentStep === 1
                         ? 'bg-[#36c0c9] text-[#0d212c]'
                         : currentStep > 1
-                        ? 'bg-[#137333] text-white'
-                        : 'bg-[#e2e8f0] text-[#64748b]'
+                          ? 'bg-[#137333] text-white'
+                          : 'bg-[#e2e8f0] text-[#64748b]'
                     }`}
                   >
                     {currentStep > 1 ? <Check className="w-4 h-4" /> : '01'}
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-[#0d212c]">
-                      01 Setup
-                    </span>
-                    <span className="text-[11px] text-[#64748b]">
-                      Session details
-                    </span>
+                    <span className="text-xs font-bold text-[#0d212c]">01 Setup</span>
+                    <span className="text-[11px] text-[#64748b]">Session details</span>
                   </div>
                 </div>
 
@@ -130,19 +138,15 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                       currentStep === 2
                         ? 'bg-[#36c0c9] text-[#0d212c]'
                         : currentStep > 2
-                        ? 'bg-[#137333] text-white'
-                        : 'bg-[#e2e8f0] text-[#64748b]'
+                          ? 'bg-[#137333] text-white'
+                          : 'bg-[#e2e8f0] text-[#64748b]'
                     }`}
                   >
                     {currentStep > 2 ? <Check className="w-4 h-4" /> : '02'}
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-[#0d212c]">
-                      02 Configure Sam
-                    </span>
-                    <span className="text-[11px] text-[#64748b]">
-                      Sam&apos;s voice & timing
-                    </span>
+                    <span className="text-xs font-bold text-[#0d212c]">02 Configure Sam</span>
+                    <span className="text-[11px] text-[#64748b]">Sam&apos;s voice & timing</span>
                   </div>
                 </div>
 
@@ -163,21 +167,15 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                     03
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xs font-bold text-[#0d212c]">
-                      03 Review & launch
-                    </span>
-                    <span className="text-[11px] text-[#64748b]">
-                      Confirm and start
-                    </span>
+                    <span className="text-xs font-bold text-[#0d212c]">03 Review & launch</span>
+                    <span className="text-[11px] text-[#64748b]">Confirm and start</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="p-4 rounded-2xl bg-white border border-[#e2e8f0] text-xs text-[#64748b]">
-              <span className="font-bold text-[#0d212c] block mb-1">
-                Need help?
-              </span>
+              <span className="font-bold text-[#0d212c] block mb-1">Need help?</span>
               <a href="#" className="text-[#36c0c9] hover:underline font-semibold">
                 View scheduling guide →
               </a>
@@ -189,9 +187,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
             {currentStep === 1 && (
               <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
                 <div>
-                  <h2 className="text-base font-extrabold text-[#0d212c]">
-                    Session setup
-                  </h2>
+                  <h2 className="text-base font-extrabold text-[#0d212c]">Session setup</h2>
                   <p className="text-xs text-[#64748b] mt-0.5">
                     Choose the session type and source material.
                   </p>
@@ -206,9 +202,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                     <div className="flex items-start gap-3">
                       <ShieldCheck className="w-5 h-5 text-[#36c0c9] shrink-0 mt-0.5" />
                       <div className="flex flex-col">
-                        <span className="font-bold text-xs text-[#0d212c]">
-                          Assessment round
-                        </span>
+                        <span className="font-bold text-xs text-[#0d212c]">Assessment round</span>
                         <span className="text-[11px] text-[#64748b] mt-0.5">
                           Structured due-diligence interview using an approved questionnaire.
                         </span>
@@ -237,9 +231,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                     </select>
                     <ChevronDown className="w-4 h-4 text-[#64748b] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
-                  <span className="text-[11px] text-[#64748b] pl-1">
-                    62 questions
-                  </span>
+                  <span className="text-[11px] text-[#64748b] pl-1">62 questions</span>
                 </div>
 
                 {/* Estimated duration box */}
@@ -248,9 +240,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                     <Clock className="w-4 h-4 text-[#36c0c9]" />
                     <span>Estimated duration</span>
                   </div>
-                  <span className="font-extrabold text-[#0d212c]">
-                    135–205 min
-                  </span>
+                  <span className="font-extrabold text-[#0d212c]">135–205 min</span>
                 </div>
 
                 {/* ROUND LABEL */}
@@ -289,9 +279,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
             {currentStep === 2 && (
               <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
                 <div>
-                  <h2 className="text-base font-extrabold text-[#0d212c]">
-                    Configure Sam
-                  </h2>
+                  <h2 className="text-base font-extrabold text-[#0d212c]">Configure Sam</h2>
                   <p className="text-xs text-[#64748b] mt-0.5">
                     Choose Sam&apos;s voice and when the session should begin.
                   </p>
@@ -326,12 +314,8 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                         </div>
 
                         <div>
-                          <h4 className="font-bold text-xs text-[#0d212c]">
-                            {v.label}
-                          </h4>
-                          <p className="text-[10px] text-[#64748b] mt-1 line-clamp-2">
-                            {v.desc}
-                          </p>
+                          <h4 className="font-bold text-xs text-[#0d212c]">{v.label}</h4>
+                          <p className="text-[10px] text-[#64748b] mt-1 line-clamp-2">{v.desc}</p>
                         </div>
                       </div>
                     ))}
@@ -380,9 +364,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                           : 'border-[#e2e8f0] bg-white'
                       }`}
                     >
-                      <span className="font-bold text-xs text-[#0d212c]">
-                        Start now
-                      </span>
+                      <span className="font-bold text-xs text-[#0d212c]">Start now</span>
                       <span className="text-[10px] text-[#64748b]">
                         Open the call room as soon as setup is complete.
                       </span>
@@ -396,9 +378,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                           : 'border-[#e2e8f0] bg-white'
                       }`}
                     >
-                      <span className="font-bold text-xs text-[#0d212c]">
-                        Schedule for later
-                      </span>
+                      <span className="font-bold text-xs text-[#0d212c]">Schedule for later</span>
                       <span className="text-[10px] text-[#64748b]">
                         Choose a date and time for this session.
                       </span>
@@ -417,12 +397,8 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                       onChange={(e) => setTimezone(e.target.value)}
                       className="w-full px-4 py-2.5 rounded-xl border border-[#e2e8f0] bg-white text-xs text-[#0d212c] appearance-none outline-none focus:border-[#36c0c9]"
                     >
-                      <option value="Asia/Calcutta - GMT+5:30">
-                        Asia/Calcutta - GMT+5:30
-                      </option>
-                      <option value="Asia/Dubai - GMT+4:00">
-                        Asia/Dubai - GMT+4:00
-                      </option>
+                      <option value="Asia/Calcutta - GMT+5:30">Asia/Calcutta - GMT+5:30</option>
+                      <option value="Asia/Dubai - GMT+4:00">Asia/Dubai - GMT+4:00</option>
                       <option value="UTC - GMT+0:00">UTC - GMT+0:00</option>
                     </select>
                     <ChevronDown className="w-4 h-4 text-[#64748b] absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -451,9 +427,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
             {currentStep === 3 && (
               <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-6">
                 <div>
-                  <h2 className="text-base font-extrabold text-[#0d212c]">
-                    Review & launch
-                  </h2>
+                  <h2 className="text-base font-extrabold text-[#0d212c]">Review & launch</h2>
                   <p className="text-xs text-[#64748b] mt-0.5">
                     Confirm configuration and initiate automated vendor assessment call.
                   </p>
@@ -506,11 +480,12 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
                   {vendor.name.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="font-bold text-[#0d212c] truncate">
-                    {vendor.name}
-                  </span>
-                  <span className="text-[11px] text-[#64748b] truncate">
-                    {vendor.flag} {vendor.country} • {vendor.domain}
+                  <span className="font-bold text-[#0d212c] truncate">{vendor.name}</span>
+                  <span className="text-[11px] text-[#64748b] truncate flex items-center gap-1.5 mt-0.5">
+                    <CountryFlag country={vendor.country} />
+                    <span>{vendor.country}</span>
+                    <span>•</span>
+                    <span>{vendor.domain}</span>
                   </span>
                 </div>
               </div>
@@ -552,20 +527,22 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
               <div className="border-t border-[#e2e8f0] pt-3 flex flex-col gap-2">
                 <div className="flex justify-between text-[11px]">
                   <span className="font-bold text-[#64748b]">READINESS</span>
-                  <span className="font-bold text-[#0d212c]">
-                    {currentStep - 1} of 3 complete
-                  </span>
+                  <span className="font-bold text-[#0d212c]">{currentStep - 1} of 3 complete</span>
                 </div>
                 <div className="flex flex-col gap-1.5 text-[11px]">
                   <div className="flex justify-between">
                     <span>Setup</span>
-                    <span className={currentStep > 1 ? 'text-[#137333] font-bold' : 'text-[#64748b]'}>
+                    <span
+                      className={currentStep > 1 ? 'text-[#137333] font-bold' : 'text-[#64748b]'}
+                    >
                       {currentStep > 1 ? 'Complete' : 'Pending'}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span>Configure Sam</span>
-                    <span className={currentStep > 2 ? 'text-[#137333] font-bold' : 'text-[#64748b]'}>
+                    <span
+                      className={currentStep > 2 ? 'text-[#137333] font-bold' : 'text-[#64748b]'}
+                    >
                       {currentStep > 2 ? 'Complete' : 'Pending'}
                     </span>
                   </div>

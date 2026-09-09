@@ -547,14 +547,20 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
               </div>
 
               <div className="bg-white p-6 sm:p-8 rounded-2xl border border-[#e2e8f0] shadow-xs">
-                <div className="relative pl-6 border-l-2 border-[#e2e8f0] flex flex-col gap-8">
-                  {auditEvents.map((event) => {
+                <div className="relative pl-2 flex flex-col gap-8">
+                  {auditEvents.map((event, idx) => {
                     const EventIcon = event.icon
+                    const isLast = idx === auditEvents.length - 1
                     return (
-                      <div key={event.id} className="relative flex flex-col gap-1.5">
-                        {/* Timeline Node Icon Circle (Stroke based icon) */}
-                        <div className="absolute -left-[35px] top-0.5 w-7 h-7 rounded-full bg-[#f8fafc] border-2 border-[#36c0c9] flex items-center justify-center text-[#36c0c9] shadow-2xs">
-                          <EventIcon className="w-3.5 h-3.5" />
+                      <div key={event.id} className="relative pl-8 flex flex-col gap-1.5">
+                        {/* Vertical connecting line (only rendered if not the last event) */}
+                        {!isLast && (
+                          <div className="absolute left-[13px] top-7 bottom-0 w-0.5 bg-[#e2e8f0] translate-y-1" />
+                        )}
+
+                        {/* Timeline Node Icon Circle (100% Primary Light Color Fill, No Stroke, White Icon) */}
+                        <div className="absolute left-0 top-0.5 w-7 h-7 rounded-full bg-[#36c0c9] flex items-center justify-center text-white shadow-2xs z-10">
+                          <EventIcon className="w-3.5 h-3.5 text-white" />
                         </div>
 
                         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -620,7 +626,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
             {/* Section 1: Assessment lifecycle (Previous Card Theme with horizontal scroll for all 9 steps) */}
             <div className="flex flex-col gap-2">
               <h3 className="text-sm font-bold text-[#0d212c]">Assessment lifecycle</h3>
-              <div className="w-full overflow-x-auto pb-2 pt-1 flex items-center gap-3 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+              <div className="w-full overflow-x-auto pb-3.5 pt-1 flex items-center gap-3 subtle-scrollbar group/lifecycle">
                 {lifecycleSteps.map((step, idx) => {
                   const isAwaiting = step.status === 'AWAITING'
 

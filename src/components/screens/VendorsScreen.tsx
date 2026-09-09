@@ -471,6 +471,7 @@ export const VendorsScreen: React.FC = () => {
       country: activeDispatchVendor.country,
       flag: activeDispatchVendor.flag,
       email: activeDispatchVendor.email,
+      recipients: activeDispatchVendor.recipients,
     }
 
     return (

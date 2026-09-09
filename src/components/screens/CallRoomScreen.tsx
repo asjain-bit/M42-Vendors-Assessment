@@ -516,40 +516,45 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
             )}
           </div>
 
-          {/* ── PARTICIPANT TILES — bottom-right, Teams style ────────────────────── */}
-          <div className="absolute bottom-4 right-4 flex items-end gap-2 z-10">
+          {/* ── PARTICIPANT TILES — bottom-right, Teams style Light Theme ────────────────────── */}
+          <div className="absolute bottom-4 right-4 flex items-end gap-2.5 z-10">
             {/* Vendor tile */}
-            <div className="w-28 h-20 rounded-xl bg-[#1e293b] border border-white/10 shadow-lg flex flex-col items-center justify-center gap-1 relative overflow-hidden">
-              <div className="w-9 h-9 rounded-full bg-[#334155] flex items-center justify-center text-white font-bold text-base shadow">
+            <div className="w-32 h-22 rounded-2xl bg-white border border-[#e2e8f0] shadow-xl flex flex-col items-center justify-center gap-1 relative overflow-hidden p-2">
+              <div className="w-9 h-9 rounded-full bg-[#f1f5f9] border border-[#cbd5e1] flex items-center justify-center text-[#0d212c] font-bold text-sm shadow-2xs">
                 {vendorShortName ? vendorShortName[0].toUpperCase() : 'V'}
               </div>
-              <span className="text-[9px] font-bold text-white/70 truncate max-w-[100px] px-1 text-center">
+              <span className="text-[10px] font-bold text-[#0d212c] truncate max-w-[110px] px-1 text-center">
                 {vendorShortName}
               </span>
-              <div className="absolute bottom-1 left-1 flex items-center gap-0.5 bg-black/30 rounded-md px-1 py-0.5">
-                <Mic className="w-2 h-2 text-white/70" />
-                <span className="text-[8px] text-white/70">Vendor</span>
+              <div className="absolute bottom-1 left-1.5 flex items-center gap-1 bg-[#f1f5f9] border border-[#e2e8f0] rounded-md px-1.5 py-0.5">
+                <Mic className="w-2.5 h-2.5 text-[#64748b]" />
+                <span className="text-[8px] font-semibold text-[#64748b]">Vendor</span>
               </div>
             </div>
 
             {/* Admin (current user = M42) tile */}
-            <div className="w-28 h-20 rounded-xl bg-[#0d212c] border border-[#36c0c9]/20 shadow-lg flex flex-col items-center justify-center gap-1 relative overflow-hidden">
-              <div className="w-9 h-9 rounded-full bg-[#1a3344] border border-[#36c0c9]/30 flex items-center justify-center text-white font-bold text-base shadow">
+            <div className="w-32 h-22 rounded-2xl bg-white border border-[#36c0c9]/40 shadow-xl flex flex-col items-center justify-center gap-1 relative overflow-hidden p-2">
+              <div className="w-9 h-9 rounded-full bg-[#36c0c9] text-white flex items-center justify-center font-bold text-sm shadow-2xs">
                 {adminInitial}
               </div>
-              <span className="text-[9px] font-bold text-white/70 truncate max-w-[100px] px-1 text-center">
-                {yourName.trim() || 'Admin'} <span className="text-[#36c0c9]">(you)</span>
+              <span className="text-[10px] font-bold text-[#0d212c] truncate max-w-[110px] px-1 text-center">
+                {yourName.trim() || 'Admin'}{' '}
+                <span className="text-[#36c0c9] font-extrabold">(you)</span>
               </span>
               {/* Mic badge */}
               <div
-                className={`absolute bottom-1 left-1 flex items-center gap-0.5 rounded-md px-1 py-0.5 ${isMuted ? 'bg-red-500/80' : 'bg-black/30'}`}
+                className={`absolute bottom-1 left-1.5 flex items-center gap-1 rounded-md px-1.5 py-0.5 border ${
+                  isMuted
+                    ? 'bg-red-50 border-red-200 text-red-700'
+                    : 'bg-[#f1f5f9] border-[#e2e8f0] text-[#64748b]'
+                }`}
               >
                 {isMuted ? (
-                  <MicOff className="w-2 h-2 text-white" />
+                  <MicOff className="w-2.5 h-2.5 text-red-600" />
                 ) : (
-                  <Mic className="w-2 h-2 text-white/70" />
+                  <Mic className="w-2.5 h-2.5 text-[#64748b]" />
                 )}
-                <span className="text-[8px] text-white/70">M42</span>
+                <span className="text-[8px] font-semibold">M42</span>
               </div>
             </div>
           </div>

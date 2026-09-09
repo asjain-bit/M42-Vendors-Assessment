@@ -1,8 +1,8 @@
-@import "tailwindcss";
-@import "../styles/tokens/primitives.css";
-@import "../styles/tokens/light.css";
-@import "../styles/tokens/dark.css";
-@import "../styles/tokens/brand.css";
+@import 'tailwindcss';
+@import '../styles/tokens/primitives.css';
+@import '../styles/tokens/light.css';
+@import '../styles/tokens/dark.css';
+@import '../styles/tokens/brand.css';
 
 @theme {
   --color-bg-default: var(--bg-default);
@@ -84,10 +84,31 @@ nextjs-portal,
 [data-nextjs-toast],
 [data-nextjs-toast-wrapper],
 [data-next-bubble],
-div[class*="nextjs"],
+div[class*='nextjs'],
 #next-route-announcer {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* Subtle custom horizontal scrollbar - ALWAYS visible upfront */
+.subtle-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  display: block !important;
+}
+.subtle-scrollbar::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 9999px;
+}
+.subtle-scrollbar::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 9999px;
+}
+.subtle-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+.subtle-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #94a3b8 #e2e8f0;
 }

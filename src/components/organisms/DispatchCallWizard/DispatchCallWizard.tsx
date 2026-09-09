@@ -18,6 +18,8 @@ export interface VendorDispatchData {
   domain: string
   country: string
   flag: string
+  email?: string
+  recipients?: string[]
 }
 
 interface DispatchCallWizardProps {

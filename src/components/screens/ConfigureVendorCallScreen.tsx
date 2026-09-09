@@ -30,6 +30,7 @@ export interface VendorDispatchData {
   country: string
   flag: string
   email: string
+  recipients?: string[]
 }
 
 interface ConfigureVendorCallScreenProps {
@@ -56,9 +57,15 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   // Estimated duration is auto-populated and non-editable
   const estimatedDuration = '60-120 minutes'
 
-  // Recipients tag state with email validation
+  // Recipients tag state with email validation (pre-filled from vendor recipients)
   const [recipientInput, setRecipientInput] = useState('')
-  const [recipients, setRecipients] = useState<string[]>([])
+  const [recipients, setRecipients] = useState<string[]>(
+    vendor.recipients && vendor.recipients.length > 0
+      ? vendor.recipients
+      : vendor.email
+        ? [vendor.email]
+        : []
+  )
   const [recipientError, setRecipientError] = useState<string | null>(null)
 
   // Step 2 states (Configure Agent)

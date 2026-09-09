@@ -21,9 +21,9 @@ export const DashboardScreen: React.FC = () => {
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
 
-  // Requirement 1: Show 6 rows per page in dashboard table
+  // Show 8 rows per page consistently across all tables
   const [currentPage, setCurrentPage] = useState(1)
-  const ITEMS_PER_PAGE = 6
+  const ITEMS_PER_PAGE = 8
 
   // Varied rounds data and created date with time & AM/PM
   const [assessments, setAssessments] = useState<AssessmentRow[]>([
@@ -181,7 +181,7 @@ export const DashboardScreen: React.FC = () => {
     })
   }, [assessments, selectedStatusFilter, searchTerm])
 
-  // Pagination math (6 items per page)
+  // Pagination math (8 items per page)
   const totalPages = Math.ceil(filteredAssessments.length / ITEMS_PER_PAGE) || 1
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const paginatedAssessments = filteredAssessments.slice(startIndex, startIndex + ITEMS_PER_PAGE)

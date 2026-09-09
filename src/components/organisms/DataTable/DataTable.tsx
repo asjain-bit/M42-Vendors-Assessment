@@ -15,7 +15,7 @@ export function DataTable<T extends Record<string, unknown>>({
   data,
   columns,
   title = 'Data Records',
-  pageSize: initialPageSize = 5,
+  pageSize: initialPageSize = 8,
   className = '',
 }: DataTableProps<T>) {
   const [searchQuery, setSearchQuery] = useState('')
@@ -29,7 +29,11 @@ export function DataTable<T extends Record<string, unknown>>({
     if (!searchQuery.trim()) return data
     const query = searchQuery.toLowerCase()
     return data.filter((row) =>
-      Object.values(row).some((val) => String(val ?? '').toLowerCase().includes(query))
+      Object.values(row).some((val) =>
+        String(val ?? '')
+          .toLowerCase()
+          .includes(query)
+      )
     )
   }, [data, searchQuery])
 
@@ -62,7 +66,14 @@ export function DataTable<T extends Record<string, unknown>>({
   }
 
   return (
-    <div className={['w-full rounded-xl border border-border-default bg-bg-surface-1 overflow-hidden shadow-xs text-text-primary', className].filter(Boolean).join(' ')}>
+    <div
+      className={[
+        'w-full rounded-xl border border-border-default bg-bg-surface-1 overflow-hidden shadow-xs text-text-primary',
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       {/* Table Header Controls */}
       <div className="p-4 border-b border-border-default flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -92,9 +103,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 >
                   <div className="flex items-center gap-1">
                     <span>{col.header}</span>
-                    {sortKey === col.key && (
-                      <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>
-                    )}
+                    {sortKey === col.key && <span>{sortDirection === 'asc' ? '▲' : '▼'}</span>}
                   </div>
                 </th>
               ))}

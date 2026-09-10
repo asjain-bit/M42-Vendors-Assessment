@@ -24,8 +24,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onTabChange,
   collapsed,
   onToggleCollapse,
-  userName = 'John Doe',
-  userEmail = 'john.doe@m42.ae',
+  userName = 'Zaid Al Ali',
+  userEmail = 'zaid.alali@m42.ae',
   onSignOut,
 }) => {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)

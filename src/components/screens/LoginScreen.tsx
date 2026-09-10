@@ -13,7 +13,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
   const handleLogin = () => {
     setIsAuthenticating(true)
     setTimeout(() => {
-      onLogin('john.doe@m42.ae')
+      onLogin('zaid.alali@m42.ae')
     }, 800)
   }
 
@@ -24,8 +24,12 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
           <div className="text-[#0d212c] mb-4">
             <Loader2 className="w-12 h-12 animate-spin text-[#0d212c]" />
           </div>
-          <h2 className="text-[20px] font-semibold text-[#0d212c] mb-2">Setting up your workspace...</h2>
-          <p className="text-[14px] text-slate-500">Preparing the M42 Vendor Assessment environment.</p>
+          <h2 className="text-[20px] font-semibold text-[#0d212c] mb-2">
+            Setting up your workspace...
+          </h2>
+          <p className="text-[14px] text-slate-500">
+            Preparing the M42 Vendor Assessment environment.
+          </p>
         </div>
       </div>
     )
@@ -50,7 +54,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
 
           <div>
             <p className="text-slate-600 text-base leading-relaxed font-normal">
-              M42 Vendor Assessment gives procurement and compliance teams a single, auditable view of every supplier relationship.
+              M42 Vendor Assessment gives procurement and compliance teams a single, auditable view
+              of every supplier relationship.
             </p>
           </div>
 
@@ -93,9 +98,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
       <div className="flex-1 bg-white p-8 lg:p-16 flex items-center justify-center">
         <div className="w-full max-w-md bg-white rounded-2xl border border-gray-100 p-8 sm:p-12 text-center shadow-xs flex flex-col items-center">
           {/* Welcome Text */}
-          <h2 className="text-2xl font-bold text-[#0d212c] mb-2 tracking-tight">
-            Welcome
-          </h2>
+          <h2 className="text-2xl font-bold text-[#0d212c] mb-2 tracking-tight">Welcome</h2>
           <p className="text-slate-500 text-sm mb-8 leading-relaxed max-w-sm mx-auto">
             Sign in with your organisational account
           </p>

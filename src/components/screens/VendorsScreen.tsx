@@ -1065,40 +1065,37 @@ export const VendorsScreen: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Manual input fields: Country + Website URL on same row */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-                    <div>
-                      <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                        Country
-                      </label>
-                      <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] bg-white focus-within:border-[#cbd5e1]">
-                        <CountryFlag country={findCountry} />
-                        <select
-                          value={findCountry}
-                          onChange={(e) => setFindCountry(e.target.value)}
-                          className="w-full text-xs text-[#0d212c] bg-transparent outline-none cursor-pointer py-1"
-                        >
-                          {worldCountryOptions.map((c) => (
-                            <option key={c.name} value={c.name}>
-                              {c.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                  {/* Country */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">Country</label>
+                    <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl border border-[#e2e8f0] bg-white focus-within:border-[#cbd5e1]">
+                      <CountryFlag country={findCountry} />
+                      <select
+                        value={findCountry}
+                        onChange={(e) => setFindCountry(e.target.value)}
+                        className="w-full text-xs text-[#0d212c] bg-transparent outline-none cursor-pointer py-1"
+                      >
+                        {worldCountryOptions.map((c) => (
+                          <option key={c.name} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
+                  </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                        Website URL
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="https://"
-                        value={findWebsite}
-                        onChange={(e) => setFindWebsite(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
-                      />
-                    </div>
+                  {/* Website URL on next line */}
+                  <div>
+                    <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
+                      Website URL
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="https://"
+                      value={findWebsite}
+                      onChange={(e) => setFindWebsite(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1]"
+                    />
                   </div>
 
                   {/* Recipients tag-input (find flow) */}

@@ -92,23 +92,35 @@ div[class*='nextjs'],
   pointer-events: none !important;
 }
 
-/* Subtle custom horizontal scrollbar - ALWAYS visible upfront */
+/* Subtle custom horizontal scrollbar - Visible ONLY on hover */
 .subtle-scrollbar::-webkit-scrollbar {
   height: 6px;
   display: block !important;
 }
 .subtle-scrollbar::-webkit-scrollbar-track {
-  background: #e2e8f0;
+  background: transparent;
   border-radius: 9999px;
+  transition: background 0.2s ease;
 }
 .subtle-scrollbar::-webkit-scrollbar-thumb {
-  background: #94a3b8;
+  background: transparent;
   border-radius: 9999px;
+  transition: background 0.2s ease;
 }
-.subtle-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+.subtle-scrollbar:hover::-webkit-scrollbar-track {
+  background: transparent;
+}
+.subtle-scrollbar:hover::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+.subtle-scrollbar:hover::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 .subtle-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #94a3b8 #e2e8f0;
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s ease;
+}
+.subtle-scrollbar:hover {
+  scrollbar-color: #cbd5e1 transparent;
 }

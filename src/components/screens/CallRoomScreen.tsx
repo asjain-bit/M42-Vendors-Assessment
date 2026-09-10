@@ -70,7 +70,7 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   vendor,
   onBack,
   onExitToVendors,
-  userName = 'John Doe',
+  userName = 'Zaid Al Ali',
 }) => {
   const [roomState, setRoomState] = useState<CallRoomState>('join')
   const [yourName, setYourName] = useState(userName)

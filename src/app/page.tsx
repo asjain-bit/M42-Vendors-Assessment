@@ -14,7 +14,7 @@ export default function HomePage() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'questionnaires' | 'vendors'>(
     'dashboard'
   )
-  const [userEmail, setUserEmail] = useState('john.doe@m42.ae')
+  const [userEmail, setUserEmail] = useState('zaid.alali@m42.ae')
 
   // Expandable/Collapsible Sidebar state
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
@@ -32,10 +32,13 @@ export default function HomePage() {
     return <LoginScreen onLogin={handleLogin} />
   }
 
-  const formattedName = userEmail
-    .split('@')[0]
-    .replace('.', ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase())
+  const formattedName =
+    userEmail === 'zaid.alali@m42.ae'
+      ? 'Zaid Al Ali'
+      : userEmail
+          .split('@')[0]
+          .replace('.', ' ')
+          .replace(/\b\w/g, (c) => c.toUpperCase())
 
   const getPageHeaderProps = () => {
     switch (activeTab) {

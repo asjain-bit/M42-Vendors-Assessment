@@ -120,7 +120,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
   // Requirement 4: Add New Question Handler
   const handleAddQuestion = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newQuestionText.trim()) return
+    if (!newQuestionText.trim() || !newResponseCue.trim()) return
 
     const maxId = questions.reduce(
       (max, q) => (typeof q.id === 'number' && q.id > max ? q.id : max),
@@ -431,12 +431,13 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
 
               <div>
                 <label className="block text-xs font-bold text-[#0d212c] mb-1.5">
-                  Response cue
+                  Response cue <span className="text-red-500 font-bold">*</span>
                 </label>
                 <textarea
                   placeholder="Instructions or cues for the vendor to answer effectively..."
                   value={newResponseCue}
                   onChange={(e) => setNewResponseCue(e.target.value)}
+                  required
                   rows={3}
                   className="w-full px-4 py-2.5 rounded-xl border border-[#cbd5e1] text-xs font-medium text-[#0d212c] outline-none bg-white resize-y"
                 />
@@ -465,7 +466,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
                 </button>
                 <button
                   type="submit"
-                  disabled={!newQuestionText.trim()}
+                  disabled={!newQuestionText.trim() || !newResponseCue.trim()}
                   className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold py-2 px-6 rounded-xl text-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition border-0"
                 >
                   Save question

@@ -760,13 +760,18 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                 <input
                   type="email"
                   value={recipientInput}
+                  disabled={recipients.length >= 5}
                   onChange={(e) => {
                     setRecipientInput(e.target.value)
                     if (recipientError) setRecipientError(null)
                   }}
                   onKeyDown={handleKeyDownRecipient}
-                  placeholder="Enter email address and press Enter..."
-                  className={`w-full px-4 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
+                  placeholder={
+                    recipients.length >= 5
+                      ? 'Maximum 5 recipients reached'
+                      : 'Enter email address and press Enter...'
+                  }
+                  className={`w-full px-4 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed ${
                     recipientError
                       ? 'border-red-500 focus:border-red-500'
                       : 'border-[#e2e8f0] focus:border-[#cbd5e1]'

@@ -929,8 +929,13 @@ export const VendorsScreen: React.FC = () => {
                 <label className="block text-xs font-bold text-[#0d212c]">Recipients</label>
                 <input
                   type="text"
-                  placeholder="Type email and press Enter"
+                  placeholder={
+                    (editingVendor.recipients || []).length >= 5
+                      ? 'Maximum 5 recipients reached'
+                      : 'Type email and press Enter'
+                  }
                   value={editRecipientInput}
+                  disabled={(editingVendor.recipients || []).length >= 5}
                   onChange={(e) => {
                     setEditRecipientInput(e.target.value)
                     setEditRecipientError(null)
@@ -958,7 +963,7 @@ export const VendorsScreen: React.FC = () => {
                       setEditRecipientError(null)
                     }
                   }}
-                  className={`w-full px-3.5 py-2 rounded-xl border text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] ${
+                  className={`w-full px-3.5 py-2 rounded-xl border text-xs text-[#0d212c] outline-none focus:border-[#cbd5e1] disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed ${
                     editRecipientError ? 'border-red-500' : 'border-[#e2e8f0]'
                   }`}
                 />
@@ -1264,14 +1269,19 @@ export const VendorsScreen: React.FC = () => {
                     </label>
                     <input
                       type="email"
-                      placeholder="Enter email and press Enter..."
+                      placeholder={
+                        findRecipients.length >= 5
+                          ? 'Maximum 5 recipients reached'
+                          : 'Enter email and press Enter...'
+                      }
                       value={findRecipientInput}
+                      disabled={findRecipients.length >= 5}
                       onChange={(e) => {
                         setFindRecipientInput(e.target.value)
                         if (findRecipientError) setFindRecipientError(null)
                       }}
                       onKeyDown={handleKeyDownFindRecipient}
-                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed ${
                         findRecipientError
                           ? 'border-red-500'
                           : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
@@ -1428,14 +1438,19 @@ export const VendorsScreen: React.FC = () => {
                     </label>
                     <input
                       type="email"
-                      placeholder="Enter email and press Enter..."
+                      placeholder={
+                        manualRecipients.length >= 5
+                          ? 'Maximum 5 recipients reached'
+                          : 'Enter email and press Enter...'
+                      }
                       value={manualRecipientInput}
+                      disabled={manualRecipients.length >= 5}
                       onChange={(e) => {
                         setManualRecipientInput(e.target.value)
                         if (manualRecipientError) setManualRecipientError(null)
                       }}
                       onKeyDown={handleKeyDownManualRecipient}
-                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition ${
+                      className={`w-full px-3.5 py-2.5 rounded-xl border text-xs text-[#0d212c] outline-none transition disabled:bg-slate-100 disabled:opacity-60 disabled:cursor-not-allowed ${
                         manualRecipientError
                           ? 'border-red-500'
                           : 'border-[#e2e8f0] focus:border-[#cbd5e1]'

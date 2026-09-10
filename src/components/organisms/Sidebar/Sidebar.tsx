@@ -6,7 +6,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { LayoutDashboard, FileText, Building2, PanelLeftClose, LogOut } from 'lucide-react'
+import { LayoutDashboard, FileText, Building2, PanelLeftClose, LogOut, X } from 'lucide-react'
 import { Avatar } from '@/components/atoms/Avatar'
 
 export interface SidebarProps {
@@ -155,7 +155,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Logout Confirmation Popup Modal (Center Aligned Danger Popup) */}
       {showLogoutConfirm && (
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-8 sm:p-10 shadow-2xl border border-[#e2e8f0] text-center flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-200 min-h-[240px] justify-center">
+          <div className="relative bg-white rounded-3xl max-w-lg w-full p-8 sm:p-10 shadow-2xl border border-[#e2e8f0] text-center flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-200 min-h-[240px] justify-center">
+            <button
+              onClick={() => setShowLogoutConfirm(false)}
+              className="absolute top-5 right-5 text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent p-0"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
             <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100 shadow-2xs">
               <LogOut className="w-6 h-6" />
             </div>

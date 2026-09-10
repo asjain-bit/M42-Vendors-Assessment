@@ -11,6 +11,10 @@ import {
   PauseCircle,
   PlayCircle,
   CheckCircle2,
+  Fingerprint,
+  Building2,
+  Info,
+  X,
 } from 'lucide-react'
 import { VendorDispatchData } from './ConfigureVendorCallScreen'
 
@@ -63,9 +67,6 @@ const sampleTranscript: TranscriptEntry[] = [
   },
 ]
 
-const currentQuestion =
-  'Can you describe how your organisation ensures data subject rights requests — such as access, erasure, or portability — are handled within the regulatory timeframes set by applicable data protection laws?'
-
 export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   vendor,
   onBack,
@@ -82,7 +83,6 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   // Assessment lifecycle
   const [assessmentStarted, setAssessmentStarted] = useState(false)
   const [agentOnHold, setAgentOnHold] = useState(false)
-  const [showHoldTooltip, setShowHoldTooltip] = useState(false)
   const holdTooltipTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Leave confirmation popup
@@ -144,9 +144,33 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   const handleHoldToggle = () => {
     if (!assessmentStarted) return
     setAgentOnHold((prev) => !prev)
-    setShowHoldTooltip(true)
-    if (holdTooltipTimeout.current) clearTimeout(holdTooltipTimeout.current)
-    holdTooltipTimeout.current = setTimeout(() => setShowHoldTooltip(false), 3000)
+  }
+
+  const [userRole, setUserRole] = useState<'admin' | 'vendor'>('admin')
+  const [vendorFlowStep, setVendorFlowStep] = useState<
+    'select_role' | 'admin_join' | 'vendor_input' | 'vendor_otp'
+  >('select_role')
+  const [vendorNameInput, setVendorNameInput] = useState('')
+  const [vendorEmailInput, setVendorEmailInput] = useState('')
+  const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', ''])
+  const [otpError, setOtpError] = useState('')
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([])
+
+  const handleOtpChange = (index: number, val: string) => {
+    const digit = val.replace(/[^0-9]/g, '').slice(-1)
+    const newDigits = [...otpDigits]
+    newDigits[index] = digit
+    setOtpDigits(newDigits)
+    if (otpError) setOtpError('')
+    if (digit && index < 3) {
+      otpRefs.current[index + 1]?.focus()
+    }
+  }
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace' && !otpDigits[index] && index > 0) {
+      otpRefs.current[index - 1]?.focus()
+    }
   }
 
   // ─── JOIN SCREEN ──────────────────────────────────────────────────────────────
@@ -163,61 +187,308 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
           <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] rounded-full bg-[#e0f2fe]/20 blur-3xl" />
         </div>
 
-        <div className="relative w-full max-w-[420px]">
-          <div className="mb-6 text-center flex flex-col items-center gap-1">
-            <span className="text-[10px] font-extrabold tracking-[0.18em] text-[#64748b] uppercase">
-              Assessment Call
-            </span>
-            <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">{vendor.name}</h1>
-            <p className="text-xs text-[#64748b] font-medium">{vendor.sublabel}</p>
-          </div>
-
-          <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-7 flex flex-col gap-5">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#36c0c9] animate-pulse inline-block" />
-              <span className="text-xs font-semibold text-[#0d212c]">
-                {formattedDate}, <span className="text-[#36c0c9]">{formattedTime}</span>{' '}
-                <span className="text-[#94a3b8] font-normal">(your local time)</span>
+        {/* STEP 1: SELECT LOGIN ROLE (SSO vs VENDOR) */}
+        {vendorFlowStep === 'select_role' && (
+          <div className="relative w-full max-w-[440px]">
+            <div className="mb-6 text-center flex flex-col items-center gap-1">
+              <span className="text-[10px] font-extrabold tracking-[0.18em] text-[#64748b] uppercase">
+                Assessment Call Access
               </span>
+              <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">
+                {vendor.name}
+              </h1>
+              <p className="text-xs text-[#64748b] font-medium">
+                Select your role to enter the call room
+              </p>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-bold text-[#0d212c]">Your name</label>
-              <input
-                id="callroom-name-input"
-                type="text"
-                placeholder="e.g. Priya Shah"
-                value={yourName}
-                onChange={(e) => setYourName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && yourName.trim()) setRoomState('waiting')
+            <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-7 flex flex-col gap-4">
+              <span className="text-xs font-bold text-[#0d212c]">
+                How would you like to sign in?
+              </span>
+
+              {/* Login via SSO Button — identical to LoginScreen.tsx */}
+              <button
+                onClick={() => {
+                  setUserRole('admin')
+                  setYourName(userName || 'Zaid Al Ali')
+                  setVendorFlowStep('admin_join')
                 }}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9] transition"
-              />
+                className="w-full flex items-start gap-3 bg-white border border-[#e2e8f0] rounded-2xl px-4 py-3.5 text-left shadow-2xs hover:shadow-md hover:border-[#36c0c9]/50 transition-all group cursor-pointer"
+              >
+                <div className="mt-0.5 bg-gray-50 p-2 rounded-xl group-hover:bg-[#36c0c9]/10 transition-colors">
+                  <Fingerprint className="w-5 h-5 text-gray-500 group-hover:text-[#36c0c9] transition-colors" />
+                </div>
+                <div className="mt-0.5">
+                  <div className="font-semibold text-sm text-[#0d212c] group-hover:text-[#36c0c9] transition-colors">
+                    Sign in with SSO
+                  </div>
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    Authenticate via your enterprise network
+                  </div>
+                </div>
+              </button>
+
+              {/* Login as a Vendor Button */}
+              <button
+                onClick={() => {
+                  setUserRole('vendor')
+                  setVendorNameInput('')
+                  setVendorEmailInput('')
+                  setVendorFlowStep('vendor_input')
+                }}
+                className="w-full flex items-start gap-3 bg-white border border-[#e2e8f0] rounded-2xl px-4 py-3.5 text-left shadow-2xs hover:shadow-md hover:border-[#36c0c9]/50 transition-all group cursor-pointer"
+              >
+                <div className="mt-0.5 bg-gray-50 p-2 rounded-xl group-hover:bg-[#36c0c9]/10 transition-colors">
+                  <Building2 className="w-5 h-5 text-gray-500 group-hover:text-[#36c0c9] transition-colors" />
+                </div>
+                <div className="mt-0.5">
+                  <div className="font-semibold text-sm text-[#0d212c] group-hover:text-[#36c0c9] transition-colors">
+                    Join as a Vendor
+                  </div>
+                  <div className="text-xs text-gray-500 mt-0.5">
+                    Verify via email OTP to join assessment call
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={onBack}
+                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0 mt-2"
+              >
+                ← Back to vendor details
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* STEP 2A: ADMIN JOIN SCREEN */}
+        {vendorFlowStep === 'admin_join' && (
+          <div className="relative w-full max-w-[420px]">
+            <div className="mb-6 text-center flex flex-col items-center gap-1">
+              <span className="text-[10px] font-extrabold tracking-[0.18em] text-[#64748b] uppercase">
+                Assessment Call · Admin Mode
+              </span>
+              <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">
+                {vendor.name}
+              </h1>
+              <p className="text-xs text-[#64748b] font-medium">{vendor.sublabel}</p>
             </div>
 
-            <p className="text-[11px] text-[#64748b] leading-relaxed">
-              This call is recorded and transcribed for assessment purposes. By joining you consent
-              to recording.
-            </p>
+            <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-7 flex flex-col gap-5">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#36c0c9] animate-pulse inline-block" />
+                <span className="text-xs font-semibold text-[#0d212c]">
+                  {formattedDate}, <span className="text-[#36c0c9]">{formattedTime}</span>{' '}
+                  <span className="text-[#94a3b8] font-normal">(your local time)</span>
+                </span>
+              </div>
 
-            <button
-              id="callroom-join-btn"
-              disabled={!yourName.trim()}
-              onClick={() => setRoomState('waiting')}
-              className="w-full bg-[#36c0c9] hover:bg-[#2badb6] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm py-3 rounded-xl transition cursor-pointer border-0 shadow-md"
-            >
-              Join call
-            </button>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-bold text-[#0d212c]">Your name</label>
+                <input
+                  id="callroom-name-input"
+                  type="text"
+                  placeholder="e.g. Zaid Al Ali"
+                  value={yourName}
+                  onChange={(e) => setYourName(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && yourName.trim()) setRoomState('waiting')
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9] transition"
+                />
+              </div>
 
-            <button
-              onClick={onBack}
-              className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
-            >
-              ← Back to vendor
-            </button>
+              <p className="text-[11px] text-[#64748b] leading-relaxed">
+                This call is recorded and transcribed for assessment purposes. By joining you
+                consent to recording.
+              </p>
+
+              <button
+                id="callroom-join-btn"
+                disabled={!yourName.trim()}
+                onClick={() => setRoomState('waiting')}
+                className="w-full bg-[#36c0c9] hover:bg-[#2badb6] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm py-3 rounded-xl transition cursor-pointer border-0 shadow-md"
+              >
+                Open Call Room
+              </button>
+
+              <button
+                onClick={() => setVendorFlowStep('select_role')}
+                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+              >
+                ← Change login role
+              </button>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* STEP 2B: VENDOR DETAILS SCREEN (Name & Email mandatory, Info icon on email field) */}
+        {vendorFlowStep === 'vendor_input' &&
+          (() => {
+            const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(vendorEmailInput.trim())
+            const isFormValid = vendorNameInput.trim() !== '' && isEmailValid
+
+            return (
+              <div className="relative w-full max-w-[420px]">
+                <div className="mb-6 text-center flex flex-col items-center gap-1">
+                  <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">
+                    {vendor.name}
+                  </h1>
+                  <p className="text-xs text-[#64748b] font-medium">Vendor Identity Verification</p>
+                </div>
+
+                <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-7 flex flex-col gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-xs font-bold text-[#0d212c]">
+                      Vendor Name <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter vendor name..."
+                      value={vendorNameInput}
+                      onChange={(e) => setVendorNameInput(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] text-xs text-[#0d212c] outline-none focus:border-[#36c0c9] transition"
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <label className="text-xs font-bold text-[#0d212c]">
+                        Vendor Email ID <span className="text-red-500">*</span>
+                      </label>
+                      {/* Info Icon — no bg, grey color */}
+                      <div className="relative group cursor-pointer">
+                        <Info className="w-3.5 h-3.5 text-[#64748b] hover:text-[#0d212c] transition" />
+                        <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-6 z-50 w-64 bg-[#0d212c] text-white text-xs p-3 rounded-xl shadow-xl border border-white/10 text-left leading-relaxed font-normal">
+                          A 4-digit OTP will be sent to your email for verification.
+                        </div>
+                      </div>
+                    </div>
+
+                    <input
+                      type="email"
+                      placeholder="e.g. contact@vendor.com"
+                      value={vendorEmailInput}
+                      onChange={(e) => setVendorEmailInput(e.target.value)}
+                      className={`w-full px-3.5 py-2.5 rounded-xl border bg-[#f8fafc] text-xs text-[#0d212c] outline-none transition ${
+                        vendorEmailInput.trim() !== '' && !isEmailValid
+                          ? 'border-red-500 focus:border-red-500'
+                          : 'border-[#e2e8f0] focus:border-[#36c0c9]'
+                      }`}
+                    />
+                    {vendorEmailInput.trim() !== '' && !isEmailValid && (
+                      <p className="text-[11px] text-red-500 font-medium animate-in fade-in duration-150">
+                        Please enter a valid email address.
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    id="vendor-send-otp-btn"
+                    disabled={!isFormValid}
+                    onClick={() => {
+                      setOtpDigits(['', '', '', ''])
+                      setOtpError('')
+                      setVendorFlowStep('vendor_otp')
+                    }}
+                    className="w-full bg-[#36c0c9] hover:bg-[#2badb6] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm py-3 rounded-xl transition cursor-pointer border-0 shadow-md mt-1"
+                  >
+                    Send OTP
+                  </button>
+
+                  <button
+                    onClick={() => setVendorFlowStep('select_role')}
+                    className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+                  >
+                    ← Back to Login Options
+                  </button>
+                </div>
+              </div>
+            )
+          })()}
+
+        {/* STEP 2C: 4-BLOCK OTP VERIFICATION SCREEN (Clean Header, 4 Blocks, Error State) */}
+        {vendorFlowStep === 'vendor_otp' && (
+          <div className="relative w-full max-w-[420px]">
+            <div className="mb-6 text-center flex flex-col items-center gap-1">
+              <h1 className="text-2xl font-extrabold text-[#0d212c] leading-tight">
+                Enter OTP Code
+              </h1>
+              <p className="text-xs text-[#64748b] font-medium">
+                OTP sent to <span className="font-semibold text-[#0d212c]">{vendorEmailInput}</span>
+              </p>
+            </div>
+
+            <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-7 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-bold text-[#0d212c]">
+                  4-Digit Verification Code
+                </label>
+                <span className="text-[10px] text-[#0d7280] font-extrabold bg-[#ddf7f9] px-2 py-0.5 rounded-md border border-[#36c0c9]/30">
+                  Demo OTP: 1234
+                </span>
+              </div>
+
+              {/* 4 Separate Digit Input Blocks */}
+              <div className="flex items-center justify-center gap-3 my-2">
+                {[0, 1, 2, 3].map((index) => (
+                  <input
+                    key={index}
+                    ref={(el) => {
+                      otpRefs.current[index] = el
+                    }}
+                    type="text"
+                    maxLength={1}
+                    value={otpDigits[index] || ''}
+                    onChange={(e) => handleOtpChange(index, e.target.value)}
+                    onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                    className={`w-12 h-14 rounded-xl border text-center text-xl font-extrabold text-[#0d212c] outline-none transition ${
+                      otpError
+                        ? 'border-red-500 bg-red-50/50 focus:border-red-600'
+                        : 'border-[#e2e8f0] bg-[#f8fafc] focus:border-[#36c0c9]'
+                    }`}
+                  />
+                ))}
+              </div>
+
+              {/* Error Message display */}
+              {otpError && (
+                <p className="text-xs text-red-600 font-semibold text-center animate-in fade-in duration-150">
+                  {otpError}
+                </p>
+              )}
+
+              <p className="text-[11px] text-[#64748b] leading-relaxed text-center">
+                Enter the 4-digit code to complete verification and enter the assessment call room.
+              </p>
+
+              <button
+                id="vendor-verify-otp-btn"
+                onClick={() => {
+                  const code = otpDigits.join('')
+                  if (code.length < 4 || code !== '1234') {
+                    setOtpError('Invalid OTP entered. Please try again.')
+                    return
+                  }
+                  setYourName(vendorNameInput.trim() || vendor.name)
+                  setUserRole('vendor')
+                  setRoomState('waiting')
+                }}
+                className="w-full bg-[#36c0c9] hover:bg-[#2badb6] text-white font-bold text-sm py-3 rounded-xl transition cursor-pointer border-0 shadow-md"
+              >
+                Verify &amp; Enter Call Room
+              </button>
+
+              <button
+                onClick={() => setVendorFlowStep('vendor_input')}
+                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+              >
+                ← Back to Vendor Details
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     )
   }
@@ -273,14 +544,16 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
 
           {/* Actions */}
           <div className="flex flex-col gap-2">
-            <button
-              id="callroom-download-transcript-btn"
-              onClick={() => alert('Downloading transcript...')}
-              className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0 flex items-center justify-center gap-2"
-            >
-              <MessageSquare className="w-4 h-4" />
-              Download transcript
-            </button>
+            {userRole === 'admin' && (
+              <button
+                id="callroom-download-transcript-btn"
+                onClick={() => alert('Downloading transcript...')}
+                className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0 flex items-center justify-center gap-2"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Download transcript
+              </button>
+            )}
             <button
               onClick={() => {
                 if (onExitToVendors) onExitToVendors()
@@ -319,7 +592,16 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
               id="callroom-rejoin-btn"
               onClick={() => {
                 setShowLeaveConfirm(false)
-                setRoomState('waiting')
+                if (userRole === 'vendor') {
+                  setVendorNameInput('')
+                  setVendorEmailInput('')
+                  setOtpDigits(['', '', '', ''])
+                  setOtpError('')
+                  setVendorFlowStep('vendor_input')
+                  setRoomState('join')
+                } else {
+                  setRoomState('waiting')
+                }
               }}
               className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white border-0 font-bold text-xs py-3 rounded-xl transition cursor-pointer shadow-xs"
             >
@@ -356,6 +638,14 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
             onClick={() => setShowLeaveConfirm(false)}
           />
           <div className="relative bg-white rounded-3xl border border-[#e2e8f0] shadow-2xl p-8 sm:p-10 max-w-lg w-full flex flex-col items-center text-center gap-4 animate-in fade-in zoom-in-95 duration-150 min-h-[220px] justify-center z-10">
+            <button
+              type="button"
+              onClick={() => setShowLeaveConfirm(false)}
+              className="absolute top-5 right-5 text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent p-0"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
             <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100 shadow-2xs">
               <DoorOpen className="w-6 h-6" />
             </div>
@@ -395,6 +685,14 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
             onClick={() => setShowFinaliseConfirm(false)}
           />
           <div className="relative bg-white rounded-3xl border border-[#e2e8f0] shadow-2xl p-8 sm:p-10 max-w-lg w-full flex flex-col items-center text-center gap-4 animate-in fade-in zoom-in-95 duration-150 min-h-[240px] justify-center z-10">
+            <button
+              type="button"
+              onClick={() => setShowFinaliseConfirm(false)}
+              className="absolute top-5 right-5 text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent p-0"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
             <div className="w-12 h-12 rounded-2xl bg-[#ddf7f9] text-[#0d7280] flex items-center justify-center border border-[#b2ecf2] shadow-2xs">
               <CheckCircle2 className="w-6 h-6" />
             </div>
@@ -716,38 +1014,42 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
           </span>
         </div>
 
-        {/* Divider */}
-        <div className="w-px h-8 bg-[#e2e8f0] mx-1" />
+        {/* End & Finalise — only visible for admin role */}
+        {userRole === 'admin' && (
+          <>
+            {/* Divider */}
+            <div className="w-px h-8 bg-[#e2e8f0] mx-1" />
 
-        {/* End & Finalise — disabled until assessment starts */}
-        <div className="flex flex-col items-center gap-0.5 relative group">
-          <div className="relative">
-            <button
-              id="callroom-finalise-btn"
-              onClick={() => assessmentStarted && setShowFinaliseConfirm(true)}
-              disabled={!assessmentStarted}
-              title={
-                assessmentStarted
-                  ? 'End and finalise assessment'
-                  : 'Available after assessment starts'
-              }
-              className={`h-10 px-4 rounded-full flex items-center justify-center gap-1.5 transition border-0 font-bold text-xs shadow-sm ${
-                assessmentStarted
-                  ? 'bg-[#ddf7f9] hover:bg-[#b2eff4] text-[#0d7280] border border-[#36c0c9]/30 cursor-pointer'
-                  : 'bg-[#f1f5f9] text-[#cbd5e1] cursor-not-allowed opacity-50'
-              }`}
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>End &amp; Finalise</span>
-            </button>
+            <div className="flex flex-col items-center gap-0.5 relative group">
+              <div className="relative">
+                <button
+                  id="callroom-finalise-btn"
+                  onClick={() => assessmentStarted && setShowFinaliseConfirm(true)}
+                  disabled={!assessmentStarted}
+                  title={
+                    assessmentStarted
+                      ? 'End and finalise assessment'
+                      : 'Available after assessment starts'
+                  }
+                  className={`h-10 px-4 rounded-full flex items-center justify-center gap-1.5 transition border-0 font-bold text-xs shadow-sm ${
+                    assessmentStarted
+                      ? 'bg-[#ddf7f9] hover:bg-[#b2eff4] text-[#0d7280] border border-[#36c0c9]/30 cursor-pointer'
+                      : 'bg-[#f1f5f9] text-[#cbd5e1] cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>End &amp; Finalise</span>
+                </button>
 
-            {/* Tooltip */}
-            <div className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-[#0d212c] text-white text-[10px] font-medium px-2.5 py-1.5 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50">
-              {!assessmentStarted ? 'Start assessment first' : 'This will not be there for vendor'}
+                {/* Tooltip */}
+                <div className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-[#0d212c] text-white text-[10px] font-medium px-2.5 py-1.5 rounded-lg shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-50">
+                  {!assessmentStarted ? 'Start assessment first' : 'End and finalise assessment'}
+                </div>
+              </div>
+              <span className="text-[9px] text-[#94a3b8] font-medium">Finalise</span>
             </div>
-          </div>
-          <span className="text-[9px] text-[#94a3b8] font-medium">Finalise</span>
-        </div>
+          </>
+        )}
 
         {/* Leave — no tooltip, visible to vendor too */}
         <div className="flex flex-col items-center gap-0.5">

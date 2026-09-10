@@ -84,7 +84,10 @@ export const VendorsScreen: React.FC = () => {
 
   // Edit Vendor modal state
   const [editingVendor, setEditingVendor] = useState<VendorRow | null>(null)
-  const [deletingVendor, setDeletingVendor] = useState<VendorRow | null>(null)
+  const [confirmStatusVendor, setConfirmStatusVendor] = useState<{
+    vendor: VendorRow
+    targetStatus: 'Activated' | 'Deactivated'
+  } | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   // Edit vendor recipients tag input state
@@ -141,6 +144,8 @@ export const VendorsScreen: React.FC = () => {
     },
   ]
 
+  const [statusFilter, setStatusFilter] = useState<'all' | 'Activated' | 'Deactivated'>('all')
+
   const [vendors, setVendors] = useState<VendorRow[]>([
     {
       id: 'v-1',
@@ -150,7 +155,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'presight.ai',
       country: 'United Arab Emirates',
       flag: '🇦🇪',
-      status: 'Active',
+      status: 'Activated',
       score: '94.0',
       recipients: ['compliance@presight.ai', 'security@presight.ai', 'audit@presight.ai'],
     },
@@ -162,7 +167,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'directus.io',
       country: 'United States',
       flag: '🇺🇸',
-      status: 'Active',
+      status: 'Activated',
       score: '88.5',
       recipients: ['security@directus.io', 'admin@directus.io'],
     },
@@ -174,7 +179,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'pango.com',
       country: 'United States',
       flag: '🇺🇸',
-      status: 'Active',
+      status: 'Activated',
       score: '91.2',
       recipients: [],
     },
@@ -186,7 +191,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'apexsystems.com',
       country: 'United Kingdom',
       flag: '🇬🇧',
-      status: 'Active',
+      status: 'Activated',
       score: '76.0',
       recipients: ['contact@apexsystems.com', 'legal@apexsystems.com', 'info@apexsystems.com'],
     },
@@ -198,7 +203,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'delphiai.com',
       country: 'Germany',
       flag: '🇩🇪',
-      status: 'Active',
+      status: 'Activated',
       score: '95.8',
       recipients: ['audit@delphiai.com', 'tech@delphiai.com'],
     },
@@ -210,7 +215,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'biohealth.de',
       country: 'Germany',
       flag: '🇩🇪',
-      status: 'Active',
+      status: 'Deactivated',
       score: '64.0',
       recipients: [],
     },
@@ -222,19 +227,19 @@ export const VendorsScreen: React.FC = () => {
       domain: 'cloudscale.nl',
       country: 'Netherlands',
       flag: '🇳🇱',
-      status: 'Active',
+      status: 'Activated',
       score: '92.0',
       recipients: ['ops@cloudscale.nl', 'sec@cloudscale.nl'],
     },
     {
-      id: 'v-8',
+      id: 'v-[#8]',
       name: 'CyberGuard Solutions',
       legalName: 'CyberGuard Security Systems SAS',
       email: 'trust@cyberguard.fr',
       domain: 'cyberguard.fr',
       country: 'France',
       flag: '🇫🇷',
-      status: 'Active',
+      status: 'Activated',
       score: '90.4',
       recipients: ['trust@cyberguard.fr', 'privacy@cyberguard.fr'],
     },
@@ -246,7 +251,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'healthcloud.sg',
       country: 'Singapore',
       flag: '🇸🇬',
-      status: 'Active',
+      status: 'Activated',
       score: '87.1',
       recipients: ['support@healthcloud.sg', 'compliance@healthcloud.sg'],
     },
@@ -258,7 +263,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'pharmatech.sa',
       country: 'Saudi Arabia',
       flag: '🇸🇦',
-      status: 'Active',
+      status: 'Activated',
       score: '82.3',
       recipients: ['regulatory@pharmatech.sa', 'info@pharmatech.sa'],
     },
@@ -270,7 +275,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'medsec.ae',
       country: 'United Arab Emirates',
       flag: '🇦🇪',
-      status: 'Active',
+      status: 'Deactivated',
       score: '69.5',
       recipients: ['audits@medsec.ae', 'contact@medsec.ae'],
     },
@@ -282,7 +287,7 @@ export const VendorsScreen: React.FC = () => {
       domain: 'globaldiag.com',
       country: 'United States',
       flag: '🇺🇸',
-      status: 'Active',
+      status: 'Activated',
       score: '93.7',
       recipients: ['info@globaldiag.com', 'sec@globaldiag.com'],
     },
@@ -291,17 +296,18 @@ export const VendorsScreen: React.FC = () => {
   // Filtered suppliers
   const filteredVendors = useMemo(() => {
     return vendors.filter((v) => {
+      const matchesStatus = statusFilter === 'all' || v.status === statusFilter
       const query = searchTerm.toLowerCase()
-      return (
+      const matchesSearch =
         v.name.toLowerCase().includes(query) ||
         v.legalName.toLowerCase().includes(query) ||
         v.email.toLowerCase().includes(query) ||
         (v.recipients && v.recipients.some((r) => r.toLowerCase().includes(query))) ||
         v.domain.toLowerCase().includes(query) ||
         v.country.toLowerCase().includes(query)
-      )
+      return matchesStatus && matchesSearch
     })
-  }, [vendors, searchTerm])
+  }, [vendors, searchTerm, statusFilter])
 
   const totalPages = Math.ceil(filteredVendors.length / ITEMS_PER_PAGE) || 1
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
@@ -339,6 +345,10 @@ export const VendorsScreen: React.FC = () => {
       e.preventDefault()
       const trimmed = findRecipientInput.trim().replace(/,/g, '')
       if (!trimmed) return
+      if (findRecipients.length >= 5) {
+        setFindRecipientError('Maximum 5 recipients can be added.')
+        return
+      }
       if (!emailRegex.test(trimmed)) {
         setFindRecipientError('Please enter a valid email address.')
         return
@@ -358,6 +368,10 @@ export const VendorsScreen: React.FC = () => {
       e.preventDefault()
       const trimmed = manualRecipientInput.trim().replace(/,/g, '')
       if (!trimmed) return
+      if (manualRecipients.length >= 5) {
+        setManualRecipientError('Maximum 5 recipients can be added.')
+        return
+      }
       if (!emailRegex.test(trimmed)) {
         setManualRecipientError('Please enter a valid email address.')
         return
@@ -445,12 +459,16 @@ export const VendorsScreen: React.FC = () => {
     setEditingVendor(null)
   }
 
-  // Handle Delete Vendor
-  const handleDeleteVendorConfirm = () => {
-    if (!deletingVendor) return
-    setVendors(vendors.filter((v) => v.id !== deletingVendor.id))
-    showToast(`Deleted vendor ${deletingVendor.name}.`)
-    setDeletingVendor(null)
+  // Handle Activate / Deactivate Vendor
+  const toggleVendorStatus = (vendor: VendorRow) => {
+    setOpenActionMenuId(null)
+    const newStatus = vendor.status === 'Activated' ? 'Deactivated' : 'Activated'
+    setVendors(vendors.map((v) => (v.id === vendor.id ? { ...v, status: newStatus } : v)))
+    showToast(
+      newStatus === 'Activated'
+        ? `Reactivated vendor ${vendor.name}.`
+        : `Deactivated vendor ${vendor.name}.`
+    )
   }
 
   const handleLaunchCall = () => {
@@ -544,6 +562,48 @@ export const VendorsScreen: React.FC = () => {
         </div>
       </div>
 
+      {/* Status Filter Chips */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        {[
+          { key: 'all', label: 'All Vendors', count: vendors.length },
+          {
+            key: 'Activated',
+            label: 'Activated',
+            count: vendors.filter((v) => v.status === 'Activated').length,
+          },
+          {
+            key: 'Deactivated',
+            label: 'Deactivated',
+            count: vendors.filter((v) => v.status === 'Deactivated').length,
+          },
+        ].map((chip) => {
+          const isSelected = statusFilter === chip.key
+          return (
+            <button
+              key={chip.key}
+              onClick={() => {
+                setStatusFilter(chip.key as 'all' | 'Activated' | 'Deactivated')
+                setCurrentPage(1)
+              }}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer flex items-center gap-2 ${
+                isSelected
+                  ? 'bg-[#36c0c9] text-white font-bold shadow-xs'
+                  : 'bg-white text-[#64748b] border border-[#e2e8f0] hover:bg-[#f8fafc]'
+              }`}
+            >
+              <span>{chip.label}</span>
+              <span
+                className={`text-[10px] font-bold px-1.5 py-0.2 rounded-full ${
+                  isSelected ? 'bg-white/25 text-white' : 'bg-[#f1f5f9] text-[#64748b]'
+                }`}
+              >
+                {chip.count}
+              </span>
+            </button>
+          )
+        })}
+      </div>
+
       {/* Vendors Directory Table */}
       <div className="bg-white rounded-2xl border border-[#e2e8f0] shadow-xs overflow-hidden w-full flex flex-col mt-1">
         <div className="overflow-x-auto w-full">
@@ -554,13 +614,14 @@ export const VendorsScreen: React.FC = () => {
                 <th className="py-3.5 px-5">Domain</th>
                 <th className="py-3.5 px-5">Recipients</th>
                 <th className="py-3.5 px-5">Country</th>
+                <th className="py-3.5 px-5">Status</th>
                 <th className="py-3.5 px-5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0]/60">
               {paginatedVendors.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-[#64748b] text-sm">
+                  <td colSpan={6} className="py-8 text-center text-[#64748b] text-sm">
                     No vendors matching search criteria.
                   </td>
                 </tr>
@@ -620,6 +681,7 @@ export const VendorsScreen: React.FC = () => {
                         </div>
                       )}
                     </td>
+
                     <td
                       className="py-4 px-5 text-xs text-[#0d212c] font-medium truncate"
                       title={`${vendor.country}`}
@@ -628,6 +690,18 @@ export const VendorsScreen: React.FC = () => {
                         <CountryFlag country={vendor.country} />
                         <span>{vendor.country}</span>
                       </div>
+                    </td>
+
+                    <td className="py-4 px-5 text-xs">
+                      {vendor.status === 'Activated' ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#ecfdf5] text-[#047857] border border-[#a7f3d0]">
+                          Activated
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#fef2f2] text-[#b91c1c] border border-[#fecaca]">
+                          Deactivated
+                        </span>
+                      )}
                     </td>
 
                     <td className="py-4 px-5 text-right relative">
@@ -645,34 +719,74 @@ export const VendorsScreen: React.FC = () => {
                         {openActionMenuId === vendor.id && (
                           <div className="absolute right-5 top-12 z-40 bg-white rounded-xl border border-[#e2e8f0] shadow-xl w-44 py-1 animate-in fade-in zoom-in-95 duration-150">
                             <button
+                              disabled={vendor.status === 'Deactivated'}
                               onClick={() => {
+                                if (vendor.status === 'Deactivated') return
                                 setOpenActionMenuId(null)
                                 setActiveDispatchVendor(vendor)
                               }}
-                              className="w-full px-4 py-2.5 text-left text-xs font-semibold text-[#334155] hover:text-[#0d212c] hover:bg-slate-50 cursor-pointer transition border-0 bg-transparent"
+                              title={
+                                vendor.status === 'Deactivated'
+                                  ? 'Cannot dispatch call for a deactivated vendor'
+                                  : 'Dispatch Call'
+                              }
+                              className={`w-full px-4 py-2.5 text-left text-xs font-semibold border-0 bg-transparent transition ${
+                                vendor.status === 'Deactivated'
+                                  ? 'text-[#94a3b8] opacity-40 cursor-not-allowed'
+                                  : 'text-[#334155] hover:text-[#0d212c] hover:bg-slate-50 cursor-pointer'
+                              }`}
                             >
                               Dispatch Call
                             </button>
 
                             <button
+                              disabled={vendor.status === 'Deactivated'}
                               onClick={() => {
+                                if (vendor.status === 'Deactivated') return
                                 setOpenActionMenuId(null)
                                 setEditingVendor(vendor)
                               }}
-                              className="w-full px-4 py-2.5 text-left text-xs font-semibold text-[#334155] hover:text-[#0d212c] hover:bg-slate-50 cursor-pointer transition border-0 bg-transparent"
+                              title={
+                                vendor.status === 'Deactivated'
+                                  ? 'Cannot edit details for a deactivated vendor'
+                                  : 'Edit Details'
+                              }
+                              className={`w-full px-4 py-2.5 text-left text-xs font-semibold border-0 bg-transparent transition ${
+                                vendor.status === 'Deactivated'
+                                  ? 'text-[#94a3b8] opacity-40 cursor-not-allowed'
+                                  : 'text-[#334155] hover:text-[#0d212c] hover:bg-slate-50 cursor-pointer'
+                              }`}
                             >
                               Edit Details
                             </button>
 
-                            <button
-                              onClick={() => {
-                                setOpenActionMenuId(null)
-                                setDeletingVendor(vendor)
-                              }}
-                              className="w-full px-4 py-2.5 text-left text-xs font-semibold text-red-600 hover:bg-red-50 cursor-pointer transition border-t border-slate-100 bg-transparent"
-                            >
-                              Delete Vendor
-                            </button>
+                            {vendor.status === 'Activated' ? (
+                              <button
+                                onClick={() => {
+                                  setOpenActionMenuId(null)
+                                  setConfirmStatusVendor({
+                                    vendor,
+                                    targetStatus: 'Deactivated',
+                                  })
+                                }}
+                                className="w-full px-4 py-2.5 text-left text-xs font-semibold text-red-600 hover:bg-red-50 cursor-pointer transition border-t border-slate-100 bg-transparent"
+                              >
+                                Deactivate Vendor
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => {
+                                  setOpenActionMenuId(null)
+                                  setConfirmStatusVendor({
+                                    vendor,
+                                    targetStatus: 'Activated',
+                                  })
+                                }}
+                                className="w-full px-4 py-2.5 text-left text-xs font-semibold text-emerald-600 hover:bg-emerald-50 cursor-pointer transition border-t border-slate-100 bg-transparent"
+                              >
+                                Reactivate Vendor
+                              </button>
+                            )}
                           </div>
                         )}
                       </div>
@@ -740,12 +854,14 @@ export const VendorsScreen: React.FC = () => {
             <div className="flex items-center justify-between pb-4 border-b border-[#e2e8f0] mb-5">
               <h3 className="text-lg font-bold text-[#0d212c]">Edit vendor details</h3>
               <button
+                type="button"
                 onClick={() => {
                   setEditingVendor(null)
                   setEditRecipientInput('')
                   setEditRecipientError(null)
                 }}
-                className="p-1 rounded-lg text-slate-400 hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent"
+                className="text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent p-0"
+                title="Close"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -895,33 +1011,60 @@ export const VendorsScreen: React.FC = () => {
         </div>
       )}
 
-      {/* Delete Vendor Confirmation Popup Modal (Center Aligned) */}
-      {deletingVendor && (
+      {/* Confirmation Modal Popup for Activating / Deactivating Vendor (styled like Logout Popup) */}
+      {confirmStatusVendor && (
         <div className="fixed inset-0 z-50 bg-[#0d212c]/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-8 sm:p-10 shadow-2xl border border-[#e2e8f0] text-center flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-200 min-h-[240px] justify-center">
-            <div className="w-12 h-12 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center border border-red-100 shadow-2xs">
+          <div className="relative bg-white rounded-3xl max-w-lg w-full p-8 sm:p-10 shadow-2xl border border-[#e2e8f0] text-center flex flex-col items-center gap-4 animate-in fade-in zoom-in-95 duration-200 min-h-[240px] justify-center">
+            <button
+              type="button"
+              onClick={() => setConfirmStatusVendor(null)}
+              className="absolute top-5 right-5 text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent p-0"
+              title="Close"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center border shadow-2xs ${
+                confirmStatusVendor.targetStatus === 'Deactivated'
+                  ? 'bg-red-50 text-red-600 border-red-100'
+                  : 'bg-[#ddf7f9] text-[#36c0c9] border-[#b2ecf2]'
+              }`}
+            >
               <AlertTriangle className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-xl font-extrabold text-[#0d212c] mb-1.5">Confirm deletion</h3>
+              <h3 className="text-xl font-extrabold text-[#0d212c] mb-1.5">
+                {confirmStatusVendor.targetStatus === 'Deactivated'
+                  ? 'Deactivate Vendor'
+                  : 'Reactivate Vendor'}
+              </h3>
               <p className="text-xs text-[#64748b] leading-relaxed max-w-md">
-                Are you sure you want to delete{' '}
-                <strong className="font-bold text-[#0d212c]">{deletingVendor.name}</strong>? This
-                action is permanent and cannot be undone.
+                {confirmStatusVendor.targetStatus === 'Deactivated'
+                  ? `Are you sure you want to deactivate ${confirmStatusVendor.vendor.name}?`
+                  : `Are you sure you want to reactivate ${confirmStatusVendor.vendor.name}?`}
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 w-full mt-2">
               <button
-                onClick={() => setDeletingVendor(null)}
+                type="button"
+                onClick={() => setConfirmStatusVendor(null)}
                 className="px-6 py-3 rounded-xl border border-[#e2e8f0] text-xs font-bold text-[#0d212c] hover:bg-slate-50 cursor-pointer flex-1 bg-transparent transition"
               >
                 Cancel
               </button>
               <button
-                onClick={handleDeleteVendorConfirm}
-                className="px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold cursor-pointer flex-1 border-0 transition shadow-2xs"
+                type="button"
+                onClick={() => {
+                  toggleVendorStatus(confirmStatusVendor.vendor)
+                  setConfirmStatusVendor(null)
+                }}
+                className={`px-6 py-3 rounded-xl text-white text-xs font-bold cursor-pointer flex-1 border-0 transition shadow-2xs ${
+                  confirmStatusVendor.targetStatus === 'Deactivated'
+                    ? 'bg-red-600 hover:bg-red-700'
+                    : 'bg-[#36c0c9] hover:bg-[#2badb6]'
+                }`}
               >
-                Delete vendor
+                {confirmStatusVendor.targetStatus === 'Deactivated' ? 'Deactivate' : 'Reactivate'}
               </button>
             </div>
           </div>
@@ -943,8 +1086,10 @@ export const VendorsScreen: React.FC = () => {
               </div>
 
               <button
+                type="button"
                 onClick={() => setShowAddVendorModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent"
+                className="text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer border-0 bg-transparent p-0"
+                title="Close"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1118,8 +1263,12 @@ export const VendorsScreen: React.FC = () => {
                           : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
                       }`}
                     />
+                    <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+                      <span>Maximum 5 recipients can be added</span>
+                      <span>{findRecipients.length}/5</span>
+                    </div>
                     {findRecipientError && (
-                      <span className="text-xs text-red-600">{findRecipientError}</span>
+                      <span className="text-xs text-red-600 font-medium">{findRecipientError}</span>
                     )}
                     {findRecipients.length > 0 && (
                       <div className="flex items-center gap-2 flex-wrap pt-1">
@@ -1266,8 +1415,14 @@ export const VendorsScreen: React.FC = () => {
                           : 'border-[#e2e8f0] focus:border-[#cbd5e1]'
                       }`}
                     />
+                    <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+                      <span>Maximum 5 recipients can be added</span>
+                      <span>{manualRecipients.length}/5</span>
+                    </div>
                     {manualRecipientError && (
-                      <span className="text-xs text-red-600">{manualRecipientError}</span>
+                      <span className="text-xs text-red-600 font-medium">
+                        {manualRecipientError}
+                      </span>
                     )}
                     {manualRecipients.length > 0 && (
                       <div className="flex items-center gap-2 flex-wrap pt-1">

@@ -218,9 +218,12 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
     }
   }
 
-  // Step 1 Validation: Questionnaire, Round Label, and at least 1 Recipient are mandatory
+  // Step 1 Validation: Questionnaire, Round Label, at least 1 Recipient, and max 5 Recipients
   const isStep1Valid =
-    selectedQuestionnaire.trim() !== '' && roundLabel.trim() !== '' && recipients.length > 0
+    selectedQuestionnaire.trim() !== '' &&
+    roundLabel.trim() !== '' &&
+    recipients.length > 0 &&
+    recipients.length <= 5
 
   // Email validation on Enter key press
   const handleKeyDownRecipient = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -770,10 +773,24 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   }`}
                 />
 
-                <div className="flex items-center justify-between text-[11px] text-[#64748b]">
+                <div
+                  className={`flex items-center justify-between text-[11px] ${
+                    recipients.length > 5 ? 'text-red-600 font-bold' : 'text-[#64748b]'
+                  }`}
+                >
                   <span>Maximum 5 recipients can be added</span>
                   <span>{recipients.length}/5</span>
                 </div>
+
+                {recipients.length > 5 && (
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-xs text-red-600 font-semibold flex items-center gap-2 mt-1 animate-in fade-in duration-150">
+                    <AlertTriangle className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>
+                      Maximum 5 recipients allowed. Please remove {recipients.length - 5}{' '}
+                      recipient(s) to continue.
+                    </span>
+                  </div>
+                )}
 
                 {recipientError && (
                   <span className="text-xs font-medium text-red-600 animate-in fade-in duration-150">

@@ -14,6 +14,7 @@ import {
   Loader2,
   Check,
   AlertTriangle,
+  AlertCircle,
 } from 'lucide-react'
 
 import { StatusChip } from '@/components/atoms/StatusChip'
@@ -388,6 +389,7 @@ export const VendorsScreen: React.FC = () => {
 
   // Handle Add Vendor from Find Flow (NO auto-population)
   const handleAddVendorFromFind = () => {
+    if (findRecipients.length > 5) return
     const vendorTitle =
       findSearchQuery.trim() || (selectedSearchResult ? selectedSearchResult.name : '')
     if (!vendorTitle) return
@@ -423,6 +425,7 @@ export const VendorsScreen: React.FC = () => {
   // Handle Manual vendor tab add
   const handleAddVendorManually = (e: React.FormEvent) => {
     e.preventDefault()
+    if (manualRecipients.length > 5) return
     if (!manualDisplayName.trim()) return
     const countryObj = worldCountryOptions.find((c) => c.name === manualCountry)
     const newVendor: VendorRow = {
@@ -453,6 +456,7 @@ export const VendorsScreen: React.FC = () => {
   const handleSaveEditedVendor = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingVendor) return
+    if ((editingVendor.recipients || []).length > 5) return
 
     setVendors(vendors.map((v) => (v.id === editingVendor.id ? editingVendor : v)))
     showToast(`Updated details for ${editingVendor.name}.`)
@@ -985,6 +989,15 @@ export const VendorsScreen: React.FC = () => {
                     ))}
                   </div>
                 )}
+                {(editingVendor.recipients || []).length > 5 && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                    <span>
+                      Maximum 5 recipients allowed. Please remove{' '}
+                      {(editingVendor.recipients || []).length - 5} recipient(s) to continue.
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-end gap-3 pt-2">
@@ -1001,7 +1014,8 @@ export const VendorsScreen: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-5 py-2 rounded-xl cursor-pointer border-0"
+                  disabled={(editingVendor.recipients || []).length > 5}
+                  className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-5 py-2 rounded-xl cursor-pointer border-0 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Save changes
                 </button>
@@ -1270,6 +1284,15 @@ export const VendorsScreen: React.FC = () => {
                     {findRecipientError && (
                       <span className="text-xs text-red-600 font-medium">{findRecipientError}</span>
                     )}
+                    {findRecipients.length > 5 && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                        <span>
+                          Maximum 5 recipients allowed. Please remove {findRecipients.length - 5}{' '}
+                          recipient(s) to continue.
+                        </span>
+                      </div>
+                    )}
                     {findRecipients.length > 0 && (
                       <div className="flex items-center gap-2 flex-wrap pt-1">
                         {findRecipients.map((rec) => (
@@ -1317,7 +1340,10 @@ export const VendorsScreen: React.FC = () => {
                     </button>
                     <button
                       type="button"
-                      disabled={!findSearchQuery.trim() && !selectedSearchResult}
+                      disabled={
+                        (!findSearchQuery.trim() && !selectedSearchResult) ||
+                        findRecipients.length > 5
+                      }
                       onClick={handleAddVendorFromFind}
                       className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed border-0"
                     >
@@ -1424,6 +1450,15 @@ export const VendorsScreen: React.FC = () => {
                         {manualRecipientError}
                       </span>
                     )}
+                    {manualRecipients.length > 5 && (
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-semibold flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                        <span>
+                          Maximum 5 recipients allowed. Please remove {manualRecipients.length - 5}{' '}
+                          recipient(s) to continue.
+                        </span>
+                      </div>
+                    )}
                     {manualRecipients.length > 0 && (
                       <div className="flex items-center gap-2 flex-wrap pt-1">
                         {manualRecipients.map((rec) => (
@@ -1467,7 +1502,7 @@ export const VendorsScreen: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={!manualDisplayName.trim()}
+                      disabled={!manualDisplayName.trim() || manualRecipients.length > 5}
                       className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed border-0"
                     >
                       Add vendor

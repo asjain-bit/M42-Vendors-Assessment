@@ -26,6 +26,7 @@ interface CallRoomScreenProps {
   vendor: VendorDispatchData
   onBack: () => void
   onExitToVendors?: () => void
+  userName?: string
 }
 
 // Sample questionnaire transcript
@@ -69,9 +70,10 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   vendor,
   onBack,
   onExitToVendors,
+  userName = 'John Doe',
 }) => {
   const [roomState, setRoomState] = useState<CallRoomState>('join')
-  const [yourName, setYourName] = useState('')
+  const [yourName, setYourName] = useState(userName)
   const [isMuted, setIsMuted] = useState(false)
   const [showTranscript, setShowTranscript] = useState(false)
   const [pulseActive, setPulseActive] = useState(true)

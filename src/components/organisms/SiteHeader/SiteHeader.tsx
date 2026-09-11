@@ -14,7 +14,7 @@ export interface SiteHeaderProps {
 }
 
 export const SiteHeader: React.FC<SiteHeaderProps> = ({
-  title = 'Vendor assessment',
+  title = 'Tech Due Dilligence',
   subtitle,
   className = '',
 }) => {
@@ -32,9 +32,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
           {title}
         </h1>
         {subtitle ? (
-          <p className="text-xs text-[#64748b] mt-0.5 leading-normal">
-            {subtitle}
-          </p>
+          <p className="text-xs text-[#64748b] mt-0.5 leading-normal">{subtitle}</p>
         ) : null}
       </div>
     </header>

@@ -28,7 +28,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
             Setting up your workspace...
           </h2>
           <p className="text-[14px] text-slate-500">
-            Preparing the M42 Vendor Assessment environment.
+            Preparing the M42 Tech Due Dilligence environment.
           </p>
         </div>
       </div>
@@ -48,14 +48,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onLogin }) => {
               className="h-8 w-auto object-contain shrink-0"
             />
             <span className="font-semibold text-xl text-[#0d212c] tracking-tight">
-              Vendor Assessment
+              Tech Due Dilligence
             </span>
           </div>
 
           <div>
             <p className="text-slate-600 text-base leading-relaxed font-normal">
-              M42 Vendor Assessment gives procurement and compliance teams a single, auditable view
-              of every supplier relationship.
+              M42 Tech Due Dilligence gives procurement and compliance teams a single, auditable
+              view of every supplier relationship.
             </p>
           </div>
 

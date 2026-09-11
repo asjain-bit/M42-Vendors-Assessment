@@ -90,47 +90,66 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
   // Sample Meeting URL for Dispatch Call
   const meetingUrl = 'https://meet.m42.ae/call/vendor-audit-9823'
 
-  // Dynamic status list based on questionnaire progress
-  const lifecycleSteps = [
-    { title: 'Call dispatched', actor: 'Admin User', time: '1 Sept, 10:30 AM', status: 'DONE' },
-    {
-      title: 'Meeting Scheduled',
-      actor: 'System Scheduler',
-      time: '1 Sept, 01:14 PM',
-      status: 'DONE',
-      hasMeetingUrl: true,
-    },
-    {
-      title: 'Participants joined',
-      actor: 'Presight AI',
-      time: '1 Sept, 01:15 PM',
-      status: 'DONE',
-    },
-    {
-      title: 'Assessment call',
-      actor: 'Voice Agent Sam',
-      time: '1 Sept, 01:19 PM',
-      status: 'DONE',
-    },
-    { title: 'Call ended', actor: 'Voice Agent Sam', time: '1 Sept, 01:19 PM', status: 'DONE' },
-    {
-      title: 'Transcript composed',
-      actor: 'NLP Pipeline',
-      time: '1 Sept, 01:20 PM',
-      status: 'DONE',
-    },
-    { title: 'Scoring', actor: 'Evaluation Subagent', time: '1 Sept, 01:22 PM', status: 'DONE' },
-    { title: 'Report ready', actor: 'Audit Engine', time: '1 Sept, 01:25 PM', status: 'DONE' },
-    {
-      title: 'Finalized',
-      actor: 'Admin User',
-      time:
-        currentStatus === 'completed' || currentStatus === 'finalised'
-          ? '1 Sept, 02:05 PM'
-          : 'Pending',
-      status: currentStatus === 'completed' || currentStatus === 'finalised' ? 'DONE' : 'AWAITING',
-    },
-  ]
+  const isScheduled = currentStatus === 'scheduled'
+
+  // Dynamic status list based on questionnaire progress and current status
+  const lifecycleSteps = isScheduled
+    ? [
+        { title: 'Call dispatched', actor: 'Admin User', time: '1 Sept, 10:30 AM', status: 'DONE' },
+        {
+          title: 'Meeting Scheduled',
+          actor: 'System Scheduler',
+          time: '1 Sept, 01:14 PM',
+          status: 'DONE',
+          hasMeetingUrl: true,
+        },
+      ]
+    : [
+        { title: 'Call dispatched', actor: 'Admin User', time: '1 Sept, 10:30 AM', status: 'DONE' },
+        {
+          title: 'Meeting Scheduled',
+          actor: 'System Scheduler',
+          time: '1 Sept, 01:14 PM',
+          status: 'DONE',
+          hasMeetingUrl: true,
+        },
+        {
+          title: 'Participants joined',
+          actor: 'Presight AI',
+          time: '1 Sept, 01:15 PM',
+          status: 'DONE',
+        },
+        {
+          title: 'Assessment call',
+          actor: 'Voice Agent Sam',
+          time: '1 Sept, 01:19 PM',
+          status: 'DONE',
+        },
+        { title: 'Call ended', actor: 'Voice Agent Sam', time: '1 Sept, 01:19 PM', status: 'DONE' },
+        {
+          title: 'Transcript composed',
+          actor: 'NLP Pipeline',
+          time: '1 Sept, 01:20 PM',
+          status: 'DONE',
+        },
+        {
+          title: 'Scoring',
+          actor: 'Evaluation Subagent',
+          time: '1 Sept, 01:22 PM',
+          status: 'DONE',
+        },
+        { title: 'Report ready', actor: 'Audit Engine', time: '1 Sept, 01:25 PM', status: 'DONE' },
+        {
+          title: 'Finalized',
+          actor: 'Admin User',
+          time:
+            currentStatus === 'completed' || currentStatus === 'finalised'
+              ? '1 Sept, 02:05 PM'
+              : 'Pending',
+          status:
+            currentStatus === 'completed' || currentStatus === 'finalised' ? 'DONE' : 'AWAITING',
+        },
+      ]
 
   // Requirement 2: Audit Trail Timeline Data
   const auditEvents: AuditTrailEvent[] = [
@@ -449,8 +468,20 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                   currentStatus === 'completed' ||
                   currentStatus === 'finalised'
                 const isLowScore = scoreLower.includes('low')
-                const confidenceLevel = isHighScore ? 'High' : isLowScore ? 'Low' : 'Medium'
-                const chipStatus = isHighScore ? 'success' : isLowScore ? 'error' : 'warning'
+                const confidenceLevel = isScheduled
+                  ? 'Pending'
+                  : isHighScore
+                    ? 'High'
+                    : isLowScore
+                      ? 'Low'
+                      : 'Medium'
+                const chipStatus = isScheduled
+                  ? 'info'
+                  : isHighScore
+                    ? 'success'
+                    : isLowScore
+                      ? 'error'
+                      : 'warning'
 
                 return (
                   <StatusChip
@@ -691,54 +722,72 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-[#0d212c]">Agent confidence evaluation</h3>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#fef7e0] text-[#b06000] text-xs font-semibold">
-                  Draft
+                  {isScheduled ? 'Pending' : 'Draft'}
                 </span>
               </div>
 
               <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
-                <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e2e8f0]">
-                  {/* Column 1: ANSWERS */}
-                  <div className="py-3 md:py-0 md:pr-6 flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
-                        <MessageSquare className="w-3.5 h-3.5" />
-                        ANSWERS
-                      </span>
-                      <StatusChip label="Medium confidence" status="warning" dot={false} />
+                {isScheduled ? (
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+                        <Clock className="w-5 h-5" />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-xs font-bold text-[#0d212c]">Evaluation Pending</span>
+                        <span className="text-[11px] text-[#64748b]">
+                          Confidence evaluation and score analytics will be generated automatically
+                          after the assessment meeting completes.
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
-                      7/7 answered
-                    </div>
+                    <StatusChip label="Scheduled" status="info" dot={false} />
                   </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e2e8f0]">
+                    {/* Column 1: ANSWERS */}
+                    <div className="py-3 md:py-0 md:pr-6 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          ANSWERS
+                        </span>
+                        <StatusChip label="Medium confidence" status="warning" dot={false} />
+                      </div>
+                      <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
+                        7/7 answered
+                      </div>
+                    </div>
 
-                  {/* Column 2: DOCUMENTS */}
-                  <div className="py-3 md:py-0 md:px-6 flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
-                        <FileText className="w-3.5 h-3.5" />
-                        DOCUMENTS
-                      </span>
-                      <StatusChip label="Low confidence" status="error" dot={false} />
+                    {/* Column 2: DOCUMENTS */}
+                    <div className="py-3 md:py-0 md:px-6 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
+                          <FileText className="w-3.5 h-3.5" />
+                          DOCUMENTS
+                        </span>
+                        <StatusChip label="Low confidence" status="error" dot={false} />
+                      </div>
+                      <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
+                        3/7 files uploaded
+                      </div>
                     </div>
-                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
-                      3/7 files uploaded
-                    </div>
-                  </div>
 
-                  {/* Column 3: RESEARCH */}
-                  <div className="py-3 md:py-0 md:pl-6 flex flex-col gap-1.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
-                        <Bot className="w-3.5 h-3.5" />
-                        EVALUATION
-                      </span>
-                      <StatusChip label="High confidence" status="success" dot={false} />
-                    </div>
-                    <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
-                      4/4 sources verified
+                    {/* Column 3: RESEARCH */}
+                    <div className="py-3 md:py-0 md:pl-6 flex flex-col gap-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase text-[#64748b] tracking-wider flex items-center gap-1.5">
+                          <Bot className="w-3.5 h-3.5" />
+                          EVALUATION
+                        </span>
+                        <StatusChip label="High confidence" status="success" dot={false} />
+                      </div>
+                      <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
+                        4/4 sources verified
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
@@ -746,55 +795,70 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
             <div className="flex flex-col gap-2">
               <h3 className="text-sm font-bold text-[#0d212c]">Interview audio</h3>
               <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs flex flex-col gap-3">
-                <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] flex items-center gap-4">
-                  <button
-                    onClick={() => setIsPlayingAudio(!isPlayingAudio)}
-                    className="w-10 h-10 rounded-xl bg-[#0d212c] text-white flex items-center justify-center shadow-xs shrink-0 hover:bg-[#08171f] transition cursor-pointer"
-                  >
-                    {isPlayingAudio ? (
-                      <Pause className="w-4 h-4" />
-                    ) : (
-                      <Play className="w-4 h-4 ml-0.5" />
-                    )}
-                  </button>
-
-                  <div className="flex-1 flex flex-col gap-1">
-                    <div className="h-2 w-full bg-[#e2e8f0] rounded-full overflow-hidden">
-                      <div
-                        className={`h-full bg-[#36c0c9] ${isPlayingAudio ? 'w-1/3 transition-all duration-1000' : 'w-0'}`}
-                      />
+                {isScheduled ? (
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center shrink-0">
+                      <PhoneCall className="w-4 h-4" />
                     </div>
-                    <div className="flex justify-between text-[11px] text-[#64748b]">
-                      <span>0:00</span>
-                      <span>3:47</span>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-bold text-[#0d212c]">No Audio Recording</span>
+                      <span className="text-[11px] text-[#64748b]">
+                        Meeting has not started yet. Audio recording will be available after the
+                        assessment call.
+                      </span>
                     </div>
                   </div>
-
-                  {/* Playback speed dropdown */}
-                  <div className="flex items-center gap-2 shrink-0">
-                    <select
-                      value={playbackSpeed}
-                      onChange={(e) => setPlaybackSpeed(e.target.value)}
-                      className="px-2.5 py-1.5 rounded-xl border border-[#cbd5e1] bg-white text-xs font-bold text-[#0d212c] outline-none cursor-pointer"
-                      title="Playback speed"
-                    >
-                      <option value="0.75">0.75x</option>
-                      <option value="1">1.0x</option>
-                      <option value="1.25">1.25x</option>
-                      <option value="1.5">1.5x</option>
-                      <option value="2">2.0x</option>
-                    </select>
-
+                ) : (
+                  <div className="p-4 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] flex items-center gap-4">
                     <button
-                      onClick={() => alert('Downloading interview audio...')}
-                      className="p-2 rounded-xl border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-slate-100 text-[#0d212c] bg-white transition cursor-pointer flex items-center justify-center"
-                      title="Download interview audio"
-                      aria-label="Download interview audio"
+                      onClick={() => setIsPlayingAudio(!isPlayingAudio)}
+                      className="w-10 h-10 rounded-xl bg-[#0d212c] text-white flex items-center justify-center shadow-xs shrink-0 hover:bg-[#08171f] transition cursor-pointer"
                     >
-                      <Download className="w-4 h-4 text-[#64748b]" />
+                      {isPlayingAudio ? (
+                        <Pause className="w-4 h-4" />
+                      ) : (
+                        <Play className="w-4 h-4 ml-0.5" />
+                      )}
                     </button>
+
+                    <div className="flex-1 flex flex-col gap-1">
+                      <div className="h-2 w-full bg-[#e2e8f0] rounded-full overflow-hidden">
+                        <div
+                          className={`h-full bg-[#36c0c9] ${isPlayingAudio ? 'w-1/3 transition-all duration-1000' : 'w-0'}`}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[11px] text-[#64748b]">
+                        <span>0:00</span>
+                        <span>3:47</span>
+                      </div>
+                    </div>
+
+                    {/* Playback speed dropdown */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <select
+                        value={playbackSpeed}
+                        onChange={(e) => setPlaybackSpeed(e.target.value)}
+                        className="px-2.5 py-1.5 rounded-xl border border-[#cbd5e1] bg-white text-xs font-bold text-[#0d212c] outline-none cursor-pointer"
+                        title="Playback speed"
+                      >
+                        <option value="0.75">0.75x</option>
+                        <option value="1">1.0x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2.0x</option>
+                      </select>
+
+                      <button
+                        onClick={() => alert('Downloading interview audio...')}
+                        className="p-2 rounded-xl border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-slate-100 text-[#0d212c] bg-white transition cursor-pointer flex items-center justify-center"
+                        title="Download interview audio"
+                        aria-label="Download interview audio"
+                      >
+                        <Download className="w-4 h-4 text-[#64748b]" />
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
 
@@ -803,7 +867,9 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
               <h3 className="text-sm font-bold text-[#0d212c]">Summary</h3>
               <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
                 <p className="text-xs text-[#64748b] leading-relaxed">
-                  Overall evaluation across 7 questions; 2 mandatory evidence items outstanding.
+                  {isScheduled
+                    ? 'No summary generated yet. The meeting has not been started.'
+                    : 'Overall evaluation across 7 questions; 2 mandatory evidence items outstanding.'}
                 </p>
               </div>
             </div>
@@ -812,21 +878,24 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-bold text-[#0d212c]">Questions</h3>
-                <button
-                  onClick={() => setShowAnswerKey(!showAnswerKey)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-[#f8fafc] text-[#0d212c] bg-white transition cursor-pointer"
-                >
-                  {showAnswerKey ? 'Hide answer key' : 'Show answer key'}
-                </button>
+                {!isScheduled && (
+                  <button
+                    onClick={() => setShowAnswerKey(!showAnswerKey)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold border border-[#cbd5e1] hover:border-[#94a3b8] hover:bg-[#f8fafc] text-[#0d212c] bg-white transition cursor-pointer"
+                  >
+                    {showAnswerKey ? 'Hide answer key' : 'Show answer key'}
+                  </button>
+                )}
               </div>
 
               <div className="bg-white p-6 rounded-2xl border border-[#e2e8f0] shadow-xs">
                 <div className="divide-y divide-[#e2e8f0]/80">
                   {questions.map((q) => {
                     const attachmentsForQuestion = questionFiles[q.id] || []
-                    const canUpload = currentStatus !== 'completed' && q.requiresEvidence
+                    const canUpload =
+                      !isScheduled && currentStatus !== 'completed' && q.requiresEvidence
                     const shouldShowAttachmentSection =
-                      attachmentsForQuestion.length > 0 || canUpload
+                      !isScheduled && (attachmentsForQuestion.length > 0 || canUpload)
 
                     return (
                       <div key={q.id} className="py-5 first:pt-0 last:pb-0 flex flex-col gap-3">
@@ -838,22 +907,29 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                           <div className="relative group shrink-0">
                             <div className="cursor-default">
                               <StatusChip
-                                label={q.confidence}
-                                status={q.confidenceType}
+                                label={isScheduled ? 'Scheduled' : q.confidence}
+                                status={isScheduled ? 'info' : q.confidenceType}
                                 dot={false}
                               />
                             </div>
                             <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute right-0 top-7 z-30 w-64 bg-[#0d212c] text-white text-xs p-3 rounded-xl shadow-xl border border-white/10">
-                              {q.confidenceTooltip}
+                              {isScheduled
+                                ? 'Scheduled: Meeting has not started yet.'
+                                : q.confidenceTooltip}
                             </div>
                           </div>
                         </div>
 
                         <div className="text-xs text-[#0d212c] leading-relaxed">
-                          <strong>Answer:</strong> {q.answer}
+                          <strong>Answer:</strong>{' '}
+                          <span className={isScheduled ? 'text-[#64748b] italic' : ''}>
+                            {isScheduled
+                              ? 'Meeting not started yet. Question will be answered during the assessment call.'
+                              : q.answer}
+                          </span>
                         </div>
 
-                        {showAnswerKey && (
+                        {!isScheduled && showAnswerKey && (
                           <>
                             <div className="text-xs text-[#64748b]">
                               <strong>Why this score:</strong> {q.whyScore}
@@ -865,7 +941,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                           </>
                         )}
 
-                        {q.research && (
+                        {!isScheduled && q.research && (
                           <div className="p-3.5 rounded-xl bg-[#f0fdf4] border border-[#bbf7d0] text-xs flex flex-col gap-1.5 mt-1">
                             <div className="flex items-center justify-between">
                               <span className="font-bold text-[#0d212c]">

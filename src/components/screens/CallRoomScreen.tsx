@@ -696,24 +696,27 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
           {/* Actions */}
           <div className="flex flex-col gap-2">
             {userRole === 'admin' && (
-              <button
-                id="callroom-download-transcript-btn"
-                onClick={() => alert('Downloading transcript...')}
-                className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0 flex items-center justify-center gap-2"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Download transcript
-              </button>
+              <>
+                <button
+                  id="callroom-download-transcript-btn"
+                  onClick={() => alert('Downloading transcript...')}
+                  className="w-full bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs py-3 rounded-xl transition cursor-pointer border-0 flex items-center justify-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Download transcript
+                </button>
+
+                <button
+                  onClick={() => {
+                    if (onExitToVendors) onExitToVendors()
+                    else onBack()
+                  }}
+                  className="w-full bg-transparent hover:bg-slate-100 text-[#64748b] hover:text-[#0d212c] font-semibold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
+                >
+                  Back to vendors
+                </button>
+              </>
             )}
-            <button
-              onClick={() => {
-                if (onExitToVendors) onExitToVendors()
-                else onBack()
-              }}
-              className="w-full bg-transparent hover:bg-slate-100 text-[#64748b] hover:text-[#0d212c] font-semibold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
-            >
-              Back to vendors
-            </button>
           </div>
         </div>
       </div>
@@ -759,19 +762,21 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
               Rejoin call
             </button>
 
-            {/* Back to vendors — tertiary button, navigates to initial vendors directory */}
-            <button
-              onClick={() => {
-                if (onExitToVendors) {
-                  onExitToVendors()
-                } else {
-                  onBack()
-                }
-              }}
-              className="w-full bg-transparent hover:bg-slate-100 text-[#64748b] hover:text-[#0d212c] font-semibold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
-            >
-              Back to vendors
-            </button>
+            {/* Back to vendors — only shown for Admin users */}
+            {userRole === 'admin' && (
+              <button
+                onClick={() => {
+                  if (onExitToVendors) {
+                    onExitToVendors()
+                  } else {
+                    onBack()
+                  }
+                }}
+                className="w-full bg-transparent hover:bg-slate-100 text-[#64748b] hover:text-[#0d212c] font-semibold text-xs py-2.5 rounded-xl transition cursor-pointer border-0"
+              >
+                Back to vendors
+              </button>
+            )}
           </div>
         </div>
       </div>

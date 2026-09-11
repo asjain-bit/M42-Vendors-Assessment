@@ -65,7 +65,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   className="h-5 w-auto object-contain shrink-0"
                 />
                 <span className="font-extrabold text-xs tracking-tight text-white truncate leading-none">
-                  Tech Due Dilligence
+                  Tech Due Diligence
                 </span>
               </div>
 
@@ -169,7 +169,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div>
               <h3 className="text-xl font-extrabold text-[#0d212c] mb-1.5">Confirm Logout</h3>
               <p className="text-xs text-[#64748b] leading-relaxed max-w-md">
-                Are you sure you want to log out of M42 Tech Due Dilligence?
+                Are you sure you want to log out of M42 Tech Due Diligence?
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 w-full mt-2">

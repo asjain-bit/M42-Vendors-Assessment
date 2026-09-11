@@ -460,37 +460,29 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                 <Clock className="w-3.5 h-3.5" />
                 <span>Round 1</span>
               </span>
-              <span className="text-[#36c0c9]/30 font-bold">|</span>
-              {(() => {
-                const scoreLower = (assessment.score || '').toLowerCase()
-                const isHighScore =
-                  scoreLower.includes('high') ||
-                  currentStatus === 'completed' ||
-                  currentStatus === 'finalised'
-                const isLowScore = scoreLower.includes('low')
-                const confidenceLevel = isScheduled
-                  ? 'Pending'
-                  : isHighScore
-                    ? 'High'
-                    : isLowScore
-                      ? 'Low'
-                      : 'Medium'
-                const chipStatus = isScheduled
-                  ? 'info'
-                  : isHighScore
-                    ? 'success'
-                    : isLowScore
-                      ? 'error'
-                      : 'warning'
+              {!isScheduled && (
+                <>
+                  <span className="text-[#36c0c9]/30 font-bold">|</span>
+                  {(() => {
+                    const scoreLower = (assessment.score || '').toLowerCase()
+                    const isHighScore =
+                      scoreLower.includes('high') ||
+                      currentStatus === 'completed' ||
+                      currentStatus === 'finalised'
+                    const isLowScore = scoreLower.includes('low')
+                    const confidenceLevel = isHighScore ? 'High' : isLowScore ? 'Low' : 'Medium'
+                    const chipStatus = isHighScore ? 'success' : isLowScore ? 'error' : 'warning'
 
-                return (
-                  <StatusChip
-                    label={`Overall confidence: ${confidenceLevel}`}
-                    status={chipStatus}
-                    dot={false}
-                  />
-                )
-              })()}
+                    return (
+                      <StatusChip
+                        label={`Overall confidence: ${confidenceLevel}`}
+                        status={chipStatus}
+                        dot={false}
+                      />
+                    )
+                  })()}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -721,8 +713,20 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-bold text-[#0d212c]">Agent confidence evaluation</h3>
-                <span className="px-2.5 py-0.5 rounded-full bg-[#fef7e0] text-[#b06000] text-xs font-semibold">
-                  {isScheduled ? 'Pending' : 'Draft'}
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                    isScheduled
+                      ? 'bg-[#fef7e0] text-[#b06000]'
+                      : currentStatus === 'completed' || currentStatus === 'finalised'
+                        ? 'bg-[#e6f4ea] text-[#137333]'
+                        : 'bg-[#fef7e0] text-[#b06000]'
+                  }`}
+                >
+                  {isScheduled
+                    ? 'Pending'
+                    : currentStatus === 'completed' || currentStatus === 'finalised'
+                      ? 'Completed'
+                      : 'Draft'}
                 </span>
               </div>
 

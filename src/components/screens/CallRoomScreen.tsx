@@ -36,6 +36,9 @@ interface CallRoomScreenProps {
   timing?: 'now' | 'later'
   scheduleDate?: string
   formattedTimeRange?: string
+  initialRole?: 'admin' | 'vendor'
+  initialFlowStep?: 'select_role' | 'admin_join' | 'vendor_input' | 'vendor_otp'
+  hideChangeRole?: boolean
 }
 
 // Sample questionnaire transcript
@@ -80,6 +83,9 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   timing = 'now',
   scheduleDate,
   formattedTimeRange,
+  initialRole = 'admin',
+  initialFlowStep = 'admin_join',
+  hideChangeRole = false,
 }) => {
   const [roomState, setRoomState] = useState<CallRoomState>('join')
   const [yourName, setYourName] = useState(userName)
@@ -157,10 +163,10 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
     setAgentOnHold((prev) => !prev)
   }
 
-  const [userRole, setUserRole] = useState<'admin' | 'vendor'>('admin')
+  const [userRole, setUserRole] = useState<'admin' | 'vendor'>(initialRole)
   const [vendorFlowStep, setVendorFlowStep] = useState<
     'select_role' | 'admin_join' | 'vendor_input' | 'vendor_otp'
-  >('select_role')
+  >(initialFlowStep)
   const [vendorNameInput, setVendorNameInput] = useState('')
   const [vendorEmailInput, setVendorEmailInput] = useState('')
   const [otpDigits, setOtpDigits] = useState<string[]>(['', '', '', ''])
@@ -370,7 +376,7 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                   onClick={onBack}
                   className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
                 >
-                  ← Back to vendor details
+                  ← Back to call details
                 </button>
                 <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 w-64 bg-[#0d212c] text-white text-[11px] p-2.5 rounded-xl shadow-xl border border-white/10 text-center leading-tight font-normal">
                   This is added for prototype navigation purposes, do not include in final designs.
@@ -432,11 +438,20 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
               </button>
 
               <button
-                onClick={() => setVendorFlowStep('select_role')}
-                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+                onClick={onBack}
+                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0 mt-1"
               >
-                ← Change login role
+                ← Back to call details
               </button>
+
+              {!hideChangeRole && (
+                <button
+                  onClick={() => setVendorFlowStep('select_role')}
+                  className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+                >
+                  ← Change login role
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -626,17 +641,12 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                 Verify &amp; Enter Call Room
               </button>
 
-              <div className="relative group flex justify-center w-full mt-1">
-                <button
-                  onClick={() => setVendorFlowStep('vendor_input')}
-                  className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
-                >
-                  ← Back to Vendor Details
-                </button>
-                <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 w-64 bg-[#0d212c] text-white text-[11px] p-2.5 rounded-xl shadow-xl border border-white/10 text-center leading-tight font-normal">
-                  This is added for prototype navigation purposes, do not include in final designs.
-                </div>
-              </div>
+              <button
+                onClick={() => setVendorFlowStep('vendor_input')}
+                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0 mt-1"
+              >
+                ← Back to call details
+              </button>
             </div>
           </div>
         )}

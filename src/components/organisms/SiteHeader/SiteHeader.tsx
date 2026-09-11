@@ -14,7 +14,7 @@ export interface SiteHeaderProps {
 }
 
 export const SiteHeader: React.FC<SiteHeaderProps> = ({
-  title = 'Tech Due Dilligence',
+  title = 'Tech Due Diligence',
   subtitle,
   className = '',
 }) => {

@@ -18,8 +18,8 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: 'Tech Due Dilligence',
-  description: 'M42 Tech Due Dilligence Portal',
+  title: 'Tech Due Diligence',
+  description: 'M42 Tech Due Diligence Portal',
   icons: {
     icon: '/favicon-square.png',
     shortcut: '/favicon-square.png',

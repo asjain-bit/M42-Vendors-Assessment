@@ -48,6 +48,8 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
   const [isDispatched, setIsDispatched] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
   const [showCallRoom, setShowCallRoom] = useState(false)
+  const [callRoomStep, setCallRoomStep] = useState<'admin_join' | 'select_role'>('admin_join')
+  const [hideChangeRole, setHideChangeRole] = useState(false)
 
   // Step 1 states (empty by default)
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState('')
@@ -341,6 +343,9 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
         timing={timing}
         scheduleDate={scheduleDate}
         formattedTimeRange={formattedTimeRange}
+        initialRole={callRoomStep === 'admin_join' ? 'admin' : 'vendor'}
+        initialFlowStep={callRoomStep}
+        hideChangeRole={hideChangeRole}
       />
     )
   }
@@ -412,7 +417,11 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
                   id="open-call-room-btn"
                   disabled={timing === 'later'}
                   onClick={() => {
-                    if (timing !== 'later') setShowCallRoom(true)
+                    if (timing !== 'later') {
+                      setCallRoomStep('admin_join')
+                      setHideChangeRole(true)
+                      setShowCallRoom(true)
+                    }
                   }}
                   className={`w-full font-bold text-xs py-3.5 px-6 rounded-xl transition border-0 ${
                     timing === 'later'
@@ -497,7 +506,11 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
             <div className="w-full max-w-md flex flex-col items-center gap-1.5 pt-4 border-t border-[#e2e8f0]">
               <button
                 id="dispatched-view-vendor-flow-btn"
-                onClick={() => setShowCallRoom(true)}
+                onClick={() => {
+                  setCallRoomStep('select_role')
+                  setHideChangeRole(false)
+                  setShowCallRoom(true)
+                }}
                 className="w-full bg-[#f8fafc] hover:bg-[#ddf7f9]/50 text-[#0d7280] font-bold text-xs py-2.5 px-4 rounded-xl transition cursor-pointer border border-[#36c0c9]/40 flex items-center justify-center gap-1.5 shadow-2xs"
               >
                 View vendor&apos;s call room flow

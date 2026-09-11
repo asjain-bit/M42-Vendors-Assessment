@@ -17,6 +17,7 @@ import {
   X,
   Calendar,
   Clock,
+  Check,
 } from 'lucide-react'
 import { VendorDispatchData } from './ConfigureVendorCallScreen'
 
@@ -97,7 +98,6 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   // Assessment lifecycle
   const [assessmentStarted, setAssessmentStarted] = useState(false)
   const [agentOnHold, setAgentOnHold] = useState(false)
-  const holdTooltipTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Leave confirmation popup
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
@@ -107,6 +107,50 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
 
   // Live timer (starts when assessment starts)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
+
+  // Local device file upload state & ref
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [uploadedFiles, setUploadedFiles] = useState<
+    { id: string; name: string; size: string; type: string; sender: string; time: string }[]
+  >([
+    {
+      id: 'sample-doc-1',
+      name: 'SOC2_Type_II_Compliance_Report_2026.pdf',
+      size: '2.4 MB',
+      type: 'PDF',
+      sender: 'Presight AI',
+      time: '11:34 AM',
+    },
+  ])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const fileSizeStr =
+      file.size > 1024 * 1024
+        ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
+        : `${Math.round(file.size / 1024)} KB`
+
+    const nowStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+
+    const newDoc = {
+      id: `uploaded-${file.name.replace(/[^a-zA-Z0-9]/g, '')}-${file.size}`,
+      name: file.name,
+      size: fileSizeStr,
+      type: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+      sender:
+        userRole === 'admin'
+          ? yourName.trim() || 'M42 Admin'
+          : vendorNameInput.trim() || vendor.name,
+      time: nowStr,
+    }
+
+    setUploadedFiles((prev) => [...prev, newDoc])
+    setShowTranscript(true)
+    // reset input value so re-uploading same file works
+    e.target.value = ''
+  }
 
   // Meeting started state (defaults to true if timing === 'now')
   const [isMeetingStarted, setIsMeetingStarted] = useState<boolean>(timing !== 'later')
@@ -1061,6 +1105,46 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                 </div>
               ))}
 
+              {/* Uploaded Documents List in Chat Room */}
+              {uploadedFiles.map((file) => (
+                <div
+                  key={file.id}
+                  className="p-3 rounded-2xl bg-[#ddf7f9]/20 border border-[#36c0c9]/40 flex flex-col gap-2 shadow-2xs animate-in fade-in zoom-in-95 duration-200"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <span className="text-[10px] font-extrabold text-[#0d212c] truncate">
+                        {file.sender}
+                      </span>
+                      <span className="px-1.5 py-0.2 rounded-md bg-[#e6f4ea] text-[#137333] text-[9px] font-bold shrink-0">
+                        Uploaded document
+                      </span>
+                    </div>
+                    <span className="text-[9px] text-[#94a3b8] shrink-0">{file.time}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2.5 bg-white p-2.5 rounded-xl border border-[#e2e8f0]">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-[#ddf7f9] text-[#36c0c9] flex items-center justify-center shrink-0 font-extrabold text-[10px]">
+                        {file.type}
+                      </div>
+                      <div className="flex flex-col min-w-0">
+                        <span
+                          className="text-xs font-bold text-[#0d212c] truncate"
+                          title={file.name}
+                        >
+                          {file.name}
+                        </span>
+                        <span className="text-[10px] text-[#64748b]">{file.size}</span>
+                      </div>
+                    </div>
+                    <div className="w-5 h-5 rounded-full bg-[#137333]/10 text-[#137333] flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-[#137333]" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+
               {/* Live typing dots */}
               <div className="flex flex-col gap-0.5">
                 <div className="flex items-center gap-1.5">
@@ -1101,9 +1185,11 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
 
         {/* Upload — disabled until assessment starts */}
         <div className="flex flex-col items-center gap-0.5 relative group">
+          <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
           <button
             id="callroom-upload-btn"
             disabled={!assessmentStarted}
+            onClick={() => assessmentStarted && fileInputRef.current?.click()}
             title={assessmentStarted ? 'Upload document' : 'Available after assessment starts'}
             className={`w-10 h-10 rounded-full flex items-center justify-center border-0 shadow-sm transition ${assessmentStarted ? 'bg-[#f1f5f9] text-[#334155] hover:bg-[#e2e8f0] cursor-pointer' : 'bg-[#f1f5f9] text-[#cbd5e1] cursor-not-allowed opacity-50'}`}
           >

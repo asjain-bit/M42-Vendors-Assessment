@@ -93,63 +93,64 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
   const isScheduled = currentStatus === 'scheduled'
 
   // Dynamic status list based on questionnaire progress and current status
-  const lifecycleSteps = isScheduled
-    ? [
-        { title: 'Call dispatched', actor: 'Admin User', time: '1 Sept, 10:30 AM', status: 'DONE' },
-        {
-          title: 'Meeting Scheduled',
-          actor: 'System Scheduler',
-          time: '1 Sept, 01:14 PM',
-          status: 'DONE',
-          hasMeetingUrl: true,
-        },
-      ]
-    : [
-        { title: 'Call dispatched', actor: 'Admin User', time: '1 Sept, 10:30 AM', status: 'DONE' },
-        {
-          title: 'Meeting Scheduled',
-          actor: 'System Scheduler',
-          time: '1 Sept, 01:14 PM',
-          status: 'DONE',
-          hasMeetingUrl: true,
-        },
-        {
-          title: 'Participants joined',
-          actor: 'Presight AI',
-          time: '1 Sept, 01:15 PM',
-          status: 'DONE',
-        },
-        {
-          title: 'Assessment call',
-          actor: 'Voice Agent Sam',
-          time: '1 Sept, 01:19 PM',
-          status: 'DONE',
-        },
-        { title: 'Call ended', actor: 'Voice Agent Sam', time: '1 Sept, 01:19 PM', status: 'DONE' },
-        {
-          title: 'Transcript composed',
-          actor: 'NLP Pipeline',
-          time: '1 Sept, 01:20 PM',
-          status: 'DONE',
-        },
-        {
-          title: 'Scoring',
-          actor: 'Evaluation Subagent',
-          time: '1 Sept, 01:22 PM',
-          status: 'DONE',
-        },
-        { title: 'Report ready', actor: 'Audit Engine', time: '1 Sept, 01:25 PM', status: 'DONE' },
-        {
-          title: 'Finalized',
-          actor: 'Admin User',
-          time:
-            currentStatus === 'completed' || currentStatus === 'finalised'
-              ? '1 Sept, 02:05 PM'
-              : 'Pending',
-          status:
-            currentStatus === 'completed' || currentStatus === 'finalised' ? 'DONE' : 'AWAITING',
-        },
-      ]
+  const lifecycleSteps = [
+    { title: 'Call dispatched', actor: 'Admin User', time: '1 Sept, 10:30 AM', status: 'DONE' },
+    {
+      title: 'Meeting Scheduled',
+      actor: 'System Scheduler',
+      time: '1 Sept, 01:14 PM',
+      status: 'DONE',
+      hasMeetingUrl: true,
+    },
+    {
+      title: 'Participants joined',
+      actor: 'Presight AI',
+      time: isScheduled ? 'Pending' : '1 Sept, 01:15 PM',
+      status: isScheduled ? 'AWAITING' : 'DONE',
+    },
+    {
+      title: 'Assessment call',
+      actor: 'Voice Agent Sam',
+      time: isScheduled ? 'Pending' : '1 Sept, 01:19 PM',
+      status: isScheduled ? 'AWAITING' : 'DONE',
+    },
+    {
+      title: 'Call ended',
+      actor: 'Voice Agent Sam',
+      time: isScheduled ? 'Pending' : '1 Sept, 01:19 PM',
+      status: isScheduled ? 'AWAITING' : 'DONE',
+    },
+    {
+      title: 'Transcript composed',
+      actor: 'NLP Pipeline',
+      time: isScheduled ? 'Pending' : '1 Sept, 01:20 PM',
+      status: isScheduled ? 'AWAITING' : 'DONE',
+    },
+    {
+      title: 'Scoring',
+      actor: 'Evaluation Subagent',
+      time: isScheduled ? 'Pending' : '1 Sept, 01:22 PM',
+      status: isScheduled ? 'AWAITING' : 'DONE',
+    },
+    {
+      title: 'Report ready',
+      actor: 'Audit Engine',
+      time: isScheduled ? 'Pending' : '1 Sept, 01:25 PM',
+      status: isScheduled ? 'AWAITING' : 'DONE',
+    },
+    {
+      title: 'Finalized',
+      actor: 'Admin User',
+      time:
+        !isScheduled && (currentStatus === 'completed' || currentStatus === 'finalised')
+          ? '1 Sept, 02:05 PM'
+          : 'Pending',
+      status:
+        !isScheduled && (currentStatus === 'completed' || currentStatus === 'finalised')
+          ? 'DONE'
+          : 'AWAITING',
+    },
+  ]
 
   // Requirement 2: Audit Trail Timeline Data
   const auditEvents: AuditTrailEvent[] = [
@@ -325,7 +326,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'Security',
       question: 'Provide your current ISO/IEC 27001 certificate.',
       confidence: 'Low confidence',
-      confidenceType: 'error' as const,
+      confidenceType: 'warning' as const,
       confidenceTooltip:
         'Low confidence: Stage 1 review uploaded; full Stage 2 certificate pending verification.',
       answer:
@@ -370,7 +371,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'Assurance',
       question: 'Provide your most recent penetration test summary or SOC 2 Type II report.',
       confidence: 'Low confidence',
-      confidenceType: 'error' as const,
+      confidenceType: 'warning' as const,
       confidenceTooltip:
         'Low confidence: Missing mandatory penetration test summary or SOC 2 report attachment.',
       answer: '(not answered)',
@@ -384,7 +385,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
       category: 'Data',
       question: 'Where is customer data stored, and can data residency be restricted to a region?',
       confidence: 'Low confidence',
-      confidenceType: 'error' as const,
+      confidenceType: 'warning' as const,
       confidenceTooltip: 'Low confidence: Missing UAE cloud tenant data residency proof.',
       answer: '(not answered)',
       whyScore: 'Scored on the quality of the answer.',
@@ -471,7 +472,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                       currentStatus === 'finalised'
                     const isLowScore = scoreLower.includes('low')
                     const confidenceLevel = isHighScore ? 'High' : isLowScore ? 'Low' : 'Medium'
-                    const chipStatus = isHighScore ? 'success' : isLowScore ? 'error' : 'warning'
+                    const chipStatus = isHighScore ? 'success' : isLowScore ? 'warning' : 'warning'
 
                     return (
                       <StatusChip
@@ -618,7 +619,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                                 event.confidence.startsWith('High')
                                   ? 'success'
                                   : event.confidence.startsWith('Low')
-                                    ? 'error'
+                                    ? 'warning'
                                     : 'warning'
                               }
                               dot={false}
@@ -745,7 +746,6 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                         </span>
                       </div>
                     </div>
-                    <StatusChip label="Scheduled" status="info" dot={false} />
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#e2e8f0]">
@@ -770,7 +770,7 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                           <FileText className="w-3.5 h-3.5" />
                           DOCUMENTS
                         </span>
-                        <StatusChip label="Low confidence" status="error" dot={false} />
+                        <StatusChip label="Low confidence" status="warning" dot={false} />
                       </div>
                       <div className="text-base font-extrabold text-[#0d212c] mt-0.5">
                         3/7 files uploaded
@@ -908,20 +908,20 @@ export const AssessmentDetailScreen: React.FC<AssessmentDetailScreenProps> = ({
                             {q.id}. [{q.category}] {q.question}
                           </h4>
 
-                          <div className="relative group shrink-0">
-                            <div className="cursor-default">
-                              <StatusChip
-                                label={isScheduled ? 'Scheduled' : q.confidence}
-                                status={isScheduled ? 'info' : q.confidenceType}
-                                dot={false}
-                              />
+                          {!isScheduled && (
+                            <div className="relative group shrink-0">
+                              <div className="cursor-default">
+                                <StatusChip
+                                  label={q.confidence}
+                                  status={q.confidenceType}
+                                  dot={false}
+                                />
+                              </div>
+                              <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute right-0 top-7 z-30 w-64 bg-[#0d212c] text-white text-xs p-3 rounded-xl shadow-xl border border-white/10">
+                                {q.confidenceTooltip}
+                              </div>
                             </div>
-                            <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute right-0 top-7 z-30 w-64 bg-[#0d212c] text-white text-xs p-3 rounded-xl shadow-xl border border-white/10">
-                              {isScheduled
-                                ? 'Scheduled: Meeting has not started yet.'
-                                : q.confidenceTooltip}
-                            </div>
-                          </div>
+                          )}
                         </div>
 
                         <div className="text-xs text-[#0d212c] leading-relaxed">

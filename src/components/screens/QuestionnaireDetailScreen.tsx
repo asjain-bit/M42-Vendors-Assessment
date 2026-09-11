@@ -154,7 +154,18 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
     e.preventDefault()
-    if (draggedIndex === null || draggedIndex === index || !isEditing) return
+    if (!isEditing) return
+
+    // Auto-scroll window when dragging near top or bottom edges of viewport
+    const viewportHeight = window.innerHeight
+    const edgeThreshold = 140
+    if (e.clientY < edgeThreshold) {
+      window.scrollBy({ top: -20, behavior: 'smooth' })
+    } else if (e.clientY > viewportHeight - edgeThreshold) {
+      window.scrollBy({ top: 20, behavior: 'smooth' })
+    }
+
+    if (draggedIndex === null || draggedIndex === index) return
 
     const updatedQuestions = [...questions]
     const itemToMove = updatedQuestions[draggedIndex]
@@ -319,11 +330,16 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
             <div className="flex items-center justify-between gap-4 border-b border-[#e2e8f0]/80 pb-3">
               <div className="flex items-center gap-3 min-w-0">
                 {isEditing && (
-                  <div
-                    className="p-1.5 rounded-lg text-[#64748b] hover:text-[#0d212c] hover:bg-slate-100 cursor-grab active:cursor-grabbing transition shrink-0"
-                    title="Hold and drag to reposition question"
-                  >
-                    <GripVertical className="w-4 h-4 text-[#64748b]" />
+                  <div className="relative group/drag shrink-0">
+                    <div
+                      className="p-1.5 rounded-lg text-[#64748b] hover:text-[#0d212c] hover:bg-slate-100 cursor-grab active:cursor-grabbing transition"
+                      title="Drag and drop to change question position"
+                    >
+                      <GripVertical className="w-4 h-4 text-[#64748b]" />
+                    </div>
+                    <div className="pointer-events-none opacity-0 group-hover/drag:opacity-100 transition-opacity duration-200 absolute left-8 top-1/2 -translate-y-1/2 z-50 w-56 bg-[#0d212c] text-white text-[11px] px-2.5 py-1.5 rounded-lg shadow-xl border border-white/10 text-center leading-snug font-normal whitespace-normal">
+                      Drag and drop to change the position of this question
+                    </div>
                   </div>
                 )}
                 <span className="text-sm font-extrabold text-[#0d212c] tracking-tight">
@@ -483,7 +499,7 @@ export const QuestionnaireDetailScreen: React.FC<QuestionnaireDetailScreenProps>
           <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-[#e2e8f0]">
             <h3 className="text-lg font-bold text-[#0d212c] mb-2">Confirm deletion</h3>
             <p className="text-xs text-[#64748b] mb-6">
-              Are you sure you want to delete this question? This action cannot be undone.
+              Are you sure you want to remove this question from the questionnaire?
             </p>
             <div className="flex justify-end gap-3">
               <button

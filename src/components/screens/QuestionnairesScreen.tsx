@@ -12,6 +12,7 @@ import {
   Info,
   Download,
   AlertTriangle,
+  Loader2,
 } from 'lucide-react'
 import { Input } from '@/components/atoms/Input'
 import { Textarea } from '@/components/atoms/Textarea'
@@ -150,6 +151,7 @@ export const QuestionnairesScreen: React.FC = () => {
   const [description, setDescription] = useState('')
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const [newQuestionnaireTitle, setNewQuestionnaireTitle] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
@@ -175,6 +177,7 @@ export const QuestionnairesScreen: React.FC = () => {
     if (!title.trim() || !uploadedFile) return
 
     setIsUploading(true)
+    setNewQuestionnaireTitle(title.trim())
 
     setTimeout(() => {
       const extension = uploadedFile.name.split('.').pop()?.toUpperCase() as 'PDF' | 'DOCX' | 'MD'
@@ -194,8 +197,9 @@ export const QuestionnairesScreen: React.FC = () => {
       setUploadedFile(null)
       setIsUploading(false)
       setShowUploadModal(false)
+      setNewQuestionnaireTitle('')
       showToast(`Questionnaire "${newQuestionnaire.title}" successfully uploaded & structured!`)
-    }, 1200)
+    }, 1500)
   }
 
   const handleDelete = () => {
@@ -271,6 +275,33 @@ export const QuestionnairesScreen: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0]/60">
+              {isUploading && (
+                <tr className="bg-[#ddf7f9]/30 border-b border-[#36c0c9]/40 animate-pulse">
+                  <td className="py-3.5 px-4 font-semibold text-xs text-[#0d212c]">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-[#36c0c9] shrink-0" />
+                      <span className="font-extrabold">
+                        {newQuestionnaireTitle || 'New Questionnaire'}
+                      </span>
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ddf7f9] text-[#0f766e] flex items-center gap-1 border border-[#36c0c9]/30">
+                        <Loader2 className="w-3 h-3 animate-spin" /> Adding item to list...
+                      </span>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-4 text-[#64748b] text-xs max-w-sm truncate italic">
+                    Parsing document and structuring questions...
+                  </td>
+                  <td className="py-3.5 px-4 text-[#0d212c] font-semibold text-xs">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <StatusChip label="Processing..." status="info" dot={false} />
+                  </td>
+                  <td className="py-3.5 px-4 text-right">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#36c0c9] ml-auto" />
+                  </td>
+                </tr>
+              )}
               {paginatedQuestionnaires.map((item) => (
                 <tr
                   key={item.id}
@@ -531,7 +562,14 @@ export const QuestionnairesScreen: React.FC = () => {
                   disabled={isUploading || !title.trim() || !uploadedFile}
                   className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold py-2.5 px-7 rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed transition border-0"
                 >
-                  {isUploading ? 'Parsing & structuring...' : 'Upload & structure'}
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Adding & structuring...</span>
+                    </>
+                  ) : (
+                    <span>Upload & structure</span>
+                  )}
                 </button>
               </div>
             </form>
@@ -549,8 +587,8 @@ export const QuestionnairesScreen: React.FC = () => {
             <div>
               <h3 className="text-xl font-extrabold text-[#0d212c] mb-1.5">Confirm deletion</h3>
               <p className="text-xs text-[#64748b] leading-relaxed max-w-md">
-                Are you sure you want to remove this questionnaire template? This action is
-                permanent and cannot be undone.
+                Are you sure you want to remove this questionnaire template from your active
+                workspace?
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 w-full mt-2">

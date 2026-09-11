@@ -141,11 +141,13 @@ export const VendorsScreen: React.FC = () => {
       name: 'Delphi Intelligence Systems',
       domain: 'delphiai.de',
       confidence: 'Low confidence',
-      confidenceType: 'error',
+      confidenceType: 'warning',
     },
   ]
 
   const [statusFilter, setStatusFilter] = useState<'all' | 'Activated' | 'Deactivated'>('all')
+  const [isAddingVendor, setIsAddingVendor] = useState(false)
+  const [addingVendorName, setAddingVendorName] = useState('')
 
   const [vendors, setVendors] = useState<VendorRow[]>([
     {
@@ -407,19 +409,27 @@ export const VendorsScreen: React.FC = () => {
       domain: domainStr,
       country: findCountry,
       flag: countryObj ? countryObj.flag : '🌐',
-      status: 'Active',
+      status: 'Activated',
       score: '88.0',
+      recipients: findRecipients.length > 0 ? findRecipients : [`compliance@${domainStr}`],
     }
 
-    setVendors([newVendor, ...vendors])
-    setFindSearchQuery('')
-    setFindWebsite('')
-    setFindRecipients([])
-    setFindRecipientInput('')
-    setHasSearched(false)
-    setSelectedSearchResult(null)
-    setShowAddVendorModal(false)
-    showToast(`Added ${newVendor.name} via public lookup.`)
+    setIsAddingVendor(true)
+    setAddingVendorName(vendorTitle)
+
+    setTimeout(() => {
+      setVendors((prev) => [newVendor, ...prev])
+      setFindSearchQuery('')
+      setFindWebsite('')
+      setFindRecipients([])
+      setFindRecipientInput('')
+      setHasSearched(false)
+      setSelectedSearchResult(null)
+      setIsAddingVendor(false)
+      setAddingVendorName('')
+      setShowAddVendorModal(false)
+      showToast(`Added ${newVendor.name} via public lookup.`)
+    }, 1500)
   }
 
   // Handle Manual vendor tab add
@@ -428,28 +438,35 @@ export const VendorsScreen: React.FC = () => {
     if (manualRecipients.length > 5) return
     if (!manualDisplayName.trim()) return
     const countryObj = worldCountryOptions.find((c) => c.name === manualCountry)
+    const domainStr = manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com'
     const newVendor: VendorRow = {
       id: `v-${Date.now()}`,
       name: manualDisplayName.trim(),
       legalName: manualLegalName.trim() || manualDisplayName.trim(),
-      email:
-        manualRecipients[0] ||
-        `contact@${manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com'}`,
-      domain: manualWebsite.replace('https://', '').split('/')[0] || 'vendor.com',
+      email: manualRecipients[0] || `contact@${domainStr}`,
+      domain: domainStr,
       country: manualCountry,
       flag: countryObj ? countryObj.flag : '🌐',
-      status: 'Active',
+      status: 'Activated',
       score: '80.0',
+      recipients: manualRecipients.length > 0 ? manualRecipients : [`contact@${domainStr}`],
     }
 
-    setVendors([newVendor, ...vendors])
-    setManualDisplayName('')
-    setManualLegalName('')
-    setManualRecipients([])
-    setManualRecipientInput('')
-    setManualWebsite('')
-    setShowAddVendorModal(false)
-    showToast(`Added ${newVendor.name} manually.`)
+    setIsAddingVendor(true)
+    setAddingVendorName(manualDisplayName.trim())
+
+    setTimeout(() => {
+      setVendors((prev) => [newVendor, ...prev])
+      setManualDisplayName('')
+      setManualLegalName('')
+      setManualRecipients([])
+      setManualRecipientInput('')
+      setManualWebsite('')
+      setIsAddingVendor(false)
+      setAddingVendorName('')
+      setShowAddVendorModal(false)
+      showToast(`Added ${newVendor.name} manually.`)
+    }, 1500)
   }
 
   // Handle Save Edited Vendor
@@ -623,6 +640,35 @@ export const VendorsScreen: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-[#e2e8f0]/60">
+              {isAddingVendor && (
+                <tr className="bg-[#ddf7f9]/30 border-b border-[#36c0c9]/40 animate-pulse">
+                  <td className="py-4 px-5 font-semibold text-xs text-[#0d212c]">
+                    <div className="flex items-center gap-2.5">
+                      <Loader2 className="w-4 h-4 animate-spin text-[#36c0c9] shrink-0" />
+                      <div className="flex flex-col gap-0.5">
+                        <span className="font-extrabold">{addingVendorName || 'New Vendor'}</span>
+                        <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#ddf7f9] text-[#0f766e] flex items-center gap-1 border border-[#36c0c9]/30 w-fit">
+                          <Loader2 className="w-3 h-3 animate-spin" /> Adding item to list...
+                        </span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-4 px-5 text-xs text-[#64748b] italic">Processing domain...</td>
+                  <td className="py-4 px-5 text-xs text-[#64748b]">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
+                  </td>
+                  <td className="py-4 px-5 text-xs text-[#64748b]">-</td>
+                  <td className="py-4 px-5 text-xs">
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#ddf7f9] text-[#0f766e] border border-[#36c0c9]/40">
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <span>Adding...</span>
+                    </span>
+                  </td>
+                  <td className="py-4 px-5 text-right">
+                    <Loader2 className="w-4 h-4 animate-spin text-[#36c0c9] ml-auto" />
+                  </td>
+                </tr>
+              )}
               {paginatedVendors.length === 0 ? (
                 <tr>
                   <td colSpan={6} className="py-8 text-center text-[#64748b] text-sm">
@@ -1351,13 +1397,21 @@ export const VendorsScreen: React.FC = () => {
                     <button
                       type="button"
                       disabled={
+                        isAddingVendor ||
                         (!findSearchQuery.trim() && !selectedSearchResult) ||
                         findRecipients.length > 5
                       }
                       onClick={handleAddVendorFromFind}
-                      className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                      className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed border-0 flex items-center justify-center gap-2"
                     >
-                      Add vendor
+                      {isAddingVendor ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Adding vendor...</span>
+                        </>
+                      ) : (
+                        <span>Add vendor</span>
+                      )}
                     </button>
                   </div>
                 </div>
@@ -1517,10 +1571,19 @@ export const VendorsScreen: React.FC = () => {
                     </button>
                     <button
                       type="submit"
-                      disabled={!manualDisplayName.trim() || manualRecipients.length > 5}
-                      className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed border-0"
+                      disabled={
+                        isAddingVendor || !manualDisplayName.trim() || manualRecipients.length > 5
+                      }
+                      className="bg-[#0d212c] hover:bg-[#122e3d] text-white font-bold text-xs px-6 py-2.5 rounded-xl transition cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed border-0 flex items-center justify-center gap-2"
                     >
-                      Add vendor
+                      {isAddingVendor ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin text-white" />
+                          <span>Adding vendor...</span>
+                        </>
+                      ) : (
+                        <span>Add vendor</span>
+                      )}
                     </button>
                   </div>
                 </div>

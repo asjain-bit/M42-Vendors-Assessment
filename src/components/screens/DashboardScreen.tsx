@@ -138,7 +138,6 @@ export const DashboardScreen: React.FC = () => {
   ])
 
   // KPI Card data calculations
-  const totalVendors = 12
   const completedAssessments = assessments.filter((a) => a.status === 'completed').length
   const finalizedAssessments = assessments.filter((a) => a.status === 'finalised').length
 
@@ -442,7 +441,7 @@ export const DashboardScreen: React.FC = () => {
                               ? 'success'
                               : row.score === 'Medium'
                                 ? 'warning'
-                                : 'error'
+                                : 'warning'
                           }
                           dot={false}
                         />

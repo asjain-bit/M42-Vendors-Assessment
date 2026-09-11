@@ -39,7 +39,7 @@ export const DispatchCallWizard: React.FC<DispatchCallWizardProps> = ({
   const [selectedQuestionnaire, setSelectedQuestionnaire] = useState('Technical Questionnaire')
   const [roundLabel, setRoundLabel] = useState('Round 1')
 
-  // Step 2 states (Configure Sam)
+  // Step 2 states (Configure Agent)
   const [selectedVoice, setSelectedVoice] = useState('Marin')
   const [showAllVoices, setShowAllVoices] = useState(false)
   const [timing, setTiming] = useState<'now' | 'later'>('now')

@@ -338,6 +338,9 @@ export const ConfigureVendorCallScreen: React.FC<ConfigureVendorCallScreenProps>
         vendor={vendor}
         onBack={() => setShowCallRoom(false)}
         onExitToVendors={onBack}
+        timing={timing}
+        scheduleDate={scheduleDate}
+        formattedTimeRange={formattedTimeRange}
       />
     )
   }

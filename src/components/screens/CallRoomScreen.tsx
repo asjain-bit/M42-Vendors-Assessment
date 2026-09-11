@@ -15,6 +15,8 @@ import {
   Building2,
   Info,
   X,
+  Calendar,
+  Clock,
 } from 'lucide-react'
 import { VendorDispatchData } from './ConfigureVendorCallScreen'
 
@@ -31,6 +33,9 @@ interface CallRoomScreenProps {
   onBack: () => void
   onExitToVendors?: () => void
   userName?: string
+  timing?: 'now' | 'later'
+  scheduleDate?: string
+  formattedTimeRange?: string
 }
 
 // Sample questionnaire transcript
@@ -72,6 +77,9 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   onBack,
   onExitToVendors,
   userName = 'Zaid Al Ali',
+  timing = 'now',
+  scheduleDate,
+  formattedTimeRange,
 }) => {
   const [roomState, setRoomState] = useState<CallRoomState>('join')
   const [yourName, setYourName] = useState(userName)
@@ -93,6 +101,9 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
 
   // Live timer (starts when assessment starts)
   const [elapsedSeconds, setElapsedSeconds] = useState(0)
+
+  // Meeting started state (defaults to true if timing === 'now')
+  const [isMeetingStarted, setIsMeetingStarted] = useState<boolean>(timing !== 'later')
 
   useEffect(() => {
     if (!assessmentStarted) return
@@ -156,6 +167,21 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
   const [otpError, setOtpError] = useState('')
   const otpRefs = useRef<(HTMLInputElement | null)[]>([])
 
+  // Resend OTP 60-second countdown state
+  const [resendTimer, setResendTimer] = useState<number>(60)
+
+  // Countdown timer for Resend OTP (60s)
+  useEffect(() => {
+    if (vendorFlowStep !== 'vendor_otp') return
+    if (resendTimer <= 0) return
+
+    const timer = setInterval(() => {
+      setResendTimer((prev) => (prev > 0 ? prev - 1 : 0))
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [vendorFlowStep, resendTimer])
+
   const handleOtpChange = (index: number, val: string) => {
     const digit = val.replace(/[^0-9]/g, '').slice(-1)
     const newDigits = [...otpDigits]
@@ -203,18 +229,99 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
             </div>
 
             <div className="bg-white rounded-3xl border border-[#e2e8f0] shadow-xl p-7 flex flex-col gap-4">
-              <span className="text-xs font-bold text-[#0d212c]">
+              {/* Meeting Details Section */}
+              <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-2xl p-4 flex flex-col gap-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-extrabold tracking-wider text-[#64748b] uppercase">
+                    Meeting Details
+                  </span>
+                  <span
+                    className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border flex items-center gap-1.5 ${
+                      isMeetingStarted
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : 'bg-amber-50 text-amber-700 border-amber-200'
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        isMeetingStarted ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+                      }`}
+                    />
+                    {isMeetingStarted ? 'Meeting Started' : 'Scheduled / Not Started'}
+                  </span>
+                </div>
+
+                <div className="flex flex-col gap-1.5 text-xs text-[#0d212c] pt-1 border-t border-[#e2e8f0]/60">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-3.5 h-3.5 text-[#64748b] shrink-0" />
+                    <span className="font-semibold text-[#0d212c]">
+                      {scheduleDate || formattedDate}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-[#64748b] shrink-0" />
+                    <span className="font-semibold text-[#0d212c]">
+                      {formattedTimeRange || `${formattedTime} (GST)`}
+                    </span>
+                  </div>
+                </div>
+
+                {!isMeetingStarted && (
+                  <div className="bg-amber-50 border border-amber-200 text-amber-800 text-[11px] p-2.5 rounded-xl flex items-center justify-between gap-2 mt-1 leading-normal">
+                    <span>
+                      Meeting has not started yet. Sign in options will unlock once the meeting time
+                      begins.
+                    </span>
+                    <div className="relative group shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setIsMeetingStarted(true)}
+                        className="text-[10px] font-bold text-amber-900 underline hover:text-amber-950 cursor-pointer bg-transparent border-0"
+                      >
+                        Start Now
+                      </button>
+                      <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute right-0 bottom-full mb-2 z-50 w-64 bg-[#0d212c] text-white text-[11px] p-2.5 rounded-xl shadow-xl border border-white/10 text-center leading-tight font-normal">
+                        This is added for prototype navigation purposes, do not include in final
+                        designs.
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {isMeetingStarted && (
+                  <div className="relative group flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => setIsMeetingStarted(false)}
+                      className="text-[10px] text-[#64748b] hover:text-[#0d212c] underline cursor-pointer bg-transparent border-0"
+                    >
+                      Reset to Not Started
+                    </button>
+                    <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute right-0 bottom-full mb-2 z-50 w-64 bg-[#0d212c] text-white text-[11px] p-2.5 rounded-xl shadow-xl border border-white/10 text-center leading-tight font-normal">
+                      This is added for prototype navigation purposes, do not include in final
+                      designs.
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <span className="text-xs font-bold text-[#0d212c] mt-1">
                 How would you like to sign in?
               </span>
 
-              {/* Login via SSO Button — identical to LoginScreen.tsx */}
+              {/* Login via SSO Button — disabled if meeting is not started */}
               <button
+                disabled={!isMeetingStarted}
                 onClick={() => {
+                  if (!isMeetingStarted) return
                   setUserRole('admin')
                   setYourName(userName || 'Zaid Al Ali')
                   setVendorFlowStep('admin_join')
                 }}
-                className="w-full flex items-start gap-3 bg-white border border-[#e2e8f0] rounded-2xl px-4 py-3.5 text-left shadow-2xs hover:shadow-md hover:border-[#36c0c9]/50 transition-all group cursor-pointer"
+                className={`w-full flex items-start gap-3 bg-white border border-[#e2e8f0] rounded-2xl px-4 py-3.5 text-left shadow-2xs transition-all group ${
+                  !isMeetingStarted
+                    ? 'opacity-40 cursor-not-allowed grayscale-[20%]'
+                    : 'hover:shadow-md hover:border-[#36c0c9]/50 cursor-pointer'
+                }`}
               >
                 <div className="mt-0.5 bg-gray-50 p-2 rounded-xl group-hover:bg-[#36c0c9]/10 transition-colors">
                   <Fingerprint className="w-5 h-5 text-gray-500 group-hover:text-[#36c0c9] transition-colors" />
@@ -229,15 +336,21 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                 </div>
               </button>
 
-              {/* Login as a Vendor Button */}
+              {/* Login as a Vendor Button — disabled if meeting is not started */}
               <button
+                disabled={!isMeetingStarted}
                 onClick={() => {
+                  if (!isMeetingStarted) return
                   setUserRole('vendor')
                   setVendorNameInput('')
                   setVendorEmailInput('')
                   setVendorFlowStep('vendor_input')
                 }}
-                className="w-full flex items-start gap-3 bg-white border border-[#e2e8f0] rounded-2xl px-4 py-3.5 text-left shadow-2xs hover:shadow-md hover:border-[#36c0c9]/50 transition-all group cursor-pointer"
+                className={`w-full flex items-start gap-3 bg-white border border-[#e2e8f0] rounded-2xl px-4 py-3.5 text-left shadow-2xs transition-all group ${
+                  !isMeetingStarted
+                    ? 'opacity-40 cursor-not-allowed grayscale-[20%]'
+                    : 'hover:shadow-md hover:border-[#36c0c9]/50 cursor-pointer'
+                }`}
               >
                 <div className="mt-0.5 bg-gray-50 p-2 rounded-xl group-hover:bg-[#36c0c9]/10 transition-colors">
                   <Building2 className="w-5 h-5 text-gray-500 group-hover:text-[#36c0c9] transition-colors" />
@@ -252,12 +365,17 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                 </div>
               </button>
 
-              <button
-                onClick={onBack}
-                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0 mt-2"
-              >
-                ← Back to vendor details
-              </button>
+              <div className="relative group flex justify-center w-full mt-2">
+                <button
+                  onClick={onBack}
+                  className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+                >
+                  ← Back to vendor details
+                </button>
+                <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 w-64 bg-[#0d212c] text-white text-[11px] p-2.5 rounded-xl shadow-xl border border-white/10 text-center leading-tight font-normal">
+                  This is added for prototype navigation purposes, do not include in final designs.
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -390,6 +508,7 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                     onClick={() => {
                       setOtpDigits(['', '', '', ''])
                       setOtpError('')
+                      setResendTimer(60)
                       setVendorFlowStep('vendor_otp')
                     }}
                     className="w-full bg-[#36c0c9] hover:bg-[#2badb6] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-sm py-3 rounded-xl transition cursor-pointer border-0 shadow-md mt-1"
@@ -417,6 +536,8 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
               </h1>
               <p className="text-xs text-[#64748b] font-medium">
                 OTP sent to <span className="font-semibold text-[#0d212c]">{vendorEmailInput}</span>
+                <span className="inline-block mx-1.5 text-gray-300">•</span>
+                <span className="text-[#0d7280] font-semibold">Valid for 5 minutes</span>
               </p>
             </div>
 
@@ -459,8 +580,33 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                 </p>
               )}
 
+              {/* Don't get the code? Resend OTP with 60-second countdown */}
+              <div className="flex items-center justify-center gap-1.5 text-xs text-[#64748b] my-0.5">
+                <span>Don&apos;t get the code?</span>
+                {resendTimer > 0 ? (
+                  <span className="font-semibold text-[#94a3b8] cursor-not-allowed">
+                    Resend OTP ({resendTimer}s)
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setOtpDigits(['', '', '', ''])
+                      setOtpError('')
+                      setResendTimer(60)
+                    }}
+                    className="font-bold text-[#36c0c9] hover:text-[#2badb6] transition cursor-pointer bg-transparent border-0 p-0 underline"
+                  >
+                    Resend OTP
+                  </button>
+                )}
+              </div>
+
               <p className="text-[11px] text-[#64748b] leading-relaxed text-center">
-                Enter the 4-digit code to complete verification and enter the assessment call room.
+                Enter the 4-digit code to complete verification and enter the assessment call room.{' '}
+                <span className="font-semibold text-[#0d212c]">
+                  Note: This OTP is valid for 5 minutes only.
+                </span>
               </p>
 
               <button
@@ -480,12 +626,17 @@ export const CallRoomScreen: React.FC<CallRoomScreenProps> = ({
                 Verify &amp; Enter Call Room
               </button>
 
-              <button
-                onClick={() => setVendorFlowStep('vendor_input')}
-                className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
-              >
-                ← Back to Vendor Details
-              </button>
+              <div className="relative group flex justify-center w-full mt-1">
+                <button
+                  onClick={() => setVendorFlowStep('vendor_input')}
+                  className="text-xs text-center text-[#94a3b8] hover:text-[#0d212c] transition cursor-pointer bg-transparent border-0"
+                >
+                  ← Back to Vendor Details
+                </button>
+                <div className="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200 absolute left-1/2 -translate-x-1/2 bottom-full mb-2 z-50 w-64 bg-[#0d212c] text-white text-[11px] p-2.5 rounded-xl shadow-xl border border-white/10 text-center leading-tight font-normal">
+                  This is added for prototype navigation purposes, do not include in final designs.
+                </div>
+              </div>
             </div>
           </div>
         )}
